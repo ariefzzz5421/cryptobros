@@ -1,25 +1,63 @@
 /* Single source of truth for the site routes.
-   The shell renders these as separate topic columns inside the
-   bottom-left navigation drawer. Labels are topics only — no numbering. */
+   The shell renders these as topic columns inside the navigation drawer.
+   Each route carries a small mark so a topic is recognisable at a glance;
+   labels stay topic names with no numbering.
+
+   Icons are 24x24 stroked paths drawn on currentColor. */
 
 export const ROUTE_COLUMNS = [
   {
     id: 'market',
     label: 'Live market',
     routes: [
-      { href: '/', label: 'Home', note: 'Landing and route index' },
-      { href: '/dashboard/', label: 'Dashboard', note: 'Volume map, trading hours, heatmap' },
-      { href: '/maps/', label: 'Maps', note: 'Volume by legal jurisdiction' },
-      { href: '/sentiment/', label: 'Sentiment', note: 'Launchpads, chains, protocol activity' },
+      {
+        href: '/',
+        label: 'Dashboard',
+        note: 'Volume map, trading hours, heatmap',
+        /* stacked bars — the shape of the heatmap and volume panels */
+        icon: 'M4 19V11M9 19V5M14 19V14M19 19V8',
+      },
+      {
+        href: '/maps/',
+        label: 'Maps',
+        note: 'Volume by legal jurisdiction',
+        /* globe with a meridian */
+        icon: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM3.6 9h16.8M3.6 15h16.8M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18',
+      },
+      {
+        href: '/sentiment/',
+        label: 'Sentiment',
+        note: 'Launchpads, chains, protocol activity',
+        /* pulse line — protocol activity over time */
+        icon: 'M3 12h4l3 7 4-14 3 7h4',
+      },
     ],
   },
   {
     id: 'research',
     label: 'Research',
     routes: [
-      { href: '/cases/', label: 'Memecoin cases', note: 'Sourced long-form case studies' },
-      { href: '/2026-memecoins/', label: 'Breakouts', note: 'Verified $100M crossings' },
-      { href: '/nft/', label: 'NFT', note: 'Collections whose floor broke 0.5 ETH' },
+      {
+        href: '/cases/',
+        label: 'Memecoin cases',
+        note: 'Sourced long-form case studies',
+        /* article page with text lines */
+        icon: 'M6 3h9l4 4v14H6zM15 3v4h4M9 12h7M9 16h7',
+      },
+      {
+        href: '/2026-memecoins/',
+        label: 'Breakouts',
+        note: 'Verified $100M crossings',
+        /* rising line breaking through a threshold */
+        icon: 'M3 17l6-6 4 4 8-8M15 7h6v6',
+      },
+      {
+        href: '/nft/',
+        label: 'NFT',
+        note: 'Collections whose floor broke 0.5 ETH',
+        /* ETH-style diamond */
+        icon: 'M12 2 5 12l7 4 7-4zM5 14l7 8 7-8-7 4z',
+      },
     ],
   },
 ];

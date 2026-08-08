@@ -23,8 +23,7 @@ npm run build
 
 | Route | Purpose |
 |---|---|
-| `/` | Landing page and route index |
-| `/dashboard/` | Global overview, active-hour analysis, and live memecoin leaderboard |
+| `/` | Global overview, active-hour analysis, and live memecoin leaderboard |
 | `/maps/` | Exchange legal-jurisdiction volume map with ranked markers and country flags |
 | `/sentiment/` | Launchpad/protocol volume and revenue, with chain ranking |
 | `/cases/` | Live `$100M+` memecoin leaderboard and sourced historical studies |
@@ -35,9 +34,10 @@ npm run build
 | `/nft/{slug}/` | Collection case study: launch, mint, peak and live floor, factors, triggers |
 
 Navigation is a drawer opened from the three-line launcher pinned to the
-bottom-left corner. Routes are defined once in `assets/js/routes.js` and rendered
-as topic columns by `assets/js/app-shell.js`, so every page picks up a new route
-without editing its markup.
+top-right corner, directly under the theme toggle. Routes are defined once in
+`assets/js/routes.js` — label, description, and a small identifying icon — and
+rendered as topic columns by `assets/js/app-shell.js`, so every page picks up a
+new route without editing its markup.
 
 ### Case article format
 
@@ -103,7 +103,7 @@ CoinGecko NFT API, so a blocked or rate-limited upstream still renders a mark.
 
 ```text
 index.html
-dashboard/  maps/  sentiment/  cases/  2026-memecoins/  nft/
+maps/  sentiment/  cases/  2026-memecoins/  nft/
 assets/css/style.css
 assets/js/
 server/market-service.mjs

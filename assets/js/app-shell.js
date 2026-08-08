@@ -1,9 +1,42 @@
 /* Shared route shell.
    Navigation lives in a drawer opened by the three-line launcher pinned to the
-   bottom-left corner. Every page keeps an empty <nav class="primary-nav">; the
-   shell fills it from routes.js so a new route appears site-wide at once. */
+   top-right corner, directly under the theme toggle. Every page keeps an empty
+   <nav class="primary-nav">; the shell fills it from routes.js so a new route
+   appears site-wide at once. */
 
 import { ROUTE_COLUMNS, activeRoute } from './routes.js';
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+function routeIcon(path) {
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('class', 'nav-icon');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('fill', 'none');
+  svg.setAttribute('stroke', 'currentColor');
+  svg.setAttribute('stroke-width', '1.6');
+  svg.setAttribute('stroke-linecap', 'round');
+  svg.setAttribute('stroke-linejoin', 'round');
+  svg.setAttribute('aria-hidden', 'true');
+  const shape = document.createElementNS(SVG_NS, 'path');
+  shape.setAttribute('d', path);
+  svg.append(shape);
+  return svg;
+}
+
+/* The launcher and drawer sit under the header, whose height differs between
+   pages that carry a status bar and those that do not. Measuring beats
+   hard-coding it. */
+function trackHeaderHeight() {
+  const head = document.querySelector('.site-head');
+  if (!head) return;
+  const apply = () => {
+    document.documentElement.style.setProperty('--head-h', `${Math.round(head.offsetHeight)}px`);
+  };
+  apply();
+  if ('ResizeObserver' in window) new ResizeObserver(apply).observe(head);
+  else window.addEventListener('resize', apply);
+}
 
 function buildLauncher(navId) {
   const button = document.createElement('button');
@@ -43,11 +76,14 @@ function buildColumns(nav, current) {
         link.className = 'is-active';
         link.setAttribute('aria-current', 'page');
       }
+      const copy = document.createElement('span');
+      copy.className = 'nav-copy';
       const label = document.createElement('strong');
       label.textContent = route.label;
       const note = document.createElement('small');
       note.textContent = route.note;
-      link.append(label, note);
+      copy.append(label, note);
+      link.append(routeIcon(route.icon), copy);
       section.append(link);
     }
     columns.append(section);
@@ -63,6 +99,7 @@ export function initAppShell() {
   nav.id ||= 'primaryNavigation';
   nav.setAttribute('aria-label', 'Primary navigation');
   buildColumns(nav, activeRoute());
+  trackHeaderHeight();
   /* The drawer is fixed to the viewport, so it is moved out of the header to
      stay clear of any ancestor that would become its containing block. */
   if (nav.parentElement !== document.body) document.body.append(nav);

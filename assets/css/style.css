@@ -2576,13 +2576,16 @@ body { padding-inline-start: 0; }
   border-top: 0;
 }
 
-/* ---- launcher ---- */
+/* ---- launcher ----
+   Pinned to the top-right corner directly beneath the theme toggle. The header
+   height is measured by the shell into --head-h because pages with a status bar
+   are taller than those without. */
 
 .nav-launcher {
   text-decoration: none;
   position: fixed;
-  left: var(--space-sm);
-  bottom: var(--space-sm);
+  right: max(20px, calc((100vw - var(--wrap)) / 2 + 20px));
+  top: calc(var(--head-h, 58px) + var(--space-2));
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -2635,10 +2638,10 @@ body[data-nav-open] .nav-launcher-bars span:nth-child(3) { transform: translateY
 
 .primary-nav {
   position: fixed;
-  left: var(--space-sm);
-  bottom: calc(var(--space-sm) + 46px + var(--space-2));
+  right: max(20px, calc((100vw - var(--wrap)) / 2 + 20px));
+  top: calc(var(--head-h, 58px) + var(--space-2) + 46px + var(--space-2));
   display: block;
-  width: min(46rem, calc(100vw - (2 * var(--space-sm))));
+  width: min(46rem, calc(100vw - 40px));
   max-height: min(72dvh, 34rem);
   padding: var(--space-md);
   overflow-y: auto;
@@ -2649,8 +2652,8 @@ body[data-nav-open] .nav-launcher-bars span:nth-child(3) { transform: translateY
   box-shadow: 0 30px 70px -28px var(--shadow-strong);
   opacity: 0;
   visibility: hidden;
-  transform: translateY(10px) scale(.985);
-  transform-origin: bottom left;
+  transform: translateY(-10px) scale(.985);
+  transform-origin: top right;
   transition:
     transform var(--dur-short) var(--ease-out),
     opacity var(--dur-short) var(--ease-out),
@@ -2711,7 +2714,9 @@ body[data-nav-open] .primary-nav {
 .primary-nav a {
   text-decoration: none;
   display: grid;
-  gap: 2px;
+  grid-template-columns: 30px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-2);
   min-height: 44px;
   padding: var(--space-2) var(--space-3);
   color: var(--ink-2);
@@ -2724,8 +2729,17 @@ body[data-nav-open] .primary-nav {
     border-color var(--dur-micro) var(--ease-out);
 }
 
+.nav-copy { display: grid; gap: 2px; min-width: 0; }
 .primary-nav a strong { color: var(--ink); font-size: 14px; font-weight: 600; }
 .primary-nav a small { color: var(--muted); font-size: 11.5px; line-height: 1.35; }
+
+.nav-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--muted);
+  transition: color var(--dur-micro) var(--ease-out);
+}
+.primary-nav a.is-active .nav-icon { color: var(--seq-hi); }
 
 .primary-nav a.is-active {
   border-color: var(--accent-28);
@@ -2752,6 +2766,7 @@ body[data-nav-open] .primary-nav {
     border-color: var(--border);
     background: var(--surface-hover);
   }
+  .primary-nav a:hover .nav-icon { color: var(--ink-2); }
   .nav-launcher:hover { border-color: var(--ink-20); background: var(--surface-hover); }
 }
 
@@ -2770,13 +2785,11 @@ body[data-nav-open] .primary-nav {
   }
 }
 
-/* Keep page content clear of the launcher on small screens. */
 .site-foot {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-2);
-  padding-bottom: calc(var(--space-sm) + 56px);
 }
 .site-foot p { margin: 0; }
 
