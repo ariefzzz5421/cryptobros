@@ -2,6 +2,7 @@ import { refreshPalette } from './utils.js';
 import { initMotion } from './motion.js';
 import { initAppShell } from './app-shell.js';
 import { hydrateSourceLinks } from './source-brands.js';
+import { initI18n, t } from './i18n.js';
 
 const STORAGE_KEY = 'heatmap-volume-theme';
 const root = document.documentElement;
@@ -25,8 +26,9 @@ function applyTheme(theme, persist = false) {
 
   document.querySelectorAll('[data-theme-toggle]').forEach((button) => {
     const next = theme === 'dark' ? 'light' : 'dark';
-    button.setAttribute('aria-label', `Switch to ${next} theme`);
-    button.setAttribute('title', `Switch to ${next} theme`);
+    const label = t(next === 'light' ? 'theme.light' : 'theme.dark');
+    button.setAttribute('aria-label', label);
+    button.setAttribute('title', label);
   });
 
   requestAnimationFrame(() => {
@@ -49,10 +51,13 @@ media.addEventListener?.('change', (event) => {
 });
 
 function initSharedUi() {
+  initI18n();
   initAppShell();
   hydrateSourceLinks();
   initMotion();
 }
+
+window.addEventListener('localechange', () => applyTheme(root.dataset.theme || 'dark'));
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initSharedUi);
 else initSharedUi();

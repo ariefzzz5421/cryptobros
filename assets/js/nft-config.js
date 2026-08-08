@@ -28,8 +28,8 @@ export const NFT_CASES = [
     explorer: 'https://etherscan.io/address/0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB',
     official: 'https://www.cryptopunks.app/',
     marketplace: 'https://opensea.io/collection/cryptopunks',
-    logo: 'https://coin-images.coingecko.com/nft_contracts/images/270/small_2x/cryptopunks.png?1707287245',
-    logoFallback: '/assets/img/nft/cryptopunks.svg',
+    logo: '/assets/img/nft/cryptopunks.png',
+    logoFallback: '/assets/img/nft/cryptopunks.png',
     peakFloor: { eth: 123.99, label: '≈124 ETH', at: '2022', note: 'peak of public floor-price history' },
     success: {
       claim: "Success here means the collection set the terms every later project was measured against, and kept its bid through two full cycles.",
@@ -86,8 +86,8 @@ export const NFT_CASES = [
     explorer: 'https://etherscan.io/address/0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D',
     official: 'https://boredapeyachtclub.com/',
     marketplace: 'https://opensea.io/collection/boredapeyachtclub',
-    logo: 'https://coin-images.coingecko.com/nft_contracts/images/20/small_2x/bored-ape-yacht-club.png?1707287177',
-    logoFallback: '/assets/img/nft/bored-ape-yacht-club.svg',
+    logo: '/assets/img/nft/bored-ape-yacht-club.png',
+    logoFallback: '/assets/img/nft/bored-ape-yacht-club.png',
     peakFloor: { eth: 152, label: '≈152 ETH', at: '2022-04-29', note: 'about $429,000 at the time' },
     success: {
       claim: "Success here is measured in what holders were paid, not only in floor price — the collection distributed several assets on top of the original mint.",
@@ -144,8 +144,8 @@ export const NFT_CASES = [
     explorer: 'https://etherscan.io/address/0xBd3531dA5CF5857e7CfAA92426877b022e612cf8',
     official: 'https://pudgypenguins.com/',
     marketplace: 'https://opensea.io/collection/pudgypenguins',
-    logo: 'https://coin-images.coingecko.com/nft_contracts/images/38/small_2x/pudgy.jpg?1730778323',
-    logoFallback: '/assets/img/nft/pudgy-penguins.svg',
+    logo: '/assets/img/nft/pudgy-penguins.jpg',
+    logoFallback: '/assets/img/nft/pudgy-penguins.jpg',
     peakFloor: { eth: 34.1, label: '34.1 ETH', at: '2024-12', note: 'about $136,000, days before the PENGU airdrop' },
     success: {
       claim: "Success here is a recovery: this is the only major 2021 collection that rebuilt its floor after the collapse, on demand created outside crypto.",
@@ -204,8 +204,8 @@ export const NFT_CASES = [
     explorer: 'https://etherscan.io/address/0xED5AF388653567Af2F388E6224dC7C4b3241C544',
     official: 'https://www.azuki.com/',
     marketplace: 'https://opensea.io/collection/azuki',
-    logo: 'https://coin-images.coingecko.com/nft_contracts/images/246/small_2x/azuki-ezgif.com-avif-to-webp-converter.webp?1719456493',
-    logoFallback: '/assets/img/nft/azuki.svg',
+    logo: '/assets/img/nft/azuki.webp',
+    logoFallback: '/assets/img/nft/azuki.webp',
     peakFloor: { eth: 29, label: '≈29 ETH', at: '2022-05', note: 'public floor history; an earlier 25 ETH print is dated April 7, 2022' },
     success: {
       claim: "Success here is proof that a high mint price is not a ceiling when the art is differentiated enough to hold its own buyer base.",
@@ -261,8 +261,8 @@ export const NFT_CASES = [
     explorer: 'https://etherscan.io/address/0x23581767a106ae21c074b2276D25e5C3e136a68b',
     official: 'https://www.moonbirds.xyz/',
     marketplace: 'https://opensea.io/collection/proof-moonbirds',
-    logo: 'https://coin-images.coingecko.com/nft_contracts/images/349/small_2x/moobirds.webp?1719455973',
-    logoFallback: '/assets/img/nft/moonbirds.svg',
+    logo: '/assets/img/nft/moonbirds.webp',
+    logoFallback: '/assets/img/nft/moonbirds.webp',
     peakFloor: { eth: 38.5, label: '38.5 ETH', at: '2022-04', note: 'reached within 48 hours of the mint' },
     success: {
       claim: "Success here is narrow and honest: the launch itself was one of the most effective ever executed, and very little after it was.",
@@ -315,8 +315,8 @@ export const NFT_CASES = [
     explorer: 'https://etherscan.io/address/0xa7d8d9ef8D8Ce8992Df33D8b8CF4Aebabd5bD270',
     official: 'https://www.tylerxhobbs.com/fidenza',
     marketplace: 'https://opensea.io/collection/fidenza-by-tyler-hobbs',
-    logo: 'https://coin-images.coingecko.com/nft_contracts/images/3175/small_2x/fidenza-by-tyler-hobbs.png?1707289873',
-    logoFallback: '/assets/img/nft/fidenza.svg',
+    logo: '/assets/img/nft/fidenza.png',
+    logoFallback: '/assets/img/nft/fidenza.png',
     peakFloor: { eth: null, label: 'Not sourced to a single figure', at: '2021-08', note: '45 pieces traded at an average 210 ETH on August 23, 2021' },
     success: {
       claim: "Success here is art-market success — a named artist, a canonical series, and collectors who hold rather than trade.",
@@ -369,8 +369,8 @@ export const NFT_CASES = [
     explorer: 'https://etherscan.io/address/0x8a90CAb2b38dba80c64b7734e58Ee1dB38B8992e',
     official: 'https://doodles.app/',
     marketplace: 'https://opensea.io/collection/doodles-official',
-    logo: 'https://coin-images.coingecko.com/nft_contracts/images/242/small_2x/3R7s-ZV0_400x400.jpg?1707287234',
-    logoFallback: '/assets/img/nft/doodles.svg',
+    logo: '/assets/img/nft/doodles.jpg',
+    logoFallback: '/assets/img/nft/doodles.jpg',
     peakFloor: { eth: null, label: 'Not sourced to a single figure', at: '2022-01', note: 'Doodle #6914 sold for 296 ETH (about $1.1M) in January 2022' },
     success: {
       claim: "Success here was aesthetic rather than mechanical: the collection was bought by people who wanted the picture.",
@@ -422,8 +422,8 @@ export const NFT_CASES = [
     explorer: 'https://etherscan.io/address/0x49cF6f5d44E70224e2E23fDcdd2C053F30aDA28B',
     official: 'https://rtfkt.com/',
     marketplace: 'https://opensea.io/collection/clonex',
-    logo: 'https://coin-images.coingecko.com/nft_contracts/images/265/small_2x/clonex.png?1707287243',
-    logoFallback: '/assets/img/nft/clonex.svg',
+    logo: '/assets/img/nft/clonex.png',
+    logoFallback: '/assets/img/nft/clonex.png',
     peakFloor: { eth: null, label: 'Not sourced to a single figure', at: '2021-12', note: 'the December 2021 Nike acquisition is the dated catalyst' },
     success: {
       claim: "Success here is corporate validation — the only collection in this set whose upside came from being acquired.",
@@ -474,8 +474,8 @@ export const NFT_CASES = [
     explorer: 'https://etherscan.io/address/0x5Af0D9827E0c53E4799BB226655A1de152A425a5',
     official: 'https://remilia.org/',
     marketplace: 'https://opensea.io/collection/milady',
-    logo: 'https://coin-images.coingecko.com/nft_contracts/images/317/small_2x/milady.webp?1719455785',
-    logoFallback: '/assets/img/nft/milady-maker.svg',
+    logo: '/assets/img/nft/milady-maker.webp',
+    logoFallback: '/assets/img/nft/milady-maker.webp',
     peakFloor: { eth: null, label: 'Not sourced to a single figure', at: '2023-05', note: 'floor spiked more than 50% overnight after a single post by Elon Musk' },
     success: {
       claim: "Success here is attention, measured directly: no roadmap, no airdrop, no company — and two 50% moves from single posts.",
@@ -527,7 +527,7 @@ export const NFT_UPDATES = [
   {
     d: '2026-07-17',
     t: 'StonkBrokers free-mints 4,444 pixel brokers on Robinhood Chain and runs to a multi-ETH floor within weeks — the largest new NFT launch of the year.',
-    url: 'https://www.stonkbrokers.vip/home/',
+    url: 'https://www.stonkbrokers.cash/',
     label: 'StonkBrokers',
   },
   {

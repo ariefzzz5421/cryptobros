@@ -86,6 +86,6 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`\n  Memecoin Heatmap is running at:\n  http://localhost:${PORT}\n`);
+  console.log(`\n  Crypto Bros is running at:\n  http://localhost:${PORT}\n`);
   console.log('  Tekan Ctrl+C untuk berhenti.\n');
 });

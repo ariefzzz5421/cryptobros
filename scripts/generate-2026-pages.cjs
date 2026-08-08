@@ -199,6 +199,56 @@ const events = [
       ['Contract explorer', 'https://robinhoodchain.blockscout.com/token/0x020bfC650A365f8BB26819deAAbF3E21291018b4'],
     ],
   },
+  {
+    id: 'troll',
+    name: 'TROLL',
+    symbol: 'TROLL',
+    chain: 'Solana',
+    cohort: 'Prior launch · recrossed in 2026',
+    launchAt: '2025-04-20',
+    crossedAt: '2026-05-10',
+    peak: '$100M+ in 2026',
+    logo: '/assets/img/coins/troll.png',
+    creator: 'Anonymous deployer; community-led token',
+    contract: '5UUH9RTDiSpq6HKS6bp4NdU9PNJpXRXuiw6ShBTBhgH2',
+    explorer: 'https://solscan.io/token/5UUH9RTDiSpq6HKS6bp4NdU9PNJpXRXuiw6ShBTBhgH2',
+    narrative: 'A survivor meme returned above the threshold',
+    thesis: 'TROLL is different from a fresh 2026 launch: the market repriced an older, already-proven meme after listings, broader distribution, and renewed Solana meme rotation.',
+    reason: 'Phemex documented a 77% one-day move on May 10, 2026, a $100M market-cap recross, and roughly 14,000 new holders in the same week. CoinGecko preserves the token’s earlier 2025 ATH, so the article labels this a recross rather than a first-ever breakout.',
+    success: {
+      claim: 'Success here is survival: an April 2025 token returned above $100M in a later cycle while much of its launch cohort disappeared.',
+      markers: [
+        'Phemex documented the May 10, 2026 move above $100M.',
+        'The same report recorded roughly 14,000 new holders during the move week.',
+        'CoinGecko tracks the market across many venues and preserves the earlier 2025 ATH.',
+        'The route explicitly distinguishes a 2026 recross from the token’s first-ever threshold event.',
+      ],
+    },
+    factors: [
+      { label: 'Meme survival became the narrative', detail: 'An older token returning with an active market offered a different story from the constant flow of new launches.' },
+      { label: 'Listings widened access', detail: 'Centralized and on-chain venues let buyers participate without relying on one DEX pool.' },
+      { label: 'Holder growth supported the move', detail: 'Phemex reported about 14,000 new holders during the week of the recross.' },
+      { label: 'No fundamental cash flow', detail: 'The token has no protocol revenue; continued value depends on culture, liquidity, and market attention.' },
+    ],
+    triggers: [
+      { d: '2025-04-20', t: 'The principal PumpSwap pair begins trading on Solana.' },
+      { d: '2025-08-22', t: 'CoinGecko records the token’s all-time-high price in the earlier cycle.' },
+      { d: '2026-05-10', t: 'Phemex documents a 77% daily move, roughly 14,000 new weekly holders, and a recross above $100M.' },
+      { d: '2026-06-01', t: 'Phemex publishes its retrospective of the 2026 revival.' },
+    ],
+    article: [
+      'TROLL launched on Solana in April 2025 and had already traded above the threshold in its first cycle. It belongs in the 2026 register because a separate public source documented the token crossing $100M again on May 10, 2026.',
+      'The revival combined broader exchange access, renewed rotation into established Solana memes, and visible holder growth. Phemex reported a 77% one-day move and roughly 14,000 new holders in the same week.',
+      'That makes TROLL a survivor case, not a clean launch case. CoinGecko’s history keeps the 2025 ATH visible, and the article does not rename the 2026 recross as a first-ever breakout.',
+    ],
+    sources: [
+      ['CoinGecko market record', 'https://www.coingecko.com/en/coins/troll-2'],
+      ['Phemex · May 2026 recross', 'https://phemex.com/blogs/what-is-troll-solana-memecoin'],
+      ['Official site', 'https://trololol.io/'],
+      ['Official X', 'https://x.com/trololol_io'],
+      ['Contract explorer', 'https://solscan.io/token/5UUH9RTDiSpq6HKS6bp4NdU9PNJpXRXuiw6ShBTBhgH2'],
+    ],
+  },
 ];
 
 function date(value) {
@@ -248,13 +298,13 @@ function template(item) {
 <title>${item.name} (${item.symbol}) — 2026 Memecoin Research</title>
 <meta name="description" content="${item.name} research dossier: launch, $100M crossing, thesis, why it pumped, factors, dated triggers, contract attribution, and public market history.">
 <link rel="stylesheet" href="/assets/css/style.css">
-<link rel="icon" type="image/png" href="/assets/img/brand/memecoin-heatmap-mark.png">
+<link rel="icon" type="image/png" href="/assets/img/brand/crypto-bros-favicon.png">
 </head>
 <body data-event="${item.id}">
 <a class="skip" href="#article">Skip to research</a>
 <header class="site-head">
   <div class="wrap head-inner">
-    <a class="brand brand-link" href="/"><img class="brand-mark" src="/assets/img/brand/memecoin-heatmap-mark.png" alt="" width="44" height="44" decoding="async"><div><h1>Memecoin Heatmap</h1><p class="brand-sub">Sourced market intelligence</p></div></a>
+    <a class="brand brand-link" href="/"><img class="brand-mark" src="/assets/img/brand/crypto-bros-mark.webp" alt="" width="44" height="44" decoding="async"><div><h1>Crypto Bros</h1><p class="brand-sub">Sourced market intelligence</p></div></a>
     <nav class="primary-nav"></nav>
     <div class="head-actions"><button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme"><span class="theme-icon theme-icon-sun" aria-hidden="true">☀</span><span class="theme-icon theme-icon-moon" aria-hidden="true">☾</span></button></div>
   </div>
@@ -338,7 +388,7 @@ function template(item) {
 
   <p class="risk-line">⚠ A historical $100M market cap is not a liquidity guarantee or a repeatable trade setup. Avoid leverage and predefine a small position size.</p>
 </main>
-<footer class="site-foot wrap"><p>Research cutoff: 29 Jul 2026 · live snapshots: CoinGecko · <span id="updatedAt">—</span></p></footer>
+<footer class="site-foot wrap"><p>Research cutoff: 9 Aug 2026 · live snapshots: CoinGecko · <span id="updatedAt">—</span></p></footer>
 <script type="module" src="/assets/js/theme.js"></script>
 <script type="module" src="/assets/js/memecoin-2026-detail.js"></script>
 </body>

@@ -5,6 +5,7 @@
    appears site-wide at once. */
 
 import { ROUTE_COLUMNS, activeRoute } from './routes.js';
+import { getLocale, t } from './i18n.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -45,7 +46,7 @@ function buildLauncher(navId) {
   button.dataset.navToggle = '';
   button.setAttribute('aria-controls', navId);
   button.setAttribute('aria-expanded', 'false');
-  button.setAttribute('aria-label', 'Open navigation');
+  button.setAttribute('aria-label', t('nav.open'));
   button.innerHTML =
     '<span class="nav-launcher-bars" aria-hidden="true"><span></span><span></span><span></span></span>';
   return button;
@@ -54,7 +55,7 @@ function buildLauncher(navId) {
 function buildColumns(nav, current) {
   const head = document.createElement('div');
   head.className = 'nav-panel-head';
-  head.innerHTML = '<p class="nav-panel-title">Routes</p><p class="nav-panel-sub">Pick a topic</p>';
+  head.innerHTML = `<p class="nav-panel-title">${t('nav.routes')}</p><p class="nav-panel-sub">${t('nav.prompt')}</p>`;
 
   const columns = document.createElement('div');
   columns.className = 'nav-columns';
@@ -65,7 +66,7 @@ function buildColumns(nav, current) {
 
     const heading = document.createElement('h2');
     heading.className = 'nav-column-title';
-    heading.textContent = column.label;
+    heading.textContent = getLocale() === 'id' ? column.labelId : column.label;
     section.append(heading);
 
     for (const route of column.routes) {
@@ -78,9 +79,9 @@ function buildColumns(nav, current) {
       const copy = document.createElement('span');
       copy.className = 'nav-copy';
       const label = document.createElement('strong');
-      label.textContent = route.label;
+      label.textContent = getLocale() === 'id' ? route.labelId : route.label;
       const note = document.createElement('small');
-      note.textContent = route.note;
+      note.textContent = getLocale() === 'id' ? route.noteId : route.note;
       copy.append(label, note);
       link.append(routeIcon(route.icon), copy);
       section.append(link);
@@ -98,6 +99,14 @@ export function initAppShell() {
   nav.id ||= 'primaryNavigation';
   nav.setAttribute('aria-label', 'Primary navigation');
   buildColumns(nav, activeRoute());
+  const brand = document.querySelector('.brand');
+  const brandTitle = brand?.querySelector('h1');
+  const brandMark = brand?.querySelector('.brand-mark');
+  if (brandTitle) brandTitle.textContent = 'Crypto Bros';
+  if (brandMark) {
+    brandMark.src = '/assets/img/brand/crypto-bros-mark.webp';
+    brandMark.alt = 'Crypto Bros';
+  }
   trackHeaderHeight();
   /* The drawer is fixed to the viewport, so it is moved out of the header to
      stay clear of any ancestor that would become its containing block. */
@@ -123,7 +132,7 @@ export function initAppShell() {
   const setOpen = (open, { returnFocus = false } = {}) => {
     document.body.toggleAttribute('data-nav-open', open);
     toggle.setAttribute('aria-expanded', String(open));
-    toggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+    toggle.setAttribute('aria-label', open ? t('nav.close') : t('nav.open'));
     backdrop.hidden = !open;
     if (open) {
       requestAnimationFrame(() => (nav.querySelector('[aria-current="page"]') || nav.querySelector('a'))?.focus());
@@ -141,5 +150,9 @@ export function initAppShell() {
     if (event.key === 'Escape' && document.body.hasAttribute('data-nav-open')) {
       setOpen(false, { returnFocus: true });
     }
+  });
+  window.addEventListener('localechange', () => {
+    buildColumns(nav, activeRoute());
+    toggle.setAttribute('aria-label', document.body.hasAttribute('data-nav-open') ? t('nav.close') : t('nav.open'));
   });
 }

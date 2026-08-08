@@ -1,18 +1,20 @@
-# Design — Memecoin Heatmap
+# Design — Crypto Bros
 
 A locked design system for this app. Every page reads this file before visual
 changes. Extend this system instead of inventing route-specific themes.
 
 ## Genre
 
-Modern-minimal market intelligence.
+Modern-minimal market intelligence with a technical neon identity. The brand
+art carries the colour; application surfaces remain graphite, quiet, and
+evidence-led.
 
 ## Macrostructure family
 
 - App dashboards: market workbench with one dominant data surface, a compact
   rail for controls or rankings, and dense tables only after the visual summary.
-- Research index: leaderboard first, filter rail second, compact research cards
-  third.
+- Research index: compact evidence ledger first, short teaching context second,
+  and screened/excluded records last.
 - Research article: research dossier with identity header, milestone strip,
   dominant chart, evidence notes, and sources.
 
@@ -32,8 +34,9 @@ Modern-minimal market intelligence.
 - `--color-negative`: oklch(69% 0.16 24)
 - `--color-warning`: oklch(79% 0.15 82)
 
-The accent occupies no more than five percent of a viewport. It marks active
-navigation, selected data, and the strongest metric; it is not decoration.
+The blue accent occupies no more than five percent of a viewport. The supplied
+Crypto Bros artwork may contain neon magenta, cyan, and amber, but those colours
+stay inside the brand mark or a single brand wash—not inside data states.
 
 ## Typography
 
@@ -76,7 +79,8 @@ Use a four-point scale through named tokens only:
 
 - Primary: compact blue rectangular control with a 10px radius.
 - Secondary: transparent control with one-pixel rule.
-- Copy is literal and short: “Buka riset”, “Lihat sumber”, “Reset”.
+- Copy is literal and short in both languages: “Read research” / “Baca riset”,
+  “View source” / “Lihat sumber”, and “Reset”.
 
 ## Per-page allowances
 
@@ -97,10 +101,31 @@ Use a four-point scale through named tokens only:
 - Article chart height.
 - Which live metric receives the accent.
 
+## Crypto Bros identity, navigation, and language
+
+- The user-supplied `Crypto Bros.png` is the canonical brand artwork. A locally
+  optimised crop is the header mark and favicon; the full source stays in the
+  repository for high-resolution use.
+- The visible product name is **Crypto Bros** on every route. “Memecoin
+  Heatmap” is a feature or route label, never the company identity.
+- The desktop header contains the brand at left and three controls at right:
+  language, theme, and a three-line navigation button. The navigation button
+  never includes the word “Menu”.
+- The menu opens a viewport drawer/mega-panel organised into Market and
+  Research columns. It is keyboard reachable, closes with Escape/backdrop/route
+  selection, traps no content, and restores focus to the launcher.
+- EN and ID are equal product languages. The language control uses a globe
+  icon plus the active two-letter code. Shared navigation, controls, status
+  text, research summaries, article headings, and 2026 dossiers translate
+  locally without sending reading behaviour to a third-party translator.
+- English is the default and Indonesian is persisted in local storage. Missing
+  translated dynamic market values keep their number and translate only the
+  surrounding label; research claims are never machine-invented at runtime.
+
 ## 2026 extension: themes, identity, and source imagery
 
 - The graphite-blue system remains the default dark theme. The light theme is a paper-blue translation of the same tokens, spacing, hierarchy, and data colors.
-- The user-supplied green/orange mascot and market-arrow mark is the product identity. Its transparent mascot crop appears in the header and favicon; the full lockup remains stored as the canonical source artwork.
+- The supplied neon Crypto Bros duo and Bitcoin mark is the product identity.
 - Official chain marks identify a network in dense tables. Country flags identify jurisdictions in rankings and tables. Neither is decorative background imagery.
 - Source panels use the existing border, radius, and type tokens. External links name both the source and the field it supports.
 - The 2026 index uses short event previews with crossing date, documented peak, and launch date. Creator attribution, contract, current snapshot, article, chart, and direct sources live on one routed dossier per token.
@@ -147,13 +172,14 @@ Use a four-point scale through named tokens only:
 
 ## Route shell and resilience extension
 
-- Every route uses the same fixed left rail on desktop: product identity, five
-  numbered destinations, market status, WIB/UTC, and the theme control.
-- Below 60rem the rail becomes a dismissible drawer with a 44px menu target.
-  Escape, backdrop click, route selection, and the desktop breakpoint all close
-  it without moving page content.
+- Every route uses the same compact header. Navigation stays behind the 44px
+  three-line launcher at every viewport width so the research title remains
+  the visual anchor.
+- The drawer becomes a two-column mega-panel on wide screens and one-column
+  sheet below 48rem. Escape, backdrop click, route selection, and focus return
+  work without moving page content.
 - Active navigation uses the existing blue signal and an inset rule. Inactive
-  routes remain neutral; the rail is navigation, not a decorative accent block.
+  routes remain neutral; the panel is navigation, not a decorative accent block.
 - Official source marks are stored locally and shown beside source names. A
   logo never replaces the readable company or project label.
 - Below-fold hourly candles activate near the viewport. Failed background

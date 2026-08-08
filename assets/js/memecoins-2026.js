@@ -1,5 +1,6 @@
 import { fmtClock, fmtUsd, el } from './utils.js';
 import { startAutoRefresh } from './autorefresh.js';
+import { getLocale, localeTag } from './i18n.js';
 
 const $ = (id) => document.getElementById(id);
 const CHAIN_LOGOS = {
@@ -14,9 +15,10 @@ const TOKEN_LOGOS = {
   'nietzschean-penguin': '/assets/img/coins/nietzschean-penguin.png',
   'the-black-bull': '/assets/img/coins/the-black-bull.jpg',
   'cash-cat': '/assets/img/coins/cash-cat.jpg',
+  troll: '/assets/img/coins/troll.png',
 };
 
-const fmtDate = (value) => new Intl.DateTimeFormat('en-US', {
+const fmtDate = (value) => new Intl.DateTimeFormat(localeTag(), {
   day: '2-digit',
   month: 'short',
   year: 'numeric',
@@ -40,16 +42,17 @@ async function fetchRecords() {
 
 function renderCard(event) {
   const chainLogo = CHAIN_LOGOS[event.chain];
+  const id = getLocale() === 'id';
 
   return el('a', {
     class: 'breakout-preview-card',
     href: `/2026-memecoins/${event.id}/`,
-    'aria-label': `Open ${event.name} research`,
+    'aria-label': `${id ? 'Buka riset' : 'Open research'} ${event.name}`,
   },
     el('div', { class: 'breakout-preview-main' },
       el('img', {
         class: 'breakout-preview-logo',
-        src: event.current?.image || TOKEN_LOGOS[event.id] || '/assets/img/brand/memecoin-heatmap-mark.png',
+        src: event.current?.image || TOKEN_LOGOS[event.id] || '/assets/img/brand/crypto-bros-mark.webp',
         alt: `${event.name} logo`,
         width: '56',
         height: '56',
@@ -66,19 +69,19 @@ function renderCard(event) {
     ),
     el('div', { class: 'breakout-preview-facts', 'aria-label': 'Key facts' },
       el('div', {},
-        el('span', {}, '$100M crossing'),
+        el('span', {}, id ? 'Tembus $100 juta' : '$100M crossing'),
         el('strong', {}, fmtDate(event.crossedAt)),
       ),
       el('div', {},
-        el('span', {}, 'Documented peak'),
+        el('span', {}, id ? 'Puncak terdokumentasi' : 'Documented peak'),
         el('strong', { class: 'num' }, fmtUsd(event.documentedPeak, 0)),
       ),
       el('div', {},
-        el('span', {}, 'Launch'),
+        el('span', {}, id ? 'Peluncuran' : 'Launch'),
         el('strong', {}, fmtDate(event.launchAt)),
       ),
     ),
-    el('span', { class: 'breakout-preview-cta', 'aria-hidden': 'true' }, 'Read research →'),
+    el('span', { class: 'breakout-preview-cta', 'aria-hidden': 'true' }, id ? 'Baca riset →' : 'Read research →'),
   );
 }
 
@@ -112,6 +115,7 @@ function init() {
       $('updatedAt').textContent = fmtClock(data.fetchedAt);
     },
   }]);
+  window.addEventListener('localechange', () => load().catch(showError));
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

@@ -31,8 +31,8 @@ const NFT_COLLECTIONS = [
   { slug: 'clonex', ids: ['clone-x-x-takashi-murakami', 'clone-x', 'clonex'] },
   { slug: 'milady-maker', ids: ['milady-maker', 'milady'] },
   { slug: 'stonkbrokers', ids: ['stonkbrokers-434284142', 'stonkbrokers'] },
-  { slug: 'chain-mancers', ids: ['chain-mancers', 'chainmancers'] },
-  { slug: 'pyopyopyopyo', ids: ['pyopyopyopyo'] },
+  { slug: 'mancers', ids: ['mancers-hyperevm', 'mancers'] },
+  { slug: 'pyopyopyopyo', ids: ['py0py0py0py0', 'pyopyopyopyo'] },
 ];
 
 const DEX_PAIRS = {
@@ -47,6 +47,7 @@ const DEX_PAIRS = {
   'nietzschean-penguin': { chain: 'solana', pairAddress: 'DRAf8QxQY86h7yeHdo9GytXAF6GoTTT8oZjknwXV6dCS' },
   'the-black-bull': { chain: 'solana', pairAddress: 'FnzKY6x7entQ1eR3D225dQyT7ybfka4PskBMQhb8L3CC' },
   'cash-cat': { chain: 'robinhood', pairAddress: '0xA70fc67C9F69da90B63a0e4C05D229954574E313' },
+  troll: { chain: 'solana', pairAddress: '4w2cysotX6czaUGmmWg13hDpY4QEMG2CzeKYEQyK9Ama' },
 };
 
 const GECKO_NETWORKS = {
@@ -232,6 +233,28 @@ const MEME_2026_EVENTS = [
     evidence: [
       { label: 'CoinDesk · Robinhood Chain memecoins', url: 'https://www.coindesk.com/tech/2026/07/13/robinhood-built-a-blockchain-for-tokenized-stocks-memecoins-took-over' },
       { label: 'Blockstream Media · $156M peak', url: 'https://blockstreammedia.com/2026/07/17/what-is-cashcat-robinhood-chains-memecoin/' },
+    ],
+  },
+  {
+    id: 'troll',
+    marketId: 'troll-2',
+    name: 'TROLL',
+    symbol: 'TROLL',
+    chain: 'Solana',
+    launchAt: '2025-04-20',
+    crossedAt: '2026-05-10',
+    launchCohort: 'Prior launch · recrossed in 2026',
+    documentedPeak: 100_000_000,
+    contract: '5UUH9RTDiSpq6HKS6bp4NdU9PNJpXRXuiw6ShBTBhgH2',
+    creator: 'Anonymous deployer; community-led token',
+    explorer: 'https://solscan.io/token/5UUH9RTDiSpq6HKS6bp4NdU9PNJpXRXuiw6ShBTBhgH2',
+    officialX: 'https://x.com/trololol_io',
+    coingecko: 'https://www.coingecko.com/en/coins/troll-2',
+    note: 'TROLL first exceeded $100M before 2026. This record is the sourced May 2026 recross, not a first-ever threshold event.',
+    evidence: [
+      { label: 'Phemex · May 2026 recross', url: 'https://phemex.com/blogs/what-is-troll-solana-memecoin' },
+      { label: 'CoinGecko market record', url: 'https://www.coingecko.com/en/coins/troll-2' },
+      { label: 'Official site', url: 'https://trololol.io/' },
     ],
   },
 ];
@@ -657,7 +680,7 @@ async function loadMeme2026() {
   let marketRows = [];
   let marketWarning = null;
   try {
-    const ids = MEME_2026_EVENTS.map((event) => event.id).join(',');
+    const ids = MEME_2026_EVENTS.map((event) => event.marketId || event.id).join(',');
     marketRows = await fetchJSON(
       `${CG}/coins/markets?vs_currency=usd&ids=${encodeURIComponent(ids)}` +
       '&order=market_cap_desc&sparkline=false&price_change_percentage=24h',
@@ -672,19 +695,19 @@ async function loadMeme2026() {
     ok: true,
     partial: Boolean(marketWarning) || currentById.size < MEME_2026_EVENTS.length,
     fetchedAt: Date.now(),
-    cutoffAt: '2026-07-29T23:59:59+07:00',
+    cutoffAt: '2026-08-09T23:59:59+07:00',
     source: 'CoinGecko live snapshots + linked threshold evidence',
     warning: marketWarning,
     methodology: {
       thresholdUsd: 100_000_000,
       windowStart: '2026-01-01',
-      windowEnd: '2026-07-29',
+      windowEnd: '2026-08-09',
       rule: 'The documented market-cap crossing must occur inside the window; the token may have launched earlier.',
       completeness: 'Public-source set verified under the stated two-source method at the research cutoff; not an exhaustive on-chain census.',
     },
     events: MEME_2026_EVENTS.map((event) => ({
       ...event,
-      current: currentById.get(event.id) || null,
+      current: currentById.get(event.marketId || event.id) || null,
     })),
   };
 }
@@ -723,7 +746,7 @@ function slimNft(id, row) {
 const nftFloorMemo = new Map();
 const NFT_MEMO_MAX_AGE = 60 * 60_000;
 const NFT_SLICE = 4;
-const NFT_REQUEST_GAP = 1_500;
+const NFT_REQUEST_GAP = 900;
 const NFT_TIME_BUDGET = 40_000;
 
 async function fetchNftCollection(collection) {
@@ -746,12 +769,16 @@ async function fetchNftCollection(collection) {
   return { error: lastError };
 }
 
-async function loadNftFloors() {
+async function loadNftFloors(requestedSlugs = []) {
   const startedAt = Date.now();
   const now = Date.now();
+  const requested = new Set(requestedSlugs);
+  const selected = requested.size
+    ? NFT_COLLECTIONS.filter((collection) => requested.has(collection.slug))
+    : NFT_COLLECTIONS;
 
   /* Never-fetched collections sort first, then the longest-since-refreshed. */
-  const due = [...NFT_COLLECTIONS]
+  const due = [...selected]
     .sort((a, b) => {
       const aAge = now - (nftFloorMemo.get(a.slug)?.savedAt ?? 0);
       const bAge = now - (nftFloorMemo.get(b.slug)?.savedAt ?? 0);
@@ -778,7 +805,7 @@ async function loadNftFloors() {
   }
 
   const collections = {};
-  for (const collection of NFT_COLLECTIONS) {
+  for (const collection of selected) {
     const memo = nftFloorMemo.get(collection.slug);
     if (!memo) continue;
     const age = Date.now() - memo.savedAt;
@@ -788,7 +815,7 @@ async function loadNftFloors() {
       : memo.value;
   }
 
-  const missing = NFT_COLLECTIONS.length - Object.keys(collections).length;
+  const missing = selected.length - Object.keys(collections).length;
   return {
     ok: true,
     partial: missing > 0,
@@ -1170,13 +1197,14 @@ async function loadDexLaunch(id) {
 
 async function loadHistory(id, symbol) {
   const eventRecord = MEME_2026_EVENTS.find((event) => event.id === id);
+  const marketId = eventRecord?.marketId || id;
   const launchAt = CASE_WEEKLY[id]?.launchAt || eventRecord?.launchAt || null;
-  const overviewCoin = cache.get('overview')?.value?.memecoins?.find((row) => row.id === id) || null;
+  const overviewCoin = cache.get('overview')?.value?.memecoins?.find((row) => row.id === marketId) || null;
   let prefetchedCoin = overviewCoin;
   let resolvedSymbol = String(symbol || overviewCoin?.sym || '').trim().toUpperCase();
   if (!resolvedSymbol) {
     try {
-      prefetchedCoin = await currentCoin(id);
+      prefetchedCoin = await currentCoin(marketId);
       resolvedSymbol = String(prefetchedCoin?.sym || '').trim().toUpperCase();
     } catch {
       prefetchedCoin = null;
@@ -1184,11 +1212,11 @@ async function loadHistory(id, symbol) {
   }
   const yahooSymbol = resolvedSymbol ? `${resolvedSymbol}-USD` : '';
   const [coinResult, yahooResult, geckoResult] = await Promise.allSettled([
-    prefetchedCoin ? Promise.resolve(prefetchedCoin) : currentCoin(id),
+    prefetchedCoin ? Promise.resolve(prefetchedCoin) : currentCoin(marketId),
     YAHOO_NAME_HINTS[id] && yahooSymbol
       ? yahooHistory(yahooSymbol, id)
       : Promise.reject(new Error('No verified Yahoo identity mapping')),
-    coingeckoHistory(id),
+    coingeckoHistory(marketId),
   ]);
   const coin = coinResult.status === 'fulfilled' ? coinResult.value : null;
   const yahooRows = yahooResult.status === 'fulfilled' ? yahooResult.value : [];
@@ -1275,8 +1303,10 @@ export async function getMarketPayload(urlLike) {
   if (resource === 'nft') {
     /* A rate-limited pass is retried sooner than a complete one, so the set
        fills in over a few cycles instead of waiting out the full TTL. */
-    const partial = cache.get('nft')?.value?.partial;
-    return cached('nft', partial ? 3 * 60_000 : TTL.nftFloors, loadNftFloors);
+    const slugs = [...new Set((url.searchParams.get('slugs') || '').split(',').map((value) => value.trim()).filter(Boolean))].sort();
+    const key = `nft:${slugs.join(',') || 'all'}`;
+    const partial = cache.get(key)?.value?.partial;
+    return cached(key, partial ? 60_000 : TTL.nftFloors, () => loadNftFloors(slugs));
   }
   if (resource === 'caseweekly') {
     const id = url.searchParams.get('id');
