@@ -27,14 +27,19 @@ function card(item, live) {
 
   const logo = el('img', {
     class: 'nft-card-logo',
-    src: item.logo,
-    alt: `${item.name} mark`,
+    src: live?.image || item.logo,
+    alt: `${item.name} official logo`,
     width: 52,
     height: 52,
     loading: 'lazy',
     decoding: 'async',
+    onerror: (event) => {
+      const img = event.currentTarget;
+      if (img.dataset.fallback) return;
+      img.dataset.fallback = '1';
+      img.src = item.logoFallback;
+    },
   });
-  if (live?.image) logo.src = live.image;
 
   return el('a', { class: 'nft-card', href: `/nft/${item.slug}/` },
     el('div', { class: 'nft-card-head' },

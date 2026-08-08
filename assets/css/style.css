@@ -2577,25 +2577,21 @@ body { padding-inline-start: 0; }
 }
 
 /* ---- launcher ----
-   Pinned to the top-right corner directly beneath the theme toggle. The header
-   height is measured by the shell into --head-h because pages with a status bar
-   are taller than those without. */
+   A three-line button in the header, sized to match the theme toggle beside it.
+   The drawer it opens is positioned against --head-h, which the shell measures,
+   because pages carrying a status bar are taller than those without. */
 
 .nav-launcher {
   text-decoration: none;
-  position: fixed;
-  right: max(20px, calc((100vw - var(--wrap)) / 2 + 20px));
-  top: calc(var(--head-h, 58px) + var(--space-2));
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 46px;
-  padding: 0 16px 0 13px;
+  display: inline-grid;
+  place-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
   color: var(--ink);
   border: 1px solid var(--border);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-sm);
   background: var(--surface);
-  box-shadow: 0 14px 34px -18px var(--shadow-strong);
   cursor: pointer;
   transition:
     transform var(--dur-micro) var(--ease-out),
@@ -2616,12 +2612,6 @@ body { padding-inline-start: 0; }
   background: currentColor;
   transform-origin: center;
   transition: transform var(--dur-short) var(--ease-out), opacity var(--dur-micro) var(--ease-out);
-}
-
-.nav-launcher-label {
-  font-size: 12.5px;
-  font-weight: 600;
-  letter-spacing: .02em;
 }
 
 .nav-launcher:active { transform: translateY(1px); }
@@ -2979,6 +2969,39 @@ body[data-nav-open] .primary-nav {
 .doc-trigger p { margin: 0; color: var(--ink-2); font-size: 14px; line-height: 1.65; }
 
 .doc-note { margin: 0; color: var(--muted); font-size: 12.5px; line-height: 1.55; }
+
+.doc-lead {
+  max-width: 68ch;
+  margin: 0;
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.doc-markers {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.doc-markers li {
+  position: relative;
+  padding-left: var(--space-md);
+  color: var(--ink-2);
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+.doc-markers li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .62em;
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  background: var(--seq-mid);
+}
 
 @media (max-width: 40rem) {
   .doc-logo { width: 84px; height: 84px; border-radius: 22px; }

@@ -58,6 +58,13 @@ export const ROUTE_COLUMNS = [
         /* ETH-style diamond */
         icon: 'M12 2 5 12l7 4 7-4zM5 14l7 8 7-8-7 4z',
       },
+      {
+        href: '/nft-2026/',
+        label: 'NFT 2026',
+        note: 'This year’s launches past 0.1 ETH',
+        /* diamond with a spark — a new mint */
+        icon: 'M11 3 5 11l6 4 6-4zM5 13l6 7 6-7-6 4zM19 2v4M21 4h-4',
+      },
     ],
   },
 ];

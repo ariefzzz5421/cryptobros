@@ -31,7 +31,7 @@ const template = (item) => `<!DOCTYPE html>
   <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/nft/">NFT</a><span>/</span><span>${item.short}</span></nav>
 
   <header class="doc-masthead">
-    <img class="doc-logo" id="docLogo" src="${item.logo}" alt="${item.name} logo" width="104" height="104" decoding="async">
+    <img class="doc-logo" id="docLogo" src="${item.logo}" alt="${item.name} official logo" width="104" height="104" decoding="async" onerror="this.onerror=null;this.src='${item.logoFallback}'">
     <p class="doc-kicker" id="docKicker">NFT case study</p>
     <h2 class="doc-title" id="docTitle">${item.name}</h2>
     <p class="doc-standfirst" id="docStandfirst">Loading summary…</p>
@@ -58,6 +58,13 @@ const template = (item) => `<!DOCTYPE html>
     <p class="eyebrow">Reasons and factors</p>
     <h2>What carried the floor</h2>
     <ul class="doc-factors" id="docFactors"></ul>
+  </section>
+
+  <section class="panel doc-section">
+    <p class="eyebrow">Why it counts as a success</p>
+    <h2>The case for calling this one a winner</h2>
+    <p class="doc-lead" id="docSuccessClaim"></p>
+    <ul class="doc-markers" id="docSuccessMarkers"></ul>
   </section>
 
   <section class="panel doc-section">

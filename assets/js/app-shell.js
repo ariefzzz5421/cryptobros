@@ -1,6 +1,6 @@
 /* Shared route shell.
-   Navigation lives in a drawer opened by the three-line launcher pinned to the
-   top-right corner, directly under the theme toggle. Every page keeps an empty
+   Navigation lives in a drawer opened by the three-line button that sits in the
+   header beside the theme toggle. Every page keeps an empty
    <nav class="primary-nav">; the shell fills it from routes.js so a new route
    appears site-wide at once. */
 
@@ -47,8 +47,7 @@ function buildLauncher(navId) {
   button.setAttribute('aria-expanded', 'false');
   button.setAttribute('aria-label', 'Open navigation');
   button.innerHTML =
-    '<span class="nav-launcher-bars" aria-hidden="true"><span></span><span></span><span></span></span>' +
-    '<span class="nav-launcher-label">Menu</span>';
+    '<span class="nav-launcher-bars" aria-hidden="true"><span></span><span></span><span></span></span>';
   return button;
 }
 
@@ -106,7 +105,9 @@ export function initAppShell() {
 
   document.querySelectorAll('.nav-toggle').forEach((old) => old.remove());
   const toggle = document.querySelector('.nav-launcher') || buildLauncher(nav.id);
-  if (!toggle.isConnected) document.body.append(toggle);
+  /* Sits inside the header next to the theme toggle, falling back to the body
+     on any page that somehow lacks the actions group. */
+  if (!toggle.isConnected) (document.querySelector('.head-actions') || document.body).append(toggle);
 
   let backdrop = document.querySelector('.nav-backdrop');
   if (!backdrop) {

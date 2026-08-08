@@ -32,6 +32,8 @@ npm run build
 | `/2026-memecoins/` | Tokens publicly verified to have first crossed `$100M` market cap in 2026 |
 | `/nft/` | NFT collections with a documented floor above `0.5 ETH` |
 | `/nft/{slug}/` | Collection case study: launch, mint, peak and live floor, factors, triggers |
+| `/nft-2026/` | Collections launched in 2026 with a documented floor above `0.1 ETH` |
+| `/nft-2026/{slug}/` | 2026 collection case study, same format as the historic route |
 
 Navigation is a drawer opened from the three-line launcher pinned to the
 top-right corner, directly under the theme toggle. Routes are defined once in
@@ -41,10 +43,14 @@ new route without editing its markup.
 
 ### Case article format
 
-`/cases/{slug}/`, `/2026-memecoins/{id}/`, and `/nft/{slug}/` share one layout:
-the official logo centred above the headline, then thesis, why it pumped, the
-reasons and factors, the chart, and the dated triggers, followed by identity and
-sources.
+`/cases/{slug}/`, `/2026-memecoins/{id}/`, `/nft/{slug}/`, and `/nft-2026/{slug}/`
+share one layout: the official logo centred above the headline, then thesis, why
+it pumped, why it counts as a success, the reasons and factors, the chart, and
+the dated triggers, followed by identity and sources.
+
+NFT collections carry their official artwork from the CoinGecko NFT image CDN,
+with a local mark as the `onerror` fallback so a blocked or slow CDN never
+leaves a broken image. Every collection links to its OpenSea page.
 
 ## Data and provenance
 
@@ -92,8 +98,9 @@ npm run generate
 ```
 
 That runs `scripts/generate-case-pages.cjs` (from `assets/js/cases-config.js`),
-`scripts/generate-2026-pages.cjs` (event data lives in the script), and
-`scripts/generate-nft-pages.cjs` (from `assets/js/nft-config.js`).
+`scripts/generate-2026-pages.cjs` (event data lives in the script),
+`scripts/generate-nft-pages.cjs` (from `assets/js/nft-config.js`), and
+`scripts/generate-nft-2026-pages.cjs` (from `assets/js/nft-2026-config.js`).
 
 NFT collection marks in `assets/img/nft/` are local placeholders. Each article
 replaces them at runtime with the official collection image returned by the
@@ -103,7 +110,7 @@ CoinGecko NFT API, so a blocked or rate-limited upstream still renders a mark.
 
 ```text
 index.html
-maps/  sentiment/  cases/  2026-memecoins/  nft/
+maps/  sentiment/  cases/  2026-memecoins/  nft/  nft-2026/
 assets/css/style.css
 assets/js/
 server/market-service.mjs

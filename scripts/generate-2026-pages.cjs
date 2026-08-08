@@ -22,6 +22,15 @@ const events = [
     narrative: 'Community-takeover revival',
     thesis: 'The event shows that attention can reprice an older launch when a community gives it a new identity. It does not prove that community takeovers are repeatable or liquid.',
     reason: 'The sourced crossing followed a fast speculative repricing and renewed community attention. Crypto Briefing documented the $100M event and 50x gains; that timing is evidence of correlation, not a single proven cause.',
+    success: {
+      claim: "Success here is a second life: an October 2025 launch that the market had largely forgotten was repriced to $100M three months later by its own holders.",
+      markers: [
+        "Documented $100M market-cap crossing on January 7, 2026.",
+        "Crypto Briefing recorded roughly 50x gains around the threshold event.",
+        "Survived the handover from an absent deployer to a community-run project.",
+        "The counterweight: a quoted market cap is not exit capacity, and no verified issuer stands behind it.",
+      ],
+    },
     factors: [
       { label: "Attention can reprice an old launch", detail: "The token launched in October 2025; the documented crossing came on January 7, 2026, so the event was a repricing rather than a launch." },
       { label: "Community takeover as the story", detail: "After the original anonymous deployer stepped back the project ran as a community takeover, which became the narrative buyers traded." },
@@ -61,6 +70,15 @@ const events = [
     narrative: 'Viral image meme meets anti-herd philosophy',
     thesis: 'PENGUIN converted a broadly understood visual meme into a liquid ticker during a concentrated attention window. The narrative was instantly legible, but the attention cycle was exceptionally fast.',
     reason: 'The crossing coincided with a viral social-media wave and a widely shared White House penguin post. Cointelegraph reported a market cap above $136M and $244M in 24-hour volume; the higher peak in this record comes from the linked market-history sources.',
+    success: {
+      claim: "Success here is reach per day alive: a January launch turned an image into a nine-figure ticker inside a week.",
+      markers: [
+        "Crossed $100M seven days after launching on Pump.fun.",
+        "Cointelegraph documented a market cap above $136M against $244M of 24-hour volume.",
+        "Carried by a meme legible without explanation, amplified through a White House social post.",
+        "The counterweight: turnover larger than market cap is a crowd passing through, not holders arriving.",
+      ],
+    },
     factors: [
       { label: "An instantly legible image", detail: "A lone penguin walking away from its colony needed no explanation, so the story travelled faster than the contract." },
       { label: "A borrowed philosophical frame", detail: "Communities read the clip as a symbol of individualism, which gave the ticker a meaning beyond the picture." },
@@ -100,6 +118,15 @@ const events = [
     narrative: 'Influencer-adjacent community tribute',
     thesis: 'ANSEM shows how a public persona can become a market narrative without proving that the referenced person created the token. That distinction is central to the dossier.',
     reason: 'The crossing coincided with intense community attention around Ansem and rapid Pump.fun distribution. Crypto Times documented the surge and also raised concentration concerns, so momentum and ownership risk must be read together.',
+    success: {
+      claim: "Success here is distribution speed — a tribute token with no product reached the threshold in under two weeks.",
+      markers: [
+        "Documented $100M crossing thirteen days after launch.",
+        "Pump.fun distribution took it from a niche launch to a widely traded ticker.",
+        "A first-in-market exchange listing widened access beyond on-chain venues.",
+        "The counterweight: Crypto Times reported concentrated ownership alongside the surge.",
+      ],
+    },
     factors: [
       { label: "A public persona as the narrative", detail: "The token traded on its association with the trader known as Ansem, without any claim that he issued it." },
       { label: "Launchpad distribution speed", detail: "Pump.fun took the token from a niche launch to a widely discussed ticker in under two weeks." },
@@ -139,6 +166,15 @@ const events = [
     narrative: 'First breakout meme on a new chain',
     thesis: 'CASHCAT benefited from first-mover attention on Robinhood Chain and a memorable connection to Robinhood’s early mascot history. The project itself remained independent.',
     reason: 'The crossing arrived during the network’s first speculative activity wave. CoinDesk documented a market value above $100M, strong trading activity, and thin liquidity—evidence that visibility and exit capacity were very different numbers.',
+    success: {
+      claim: "Success here is a land-grab: being the first memecoin the market noticed on a brand-new chain was worth more than anything about the token itself.",
+      markers: [
+        "Crossed $100M six days after launching on a chain that was days old.",
+        "Documented peak of $156M.",
+        "Became the reference memecoin for Robinhood Chain’s opening weeks.",
+        "The counterweight: CoinDesk recorded roughly $6.6M of liquidity behind that $100M+ valuation.",
+      ],
+    },
     factors: [
       { label: "First-mover position on a new chain", detail: "Being the first widely reported memecoin on Robinhood Chain concentrated the network's early speculative attention on one ticker." },
       { label: "A recognisable origin story", detail: "The name referenced an early Robinhood mascot, which made the token memorable without any endorsement from Robinhood." },
@@ -198,6 +234,7 @@ function template(item) {
   /* The first paragraph becomes the standfirst under the headline, so the
      body starts at the second one instead of repeating it. */
   const article = item.article.slice(1).map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join('');
+  const markers = item.success.markers.map((marker) => `<li>${escapeHtml(marker)}</li>`).join('');
   const factors = item.factors.map((factor) =>
     `<li class="doc-factor"><strong>${escapeHtml(factor.label)}</strong><span>${escapeHtml(factor.detail)}</span></li>`).join('');
   const triggers = item.triggers.map((trigger) =>
@@ -254,6 +291,13 @@ function template(item) {
     <h2>The move, and what was behind it</h2>
     <div class="doc-prose">${article}</div>
     <div class="doc-callout"><h3>Why it crossed $100M</h3><p>${escapeHtml(item.reason)}</p></div>
+  </section>
+
+  <section class="panel doc-section">
+    <p class="eyebrow">Why it counts as a success</p>
+    <h2>The case for calling this one a winner</h2>
+    <p class="doc-lead">${escapeHtml(item.success.claim)}</p>
+    <ul class="doc-markers">${markers}</ul>
   </section>
 
   <section class="panel doc-section">

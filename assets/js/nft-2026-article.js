@@ -1,10 +1,11 @@
-/* NFT collection article.
+/* 2026 NFT collection article.
 
-   Layout matches every other case endpoint on the site: official logo centred
-   above the headline, then thesis, why it moved, the factors behind it, the
-   floor chart, and the dated triggers. */
+   Same layout as every other case endpoint: official logo centred above the
+   headline, then thesis, why it moved, why it counts as a success, the factors,
+   the floor chart, and the dated triggers. Only the research set and the
+   threshold differ from the historic route. */
 
-import { NFT_BY_SLUG, FLOOR_THRESHOLD_ETH } from './nft-config.js';
+import { NFT_2026_BY_SLUG as NFT_BY_SLUG, THRESHOLD_2026_ETH as FLOOR_THRESHOLD_ETH } from './nft-2026-config.js';
 import { fetchNftFloors, fmtEth, fmtResearchDate } from './nft-data.js';
 import { renderFloorChart } from './nft-chart.js';
 import { brandedSourceLink } from './source-brands.js';
@@ -70,7 +71,7 @@ function renderMeta() {
 
 function renderArticle() {
   $('docKicker').textContent =
-    `NFT case study · ${item.chain} · launched ${fmtResearchDate(item.launch)}`;
+    `2026 NFT case study · ${item.chain} · launched ${fmtResearchDate(item.launch)}`;
   $('docTitle').replaceChildren(item.name, el('span', { class: 'doc-sym' }, item.short));
   $('docStandfirst').textContent = item.standfirst;
 
@@ -102,8 +103,8 @@ function renderArticle() {
       el('strong', {}, item.launchNote),
     ),
     el('div', { class: 'identity-item' },
-      el('span', {}, `${item.chain} contract`),
-      el('a', { href: item.explorer, target: '_blank', rel: 'noreferrer' }, item.contract),
+      el('span', {}, 'Marketplace'),
+      el('a', { href: item.marketplace, target: '_blank', rel: 'noreferrer' }, 'OpenSea collection'),
     ),
     el('div', { class: 'identity-item' },
       el('span', {}, 'Peak floor note'),
@@ -114,7 +115,7 @@ function renderArticle() {
   $('docSources').replaceChildren(...[
     { label: 'OpenSea collection', url: item.marketplace, note: 'buy, sell, and live floor' },
     { label: 'Official site', url: item.official, note: new URL(item.official).hostname },
-    { label: 'Contract explorer', url: item.explorer, note: 'verified contract' },
+    { label: 'CoinGecko floor record', url: item.coingecko, note: 'live floor and market cap' },
     ...item.sources.map(([label, url]) => ({ label, url, note: new URL(url).hostname })),
   ].filter((source, index, rows) => rows.findIndex((row) => row.url === source.url) === index)
     .map((source) => brandedSourceLink(source)));

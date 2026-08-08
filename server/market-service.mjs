@@ -30,6 +30,9 @@ const NFT_COLLECTIONS = [
   { slug: 'doodles', ids: ['doodles-official', 'doodles'] },
   { slug: 'clonex', ids: ['clone-x-x-takashi-murakami', 'clone-x', 'clonex'] },
   { slug: 'milady-maker', ids: ['milady-maker', 'milady'] },
+  { slug: 'stonkbrokers', ids: ['stonkbrokers-434284142', 'stonkbrokers'] },
+  { slug: 'chain-mancers', ids: ['chain-mancers', 'chainmancers'] },
+  { slug: 'pyopyopyopyo', ids: ['pyopyopyopyo'] },
 ];
 
 const DEX_PAIRS = {
