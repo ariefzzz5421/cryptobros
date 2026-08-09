@@ -19,12 +19,12 @@ let latestSnapshot = null;
 
 const copy = () => getLocale() === 'id' ? {
   live: 'Floor langsung', documented: 'Terdokumentasi', mint: 'Mint', unavailable: 'Tidak tersedia',
-  read: 'Baca riset', market: 'OpenSea resmi', launched: 'launch', confirmed: 'Kualifikasi terkonfirmasi',
+  read: 'Baca riset', market: 'OpenSea', launched: 'launch', confirmed: 'Kualifikasi terkonfirmasi',
   context: 'Studi konteks penting', screened: 'Sudah diperiksa', below: 'di bawah batas',
   partial: 'Sebagian floor langsung tersedia · riset tetap bersumber', ready: 'Floor langsung siap',
 } : {
   live: 'Live floor', documented: 'Documented', mint: 'Mint', unavailable: 'Unavailable',
-  read: 'Read research', market: 'Official OpenSea', launched: 'launched', confirmed: 'Confirmed qualifiers',
+  read: 'Read research', market: 'OpenSea', launched: 'launched', confirmed: 'Confirmed qualifiers',
   context: 'Important context cases', screened: 'Screened', below: 'below threshold',
   partial: 'Live floors partially available · research remains sourced', ready: 'Live floors ready',
 };
@@ -63,7 +63,7 @@ function card(sourceItem, live) {
       el('div', {}, el('span', {}, ui.documented), el('strong', { class: 'num' }, item.peakFloor?.label || ui.unavailable)),
       el('div', {}, el('span', {}, ui.mint), el('strong', { class: 'num' }, item.mint))),
     el('div', { class: 'nft-card-actions' },
-      el('a', { class: 'nft-read-link', href: `/nft-2026/${item.slug}/` }, `${ui.read} →`),
+      el('a', { class: 'nft-read-link', href: `/nft-2026/${item.slug}/` }, ui.read),
       brandedSourceLink({ label: ui.market, url: item.marketplace, note: 'opensea.io', className: 'source-button' })),
     el('span', { class: `nft-flag${item.status === 'confirmed' ? ' is-live' : ''}` }, item.statusLabel),
   );
@@ -89,7 +89,7 @@ function renderGrid(snapshot = latestSnapshot) {
 function renderScreened() {
   $('screenedList').replaceChildren(...SCREENED_OUT.map((row) => el('li', { class: 'doc-trigger' },
     el('time', {}, row.floor),
-    el('p', {}, el('a', { href: row.url, target: '_blank', rel: 'noreferrer' }, row.name), ` — ${row.note}.`))));
+    el('p', {}, el('a', { href: row.url, target: '_blank', rel: 'noreferrer' }, row.name), ` — ${getLocale() === 'id' ? row.noteId : row.note}.`))));
 }
 
 async function refresh({ force = false } = {}) {

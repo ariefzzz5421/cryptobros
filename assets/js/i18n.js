@@ -63,6 +63,124 @@ const UI = {
   },
 };
 
+/* Reviewed interface copy shared by static and dynamically-rendered routes.
+   Proper names, symbols, contracts, prices, and source names intentionally stay
+   unchanged. MutationObserver applies the same dictionary to content inserted
+   after a market request finishes. */
+const ID_TEXT = new Map(Object.entries({
+  'Skip to the map': 'Lewati ke peta',
+  'Skip to the article': 'Lewati ke artikel',
+  'Preparing market data…': 'Menyiapkan data pasar…',
+  'Market data ready': 'Data pasar siap',
+  'Global crypto volume · 24h': 'Volume kripto global · 24 jam',
+  'all spot markets': 'seluruh pasar spot',
+  'Largest volume hub': 'Pusat volume terbesar',
+  'Average volume per exchange': 'Rata-rata volume per bursa',
+  'Most active hour': 'Jam paling aktif',
+  'Memecoin category · 24h': 'Kategori memecoin · 24 jam',
+  'Market size and share': 'Ukuran dan pangsa pasar',
+  "CoinGecko category total with a clearly labeled tracked-basket fallback.": 'Total kategori CoinGecko dengan fallback keranjang terpantau yang diberi label jelas.',
+  'Total market cap': 'Total kapitalisasi pasar',
+  'Crypto market share': 'Pangsa pasar kripto',
+  'Share of total crypto market cap': 'Pangsa dari total kapitalisasi pasar kripto',
+  'Live movers · 24h': 'Pergerakan langsung · 24 jam',
+  'Memecoin leaderboard': 'Peringkat memecoin',
+  "Largest percentage moves in CoinGecko's memecoin category. Open any coin for price and market-cap history.": 'Pergerakan persentase terbesar dalam kategori memecoin CoinGecko. Buka koin untuk melihat riwayat harga dan kapitalisasi pasar.',
+  'Explore $100M+ coins →': 'Jelajahi koin $100 juta+',
+  'Global crypto volume map': 'Peta volume kripto global',
+  'Bubble size and color represent reported 24h exchange volume grouped by legal jurisdiction. Scroll to zoom, drag to pan, and click to lock details.': 'Ukuran dan warna gelembung mewakili volume bursa 24 jam berdasarkan yurisdiksi hukum. Gulir untuk zoom, geser untuk memindahkan, dan klik untuk mengunci detail.',
+  'Zoom in': 'Perbesar',
+  'Zoom out': 'Perkecil',
+  'Reset': 'Atur ulang',
+  'Labels': 'Label',
+  'Loading map geometry…': 'Memuat geometri peta…',
+  'Jurisdiction ranking': 'Peringkat yurisdiksi',
+  'Regional distribution': 'Distribusi regional',
+  'Full jurisdiction table': 'Tabel yurisdiksi lengkap',
+  'Most active trading hours': 'Jam perdagangan paling aktif',
+  'Average quote volume from real 1-hour candles. The primary axis is WIB (UTC+7), with UTC shown for comparison.': 'Rata-rata volume kuotasi dari candle 1 jam yang nyata. Sumbu utama menggunakan WIB (UTC+7), dengan UTC sebagai pembanding.',
+  'Coin basket': 'Keranjang koin',
+  'Time range': 'Rentang waktu',
+  'Memecoin': 'Memecoin',
+  'Major': 'Aset utama',
+  'Average hourly volume profile': 'Profil rata-rata volume per jam',
+  'Market-session contribution': 'Kontribusi sesi pasar',
+  'Peak hour by coin': 'Jam puncak per koin',
+  'Average volume by hour · 24 rows': 'Rata-rata volume per jam · 24 baris',
+  'Memecoin volume heatmap': 'Heatmap volume memecoin',
+  'Tile area is 24h volume share. Color is price change ( blue up, red down).': 'Luas kotak adalah pangsa volume 24 jam. Warna menunjukkan perubahan harga (biru naik, merah turun).',
+  'Strongest gain · 24 hours': 'Kenaikan terkuat · 24 jam',
+  'Deepest drop · 24 hours': 'Penurunan terdalam · 24 jam',
+  'Coins up': 'Koin naik',
+  'Largest volume': 'Volume terbesar',
+  'Memecoin volume · 24h': 'Volume memecoin · 24 jam',
+  'top 40 coins': '40 koin teratas',
+  'over 24 hours': 'selama 24 jam',
+  "this map uses an exchange's legal-jurisdiction metadata, not trader location. Exchanges without a country field are excluded from jurisdiction totals. Active trading hours below come from real hourly candles.": 'peta ini menggunakan metadata yurisdiksi hukum bursa, bukan lokasi trader. Bursa tanpa data negara tidak dihitung dalam total yurisdiksi. Jam perdagangan aktif di bawah berasal dari candle per jam yang nyata.',
+  '⚠ Volume and momentum are not buy signals. Avoid leverage and size positions before entering.': '⚠ Volume dan momentum bukan sinyal beli. Hindari leverage dan tentukan ukuran posisi sebelum masuk.',
+  'Change period': 'Periode perubahan',
+  'View': 'Tampilan',
+  'Tiles': 'Kotak',
+  'Table': 'Tabel',
+  'Live prices temporarily unavailable': 'Harga langsung sementara tidak tersedia',
+  'Last update': 'Pembaruan terakhir',
+  'Loading live floor…': 'Memuat floor langsung…',
+  'NFT case study': 'Studi kasus NFT',
+  'Loading summary…': 'Memuat ringkasan…',
+  'Thesis': 'Tesis',
+  'What this collection actually priced': 'Apa yang sebenarnya dihargai oleh koleksi ini',
+  'Narrative': 'Narasi',
+  'Why it pumped': 'Mengapa harganya naik',
+  'The move, and what was behind it': 'Pergerakan harga dan faktor di baliknya',
+  'Reasons and factors': 'Alasan dan faktor',
+  'What carried the floor': 'Faktor yang menopang floor',
+  'Why it counts as a success': 'Mengapa kasus ini dianggap berhasil',
+  'What success means in this case': 'Arti keberhasilan dalam kasus ini',
+  'Floor history': 'Riwayat floor',
+  'Sourced floor milestones': 'Tonggak floor berdasarkan sumber',
+  'Triggers': 'Pemicu',
+  'What triggered each move': 'Pemicu setiap pergerakan',
+  'Triggers are publicly dated events that correlate with a floor move. Correlation is not proof that a single event caused the repricing.': 'Pemicu adalah peristiwa bertanggal publik yang berkorelasi dengan perubahan floor. Korelasi bukan bukti bahwa satu peristiwa menyebabkan perubahan harga.',
+  'Identity': 'Identitas',
+  'Creator and contract': 'Kreator dan kontrak',
+  'Creator / issuer': 'Kreator / penerbit',
+  'Launch detail': 'Detail peluncuran',
+  'Marketplace': 'Marketplace',
+  'Peak floor note': 'Catatan floor puncak',
+  'Sources': 'Sumber',
+  'Pages, verified contracts, and publications cited above.': 'Halaman proyek, kontrak terverifikasi, dan publikasi yang dikutip di atas.',
+  'Project pages, the verified contract, and every publication cited above.': 'Halaman proyek, kontrak terverifikasi, dan setiap publikasi yang dikutip di atas.',
+  'Project identity, explorer, and market-history links.': 'Identitas proyek, explorer, dan tautan riwayat pasar.',
+  'Live floor': 'Floor langsung',
+  'Peak floor': 'Floor puncak',
+  'Mint price': 'Harga mint',
+  'Supply': 'Supply',
+  'Launch': 'Peluncuran',
+  'Current market cap': 'Kapitalisasi pasar saat ini',
+  'Current snapshot': 'Snapshot saat ini',
+  'Historical evidence remains valid': 'Bukti historis tetap berlaku',
+  'Documented peak': 'Puncak terdokumentasi',
+  'Research cutoff': 'Batas waktu riset',
+  'Confirmed qualifiers': 'Kualifikasi terkonfirmasi',
+  'Important context': 'Konteks penting',
+  'Screened out': 'Sudah diperiksa',
+  'Read research': 'Baca riset',
+  'Loading leaderboard…': 'Memuat peringkat…',
+  'Unavailable': 'Tidak tersedia',
+  'Loading…': 'Memuat…',
+  'Data boundary:': 'Batas data:',
+  'Coverage note': 'Catatan cakupan',
+  'Source': 'Sumber',
+  'Sources and boundaries': 'Sumber dan batasan',
+  'Open navigation': 'Buka navigasi',
+  'Close navigation': 'Tutup navigasi',
+}));
+
+const originalText = new WeakMap();
+const originalAttributes = new WeakMap();
+let observer = null;
+let eventsBound = false;
+
 let locale = 'en';
 
 function storedLocale() {
@@ -86,8 +204,8 @@ export function t(key, fallback = '') {
   return UI[locale]?.[key] || UI.en[key] || fallback || key;
 }
 
-function globeIcon() {
-  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"></path></svg>';
+function translationIcon() {
+  return '<svg class="translation-orbit" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path class="translation-orbit-ring" d="M4.5 13.8a9.7 9.7 0 0 1 16.9-6.4"/><path class="translation-orbit-ring" d="M23.5 14.2a9.7 9.7 0 0 1-16.9 6.4"/><path class="translation-bubble translation-bubble-a" d="M5.5 6.5h10v7h-5l-3.3 2.4.8-2.4H5.5z"/><path class="translation-bubble translation-bubble-b" d="M12.5 14.5h10v7H20l.8 2.4-3.3-2.4h-5z"/><path class="translation-glyph" d="M8.2 9.5h4.6M10.5 8v4M15.3 17.3h4.4M17.5 16v4"/></svg>';
 }
 
 function syncLanguageButton() {
@@ -98,7 +216,55 @@ function syncLanguageButton() {
     button.setAttribute('lang', locale);
     const code = button.querySelector('.language-code');
     if (code) code.textContent = locale.toUpperCase();
+    if (!button.querySelector('.translation-orbit')) {
+      button.innerHTML = `${translationIcon()}<span class="language-code">${locale.toUpperCase()}</span>`;
+    }
     button.dataset.nextLanguage = next;
+  });
+}
+
+function translatedText(source) {
+  const trimmed = source.trim();
+  if (!trimmed) return source;
+  const exact = ID_TEXT.get(trimmed);
+  let translated = exact || trimmed;
+  if (!exact) {
+    translated = translated
+      .replace(/^Loading (.+)…$/u, 'Memuat $1…')
+      .replace(/^Read research\s*→?$/u, 'Baca riset')
+      .replace(/^Open research\s+/u, 'Buka riset ')
+      .replace(/^Switch to light theme$/u, 'Ganti ke tema terang')
+      .replace(/^Switch to dark theme$/u, 'Ganti ke tema gelap');
+  }
+  const leading = source.match(/^\s*/u)?.[0] || '';
+  const trailing = source.match(/\s*$/u)?.[0] || '';
+  return `${leading}${translated}${trailing}`;
+}
+
+function translatable(node) {
+  const parent = node.parentElement;
+  return parent && !parent.closest('script,style,noscript,code,pre,[data-no-translate]');
+}
+
+function translateTree(root = document) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach((node) => {
+    if (!translatable(node)) return;
+    if (!originalText.has(node)) originalText.set(node, node.nodeValue);
+    const source = originalText.get(node);
+    node.nodeValue = locale === 'id' ? translatedText(source) : source;
+  });
+
+  root.querySelectorAll?.('[aria-label],[title],[placeholder]').forEach((node) => {
+    if (!originalAttributes.has(node)) originalAttributes.set(node, {});
+    const originals = originalAttributes.get(node);
+    for (const attribute of ['aria-label', 'title', 'placeholder']) {
+      if (!node.hasAttribute(attribute)) continue;
+      originals[attribute] ||= node.getAttribute(attribute);
+      node.setAttribute(attribute, locale === 'id' ? translatedText(originals[attribute]) : originals[attribute]);
+    }
   });
 }
 
@@ -109,6 +275,7 @@ export function applyTranslations(root = document) {
     if (!node.dataset.i18nEn) node.dataset.i18nEn = node.textContent.trim();
     node.textContent = locale === 'en' ? node.dataset.i18nEn : t(key, node.dataset.i18nEn);
   });
+  translateTree(root);
   syncLanguageButton();
 }
 
@@ -132,9 +299,32 @@ export function initI18n() {
     button.type = 'button';
     button.className = 'language-toggle';
     button.dataset.languageToggle = '';
-    button.innerHTML = `${globeIcon()}<span class="language-code">${locale.toUpperCase()}</span>`;
+    button.innerHTML = `${translationIcon()}<span class="language-code">${locale.toUpperCase()}</span>`;
     actions.prepend(button);
-    button.addEventListener('click', () => setLocale(locale === 'en' ? 'id' : 'en'));
   }
+  if (!eventsBound) {
+    eventsBound = true;
+    document.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-language-toggle]');
+      if (!button) return;
+      button.classList.remove('is-switching');
+      void button.offsetWidth;
+      button.classList.add('is-switching');
+      setTimeout(() => button.classList.remove('is-switching'), 520);
+      setLocale(locale === 'en' ? 'id' : 'en');
+    });
+  }
+  observer ||= new MutationObserver((records) => {
+    if (locale !== 'id') return;
+    records.forEach((record) => record.addedNodes.forEach((node) => {
+      if (node.nodeType === Node.TEXT_NODE && translatable(node)) {
+        if (!originalText.has(node)) originalText.set(node, node.nodeValue);
+        node.nodeValue = translatedText(originalText.get(node));
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        translateTree(node);
+      }
+    }));
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
   applyTranslations(document);
 }

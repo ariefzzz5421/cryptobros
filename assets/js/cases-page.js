@@ -62,7 +62,7 @@ function renderUniverse() {
       el('td', { class: `r num ${coin.ch24h >= 0 ? 'up' : 'down'}` }, fmtPct(coin.ch24h, 1)),
       el('td', { class: 'r num' }, fmtUsd(coin.mcap)),
       el('td', { class: 'r num' }, fmtUsd(coin.vol)),
-      el('td', { class: 'r' }, el('a', { class: 'table-link', href: detailHref(coin) }, 'Detail →')),
+      el('td', { class: 'r' }, el('a', { class: 'table-link', href: detailHref(coin) }, 'Detail')),
     ));
   });
   table.append(body);
@@ -88,7 +88,7 @@ function renderCurated() {
           el('span', {}, live ? fmtUsd(live.mcap) : 'Market cap —'),
           el('span', { class: live?.ch24h >= 0 ? 'up' : 'down' }, live ? fmtPct(live.ch24h, 1) : '—'),
         ),
-        el('span', { class: 'case-card-cta' }, 'Open dossier →'),
+        el('span', { class: 'case-card-cta' }, 'Open dossier'),
       ),
     ));
   });

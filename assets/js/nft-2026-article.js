@@ -28,7 +28,7 @@ const ui = () => getLocale() === 'id' ? {
   thresholdBelow: `Di bawah batas riset ${FLOOR_THRESHOLD_ETH} ETH hari ini`,
   context: 'Studi konteks · tidak dihitung sebagai kualifikasi', creator: 'Kreator / penerbit',
   detail: 'Detail peluncuran', market: 'Marketplace', peakNote: 'Catatan floor puncak',
-  caseStudy: 'Studi kasus NFT', collection: 'Koleksi OpenSea', official: 'Situs resmi', social: 'X resmi',
+  caseStudy: 'Studi kasus NFT', collection: 'OpenSea', official: 'Situs', social: 'X',
   marketNote: 'pasar dan floor langsung', siteNote: 'sumber proyek', socialNote: 'akun publik',
   cap: 'kapitalisasi koleksi', ready: 'Artikel dan floor langsung siap',
 } : {
@@ -37,7 +37,7 @@ const ui = () => getLocale() === 'id' ? {
   thresholdBelow: `Below the ${FLOOR_THRESHOLD_ETH} ETH research threshold today`,
   context: 'Context case · not counted as a qualifier', creator: 'Creator / issuer',
   detail: 'Launch detail', market: 'Marketplace', peakNote: 'Peak floor note',
-  caseStudy: 'NFT case study', collection: 'OpenSea collection', official: 'Official site', social: 'Official X',
+  caseStudy: 'NFT case study', collection: 'OpenSea', official: 'Site', social: 'X',
   marketNote: 'market and live floor', siteNote: 'project source', socialNote: 'public account',
   cap: 'collection cap', ready: 'Article and live floor ready',
 };
@@ -71,7 +71,7 @@ function renderMeta() {
 
   const snapshot = $('liveSnapshot');
   if (Number.isFinite(floor)) {
-    snapshot.replaceChildren(
+    snapshot.replaceChildren(...[
       el('span', { class: `nft-flag${floor >= FLOOR_THRESHOLD_ETH ? ' is-live' : ''}` },
         item.status === 'context' ? text.context
           : floor >= FLOOR_THRESHOLD_ETH ? text.thresholdAbove : text.thresholdBelow),
@@ -90,7 +90,7 @@ function renderMeta() {
         ? el('span', { class: 'nft-flag' },
           `floor read ${Math.round(live.ageMs / 60_000)}m ago`)
         : null,
-    );
+    ].filter(Boolean));
   } else {
     snapshot.replaceChildren(
       el('span', { class: `nft-flag${item.status === 'confirmed' ? ' is-live' : ''}` }, item.statusLabel),
@@ -163,7 +163,7 @@ function renderChart() {
 }
 
 async function refresh({ force = false } = {}) {
-  const snapshot = await fetchNftFloors({ force, slugs: ['stonkbrokers', 'pyopyopyopyo'] });
+  const snapshot = await fetchNftFloors({ force, slugs: [sourceItem.slug] });
   live = snapshot.collections?.[item.slug] || null;
   if (live?.image) $('docLogo').src = live.image;
   renderMeta();

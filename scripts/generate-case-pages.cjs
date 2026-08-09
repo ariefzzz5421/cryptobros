@@ -87,7 +87,7 @@ const template = (item) => `<!DOCTYPE html>
   </section>
 
   <section class="panel source-panel">
-    <div><h2>Sources</h2><p class="panel-sub">Official identity, explorer, and market-history links.</p></div>
+    <div><h2>Sources</h2><p class="panel-sub">Project identity, explorer, and market-history links.</p></div>
     <div class="source-links" id="caseSources"></div>
   </section>
 

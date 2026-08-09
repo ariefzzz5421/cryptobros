@@ -59,6 +59,16 @@ export function sourceLogo(url, fallback = {}) {
   }));
 }
 
+function cleanSourceLabel(value, fallback = 'Source') {
+  const cleaned = String(value || '')
+    .replace(/\bofficial\b/gi, '')
+    .replace(/[↗→]/g, '')
+    .replace(/\s+/g, ' ')
+    .replace(/^[·|:\-\s]+|[·|:\-\s]+$/g, '')
+    .trim();
+  return cleaned || fallback;
+}
+
 export function brandedSourceLink({
   label,
   url,
@@ -69,22 +79,23 @@ export function brandedSourceLink({
 }) {
   const brand = sourceBrand(url, logo ? { logo } : {});
   const mark = sourceLogo(url, logo ? { logo } : {});
+  const cleanLabel = cleanSourceLabel(label, brand.name || 'Source');
+  const cleanNote = cleanSourceLabel(note, '');
   /* Without a brand mark the link drops the logo column entirely, otherwise
      the copy would be laid into the 34px slot and truncate to nothing. */
   const linkClass = mark ? className : `${className} has-no-logo`;
   const content = [
     mark,
     el('span', { class: 'source-copy' },
-      el('strong', {}, label || brand.name || 'Source'),
-      note ? el('small', {}, note) : null,
+      el('strong', {}, cleanLabel),
+      cleanNote ? el('small', {}, cleanNote) : null,
     ),
-    el('span', { class: 'source-arrow', 'aria-hidden': 'true' }, disabled ? '—' : '↗'),
   ];
   if (disabled || !url) {
     return el('span', {
       class: `${linkClass} is-disabled`,
       'aria-disabled': 'true',
-      title: note || 'Source unavailable',
+      title: cleanNote || 'Source unavailable',
     }, ...content);
   }
   return el('a', {
@@ -92,11 +103,17 @@ export function brandedSourceLink({
     href: url,
     target: '_blank',
     rel: 'noreferrer',
+    'aria-label': cleanLabel.toLowerCase() === String(brand.name || '').toLowerCase()
+      ? cleanLabel
+      : `${cleanLabel} (${brand.name || new URL(url).hostname})`,
   }, ...content);
 }
 
 export function hydrateSourceLinks(root = document) {
-  root.querySelectorAll('.source-link.source-only[href]').forEach((link) => {
+  root.querySelectorAll('.source-link.source-only[href], .source-button[href]').forEach((link) => {
+    if (!link.querySelector('.source-copy')) {
+      link.textContent = cleanSourceLabel(link.textContent, sourceBrand(link.href).name || 'Source');
+    }
     if (link.querySelector('.source-logo-wrap')) return;
     const logo = sourceLogo(link.href);
     if (!logo) return;

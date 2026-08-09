@@ -51,7 +51,7 @@ const events = [
       ['CoinGecko market record', 'https://www.coingecko.com/en/coins/the-white-whale'],
       ['Crypto Briefing · $100M event', 'https://cryptobriefing.com/whitewhale-memecoin-hits-100mn-with-50x-gains/'],
       ['Contract explorer', 'https://solscan.io/token/a3W4qutoEJA4232T2gwZUfgYJTetr96pU4SJMwppump'],
-      ['Official X', 'https://x.com/WhiteWhaleMeme'],
+      ['X', 'https://x.com/WhiteWhaleMeme'],
     ],
   },
   {
@@ -244,8 +244,8 @@ const events = [
     sources: [
       ['CoinGecko market record', 'https://www.coingecko.com/en/coins/troll-2'],
       ['Phemex · May 2026 recross', 'https://phemex.com/blogs/what-is-troll-solana-memecoin'],
-      ['Official site', 'https://trololol.io/'],
-      ['Official X', 'https://x.com/trololol_io'],
+      ['Site', 'https://trololol.io/'],
+      ['X', 'https://x.com/trololol_io'],
       ['Contract explorer', 'https://solscan.io/token/5UUH9RTDiSpq6HKS6bp4NdU9PNJpXRXuiw6ShBTBhgH2'],
     ],
   },

@@ -78,7 +78,6 @@ export function renderDexScreenerChart(holder, pair, tokenName, launchPayload = 
   const facts = snapshotFacts(resolvedPair, launch);
   const frameWrap = el('div', { class: 'dex-frame-wrap is-deferred' });
   const loadButton = el('button', { class: 'dex-load-button', type: 'button' },
-    el('span', { 'aria-hidden': 'true' }, '↗'),
     el('span', {},
       el('strong', {}, 'Load interactive chart'),
       el('small', {}, 'DEX Screener loads only after this click'),

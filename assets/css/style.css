@@ -1,5 +1,5 @@
 @import url("./tokens.css");
-/* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V5 · genre: modern-minimal · theme: graphite-blue with restrained Crypto Bros neon · macrostructure: research workbench + long document · shell: compact header drawer · enrichment: official source marks + honest market data · design-system: design.md · nav: N11 grouped evidence panel · footer: Ft2 · contrast/slop/honesty/responsive/mobile/icons: pass */
+/* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V4 · genre: modern-minimal · theme: graphite-blue / cool paper · macrostructure: bilingual market tape + evidence dossiers · shell: compact header drawer · enrichment: sourced logos + honest market data · design-system: design.md · nav: N11 · footer: Ft2 · slop/contrast/honesty/chrome/tokens/responsive/mobile/icons: pass */
 @font-face { font-family: "Geist"; src: url("/assets/fonts/geist-400.ttf") format("truetype"); font-style: normal; font-weight: 400; font-display: swap; }
 @font-face { font-family: "Geist"; src: url("/assets/fonts/geist-500.ttf") format("truetype"); font-style: normal; font-weight: 500; font-display: swap; }
 @font-face { font-family: "Geist"; src: url("/assets/fonts/geist-600.ttf") format("truetype"); font-style: normal; font-weight: 600; font-display: swap; }
@@ -167,6 +167,18 @@
 }
 
 * { box-sizing: border-box; }
+
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
 
 html { scroll-behavior: smooth; overflow-x: clip; }
 
@@ -3231,6 +3243,250 @@ body[data-nav-open] { overflow: hidden; }
   .nft-card-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-.floor-chart { width: 100%; }
+.floor-chart { width: 100%; min-width: 0; margin: 0; }
 .floor-chart svg { display: block; width: 100%; height: auto; }
 .floor-chart figcaption { margin-top: var(--space-2); color: var(--muted); font-size: 12px; line-height: 1.5; }
+
+/* ---------------- 2026 market tape + tactile controls ---------------- */
+
+body {
+  overflow-x: clip;
+  background:
+    linear-gradient(180deg, color-mix(in oklch, var(--seq-mid) 4%, transparent), transparent 24rem),
+    var(--plane);
+}
+
+.market-tape {
+  position: relative;
+  z-index: calc(var(--z-sticky) - 1);
+  min-height: 42px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border-2);
+  background: color-mix(in oklch, var(--plane) 92%, var(--seq-mid) 8%);
+}
+
+.market-tape::before,
+.market-tape::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset-block: 0;
+  width: clamp(20px, 5vw, 80px);
+  pointer-events: none;
+}
+.market-tape::before { left: 0; background: linear-gradient(90deg, var(--plane), transparent); }
+.market-tape::after { right: 0; background: linear-gradient(-90deg, var(--plane), transparent); }
+.market-tape-viewport { width: 100%; overflow: hidden; contain: inline-size; }
+.market-tape-track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  min-height: 42px;
+  will-change: transform;
+}
+.market-tape[data-state="ready"] .market-tape-track,
+.market-tape[data-state="partial"] .market-tape-track {
+  animation: market-tape-right 34s linear infinite;
+}
+.market-tape:hover .market-tape-track { animation-play-state: paused; }
+.market-tape-group { display: inline-flex; align-items: center; flex: none; }
+.market-tape-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 190px;
+  min-height: 42px;
+  padding-inline: var(--space-4);
+  border-right: 1px solid var(--border-2);
+  white-space: nowrap;
+}
+.market-tape-item img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  border-radius: 50%;
+}
+.market-tape-item strong { color: var(--ink); font-size: 12px; letter-spacing: .08em; }
+.market-tape-price { color: var(--ink-2); font-size: 12px; font-weight: 600; }
+.market-tape-change { margin-left: auto; font-size: 11px; }
+.market-tape-change.up { color: var(--up); }
+.market-tape-change.down { color: var(--down); }
+.market-tape-skeleton {
+  width: 190px;
+  height: 18px;
+  margin-inline: var(--space-4);
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--surface), var(--surface-hover), var(--surface));
+  background-size: 200% 100%;
+  animation: tape-skeleton 1.2s linear infinite;
+}
+.market-tape-error {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  font-size: 12px;
+}
+.market-tape-error[hidden] { display: none; }
+@keyframes market-tape-right { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+@keyframes tape-skeleton { to { background-position: -200% 0; } }
+
+.language-toggle,
+.theme-toggle {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 12px;
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    linear-gradient(135deg, var(--accent-28), var(--border)) border-box;
+  box-shadow: 0 8px 24px -20px var(--seq-mid);
+}
+.language-toggle { min-width: 66px; }
+.translation-orbit { width: 22px !important; height: 22px !important; overflow: visible; }
+.translation-orbit-ring,
+.translation-bubble,
+.translation-glyph {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.45;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.translation-orbit-ring { color: var(--seq-mid); stroke-dasharray: 8 4; }
+.translation-bubble-b { color: var(--seq-hi); }
+.translation-glyph { stroke-width: 1.2; }
+.language-toggle:hover .translation-orbit-ring { animation: translation-orbit 1.6s linear infinite; transform-origin: center; }
+.language-toggle.is-switching .translation-bubble-a { animation: bubble-swap-a 480ms var(--ease-out); }
+.language-toggle.is-switching .translation-bubble-b { animation: bubble-swap-b 480ms var(--ease-out); }
+.language-toggle.is-switching .language-code { animation: language-code-flip 480ms var(--ease-out); }
+
+.theme-toggle { width: 44px; height: 44px; }
+.theme-glyph { width: 20px; height: 20px; overflow: visible; }
+.theme-glyph-sun,
+.theme-glyph-rays,
+.theme-glyph-moon {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  transform-origin: 12px 12px;
+  transition: opacity var(--dur-short) var(--ease-out), transform var(--dur-short) var(--ease-out);
+}
+.theme-glyph-sun { fill: color-mix(in oklch, var(--warn) 24%, transparent); }
+.theme-glyph-moon { opacity: 1; transform: rotate(0) scale(1); }
+.theme-glyph-sun,
+.theme-glyph-rays { opacity: 0; transform: rotate(-45deg) scale(.6); }
+:root[data-theme="light"] .theme-glyph-moon { opacity: 0; transform: rotate(45deg) scale(.6); }
+:root[data-theme="light"] .theme-glyph-sun,
+:root[data-theme="light"] .theme-glyph-rays { opacity: 1; transform: rotate(0) scale(1); }
+
+.has-interaction-ripple { position: relative; overflow: hidden; isolation: isolate; }
+.interaction-ripple {
+  position: absolute;
+  z-index: 3;
+  width: 10px;
+  height: 10px;
+  margin: -5px;
+  border-radius: 50%;
+  background: color-mix(in oklch, var(--seq-mid) 28%, transparent);
+  pointer-events: none;
+  animation: interaction-ripple 520ms var(--ease-out) forwards;
+}
+@keyframes interaction-ripple { to { transform: scale(24); opacity: 0; } }
+@keyframes translation-orbit { to { transform: rotate(1turn); } }
+@keyframes bubble-swap-a { 50% { transform: translate(5px, 4px); opacity: .35; } }
+@keyframes bubble-swap-b { 50% { transform: translate(-5px, -4px); opacity: .35; } }
+@keyframes language-code-flip { 50% { transform: translateY(-4px); opacity: 0; } }
+
+/* Source marks carry identity; labels stay short and literal. */
+.source-link,
+.source-link.source-only.is-branded-source { grid-template-columns: 34px minmax(0, 1fr); }
+.source-link.has-no-logo { grid-template-columns: minmax(0, 1fr); }
+.source-link { max-width: 100%; overflow: hidden; }
+.source-copy { min-width: 0; }
+.source-copy strong,
+.source-copy small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.source-button { gap: var(--space-2); }
+.source-arrow { display: none !important; }
+
+.identity-item code {
+  display: block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+/* Article pages use the same font family, with an editorial rhythm instead of
+   introducing an ornamental route-specific typeface. */
+.case-doc { counter-reset: research-section; }
+.case-doc .doc-masthead { position: relative; }
+.case-doc .doc-title {
+  max-width: 18ch;
+  font-size: clamp(2.15rem, 6.5vw, 4.75rem);
+  line-height: .98;
+  letter-spacing: -.055em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.case-doc .doc-standfirst { font-size: clamp(1rem, 1.5vw, 1.2rem); line-height: 1.7; }
+.case-doc .doc-section { counter-increment: research-section; }
+.case-doc .doc-section > .eyebrow::before {
+  content: "0" counter(research-section) " / ";
+  color: var(--seq-mid);
+  font-family: var(--font-outlier);
+  letter-spacing: .02em;
+}
+.case-doc .doc-section > h2 {
+  max-width: 26ch;
+  font-size: clamp(1.45rem, 3vw, 2.35rem);
+  line-height: 1.12;
+  letter-spacing: -.035em;
+  text-wrap: balance;
+}
+.case-doc .doc-callout.is-accent {
+  border-color: var(--accent-28);
+  background: linear-gradient(110deg, var(--accent-14), var(--plane) 58%);
+}
+.case-doc .doc-callout.is-accent p { color: var(--ink); font-size: clamp(1rem, 1.5vw, 1.16rem); line-height: 1.65; }
+
+::view-transition-old(root),
+::view-transition-new(root) { animation-duration: 320ms; animation-timing-function: var(--ease-out); }
+
+@media (max-width: 36rem) {
+  .market-tape-item { min-width: 168px; padding-inline: var(--space-3); }
+  .market-tape[data-state="ready"] .market-tape-track,
+  .market-tape[data-state="partial"] .market-tape-track { animation-duration: 26s; }
+  .case-doc .doc-title { max-width: 13ch; }
+}
+
+@media (max-width: 48rem) {
+  .clock { display: none; }
+}
+
+.landing-cta,
+.landing-route,
+.nft-read-link,
+.source-link,
+.source-button { white-space: nowrap; }
+.landing-cta:active,
+.landing-route:active,
+.nft-read-link:active,
+.source-button:active { opacity: .72; }
+.theme-toggle:disabled,
+.language-toggle:disabled,
+.source-link[aria-disabled="true"],
+.source-button[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
+
+@media (prefers-reduced-motion: reduce) {
+  .market-tape-track,
+  .market-tape-skeleton,
+  .translation-orbit-ring,
+  .translation-bubble,
+  .language-code,
+  .interaction-ripple { animation: none !important; }
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation-duration: 1ms; }
+}

@@ -8,6 +8,8 @@ export default async function handler(request, response) {
     const resource = url.searchParams.get('resource') || 'overview';
     const cacheControl = resource === 'dexlaunch'
       ? 'public, s-maxage=86400, stale-while-revalidate=604800'
+      : resource === 'ticker'
+        ? 'public, s-maxage=10, stale-while-revalidate=60'
       : resource === 'history'
         ? 'public, s-maxage=3600, stale-while-revalidate=86400'
           : resource === 'nft'

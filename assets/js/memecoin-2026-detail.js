@@ -65,8 +65,8 @@ function renderCurrent(data) {
   }
 
   const social = record.officialX
-    ? { label: record.socialLabel || 'Official X', url: record.officialX, note: 'public account' }
-    : { label: 'Official X unavailable', url: 'https://x.com/', note: record.socialNote, disabled: true };
+    ? { label: record.socialLabel || 'X', url: record.officialX, note: 'public account' }
+    : { label: 'X unavailable', url: 'https://x.com/', note: record.socialNote, disabled: true };
   const sources = [
     { label: 'CoinGecko', url: record.coingecko, note: 'market record' },
     { label: 'Contract explorer', url: record.explorer, note: 'contract address' },

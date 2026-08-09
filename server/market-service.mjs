@@ -5,10 +5,12 @@ const CG = 'https://api.coingecko.com/api/v3';
 const YAHOO = 'https://query1.finance.yahoo.com/v8/finance/chart';
 const DEX = 'https://api.dexscreener.com';
 const GECKO_TERMINAL = 'https://api.geckoterminal.com/api/v2';
+const OPENSEA = 'https://opensea.io/collection';
 const cache = new Map();
 
 const TTL = {
   overview: 30_000,
+  ticker: 10_000,
   history: 60 * 60 * 1000,
   sentiment: 60_000,
   meme2026: 60_000,
@@ -33,6 +35,16 @@ const NFT_COLLECTIONS = [
   { slug: 'stonkbrokers', ids: ['stonkbrokers-434284142', 'stonkbrokers'] },
   { slug: 'mancers', ids: ['mancers-hyperevm', 'mancers'] },
   { slug: 'pyopyopyopyo', ids: ['py0py0py0py0', 'pyopyopyopyo'] },
+  { slug: 'robinhood-minis', ids: [], openSeaSlug: 'robinhood-minis' },
+  { slug: '8skullz', ids: ['8skullz'], openSeaSlug: '8skullz' },
+];
+
+const TICKER_ASSETS = [
+  { id: 'bitcoin', symbol: 'BTC', name: 'Bitcoin', yahoo: 'BTC-USD' },
+  { id: 'ethereum', symbol: 'ETH', name: 'Ethereum', yahoo: 'ETH-USD' },
+  { id: 'solana', symbol: 'SOL', name: 'Solana', yahoo: 'SOL-USD' },
+  { id: 'hyperliquid', symbol: 'HYPE', name: 'Hyperliquid', yahoo: 'HYPE-USD' },
+  { id: 'zcash', symbol: 'ZEC', name: 'Zcash', yahoo: 'ZEC-USD' },
 ];
 
 const DEX_PAIRS = {
@@ -312,6 +324,24 @@ async function fetchJSON(url, { timeout = 18_000, retries = 1 } = {}) {
   throw lastError || new Error('Upstream unavailable');
 }
 
+async function fetchText(url, { timeout = 18_000 } = {}) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeout);
+  try {
+    const response = await fetch(url, {
+      signal: controller.signal,
+      headers: {
+        accept: 'text/html,application/xhtml+xml',
+        'user-agent': 'Mozilla/5.0 (compatible; CryptoBrosResearch/1.0)',
+      },
+    });
+    if (!response.ok) throw new Error(`${response.status} ${new URL(url).hostname}`);
+    return await response.text();
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function cached(key, ttl, loader) {
   const now = Date.now();
   const hit = cache.get(key);
@@ -572,6 +602,67 @@ async function loadOverview() {
   };
 }
 
+async function loadTicker() {
+  let coinGeckoRows = [];
+  try {
+    coinGeckoRows = await fetchJSON(
+      `${CG}/coins/markets?vs_currency=usd&ids=${TICKER_ASSETS.map((asset) => asset.id).join(',')}` +
+      '&order=market_cap_desc&per_page=20&page=1&sparkline=false&price_change_percentage=24h',
+      { timeout: 12_000, retries: 0 },
+    );
+  } catch {
+    coinGeckoRows = [];
+  }
+
+  const byId = new Map(coinGeckoRows.map((row) => [row.id, row]));
+  const missing = TICKER_ASSETS.filter((asset) => !byId.has(asset.id));
+  const yahooRows = new Map();
+  if (missing.length) {
+    const fallbacks = await Promise.allSettled(missing.map(async (asset) => ({
+      asset,
+      value: await yahooPrice(asset.yahoo),
+    })));
+    for (const result of fallbacks) {
+      if (result.status === 'fulfilled') yahooRows.set(result.value.asset.id, result.value.value);
+    }
+  }
+
+  const assets = TICKER_ASSETS.map((asset) => {
+    const row = byId.get(asset.id);
+    if (row) {
+      return {
+        id: asset.id,
+        symbol: asset.symbol,
+        name: asset.name,
+        price: Number(row.current_price),
+        change24h: Number.isFinite(row.price_change_percentage_24h)
+          ? row.price_change_percentage_24h
+          : null,
+        source: 'CoinGecko',
+      };
+    }
+    const yahoo = yahooRows.get(asset.id);
+    if (!yahoo) return null;
+    return {
+      id: asset.id,
+      symbol: asset.symbol,
+      name: asset.name,
+      price: yahoo.price,
+      change24h: yahoo.changePct,
+      source: 'Yahoo Finance',
+    };
+  }).filter((asset) => Number.isFinite(asset?.price));
+
+  if (!assets.length) throw new Error('CoinGecko and Yahoo Finance ticker data unavailable');
+  return {
+    ok: true,
+    partial: assets.length !== TICKER_ASSETS.length,
+    fetchedAt: Date.now(),
+    refreshMs: TTL.ticker,
+    assets,
+  };
+}
+
 function llamaMetric(summary) {
   if (!summary) return null;
   const chainBreakdown = {};
@@ -749,6 +840,40 @@ const NFT_SLICE = 4;
 const NFT_REQUEST_GAP = 900;
 const NFT_TIME_BUDGET = 40_000;
 
+function slimOpenSeaCollection(slug, html) {
+  const normalized = html.replaceAll('\\"', '"').replaceAll('\\/', '/');
+  const marker = `"collectionBySlug":{"__typename":"Collection","slug":"${slug}"`;
+  const offset = normalized.indexOf(marker);
+  if (offset < 0) throw new Error(`OpenSea ${slug} collection payload missing`);
+  const block = normalized.slice(offset, offset + 120_000);
+  const number = (pattern) => {
+    const match = block.match(pattern);
+    return match && Number.isFinite(Number(match[1])) ? Number(match[1]) : null;
+  };
+  const text = (pattern) => block.match(pattern)?.[1] || null;
+  const floorNative = number(/"floorPrice":\{"pricePerItem":\{"token":\{"unit":([0-9.eE+-]+)/);
+  const currency = text(/"floorPrice":\{"pricePerItem":\{"token":\{"unit":[0-9.eE+-]+,"symbol":"([^"]+)"/);
+  if (!Number.isFinite(floorNative) || !currency) throw new Error(`OpenSea ${slug} floor unavailable`);
+  return {
+    id: slug,
+    name: text(/"name":"([^"]+)"/) || slug,
+    image: text(/"imageUrl":"([^"]+)"/),
+    currency,
+    floorNative,
+    floorUsd: number(/"floorPrice":\{"pricePerItem":\{.*?"usd":([0-9.eE+-]+)/),
+    floorChange24h: number(/"oneDay":\{"floorPriceChange":([0-9.eE+-]+)/),
+    marketCapUsd: null,
+    volume24hNative: number(/"oneDay":\{.*?"volume":\{.*?"native":\{"symbol":"[^"]+","unit":([0-9.eE+-]+)/),
+    owners: number(/"ownerCount":([0-9]+)/),
+    provider: 'OpenSea',
+  };
+}
+
+async function fetchOpenSeaCollection(slug) {
+  const html = await fetchText(`${OPENSEA}/${encodeURIComponent(slug)}/overview`, { timeout: 16_000 });
+  return slimOpenSeaCollection(slug, html);
+}
+
 async function fetchNftCollection(collection) {
   let lastError = null;
   for (const id of collection.ids) {
@@ -764,6 +889,13 @@ async function fetchNftCollection(collection) {
          request. Anything else would fail the same way and just burn budget. */
       if (!/^404\b/.test(error.message || '')) break;
       await pause(NFT_REQUEST_GAP);
+    }
+  }
+  if (collection.openSeaSlug) {
+    try {
+      return { value: await fetchOpenSeaCollection(collection.openSeaSlug) };
+    } catch (error) {
+      lastError = error;
     }
   }
   return { error: lastError };
@@ -820,8 +952,9 @@ async function loadNftFloors(requestedSlugs = []) {
     ok: true,
     partial: missing > 0,
     fetchedAt: Date.now(),
-    source: 'CoinGecko NFT collections API',
+    source: 'CoinGecko NFT API + OpenSea public collection pages',
     thresholdEth: 0.5,
+    thresholds: { historicalEth: 0.5, nft2026Eth: 0.1 },
     memoMaxAgeMs: NFT_MEMO_MAX_AGE,
     refreshedThisPass: due.map((row) => row.slug),
     warning: missing ? `Live floor still filling in for ${missing} collection(s)` : null,
@@ -1278,6 +1411,9 @@ export async function getMarketPayload(urlLike) {
 
   if (resource === 'health') {
     return { ok: true, fetchedAt: Date.now(), service: 'market-data' };
+  }
+  if (resource === 'ticker') {
+    return cached('ticker', TTL.ticker, loadTicker);
   }
   if (resource === 'history') {
     const id = url.searchParams.get('id');

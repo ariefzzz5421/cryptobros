@@ -113,7 +113,7 @@ function renderArticle() {
 
   $('docSources').replaceChildren(...[
     { label: 'OpenSea collection', url: item.marketplace, note: 'buy, sell, and live floor' },
-    { label: 'Official site', url: item.official, note: new URL(item.official).hostname },
+    { label: 'Site', url: item.official, note: new URL(item.official).hostname },
     { label: 'Contract explorer', url: item.explorer, note: 'verified contract' },
     ...item.sources.map(([label, url]) => ({ label, url, note: new URL(url).hostname })),
   ].filter((source, index, rows) => rows.findIndex((row) => row.url === source.url) === index)

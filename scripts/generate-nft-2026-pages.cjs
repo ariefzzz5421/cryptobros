@@ -12,7 +12,7 @@ const template = (item) => `<!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${item.name} (${item.short}) — Crypto Bros NFT Research</title>
-<meta name="description" content="${item.name} sourced NFT case study: launch, market record, thesis, success factors, contract, official OpenSea collection, and dated triggers.">
+<meta name="description" content="${item.name} sourced NFT case study: launch, market record, thesis, success factors, contract, OpenSea collection, and dated triggers.">
 <link rel="stylesheet" href="/assets/css/style.css">
 <link rel="icon" type="image/png" href="/assets/img/brand/crypto-bros-favicon.png">
 </head>
@@ -31,7 +31,7 @@ const template = (item) => `<!DOCTYPE html>
   <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/nft-2026/">NFT 2026</a><span>/</span><span>${item.short}</span></nav>
 
   <header class="doc-masthead">
-    <img class="doc-logo" id="docLogo" src="${item.logo}" alt="${item.name} official logo" width="104" height="104" decoding="async" onerror="this.onerror=null;this.src='${item.logoFallback}'">
+    <img class="doc-logo" id="docLogo" src="${item.logo}" alt="${item.name} collection logo" width="104" height="104" decoding="async" onerror="this.onerror=null;this.src='${item.logoFallback}'">
     <p class="doc-kicker" id="docKicker">NFT case study</p>
     <h2 class="doc-title" id="docTitle">${item.name}</h2>
     <p class="doc-standfirst" id="docStandfirst">Loading summary…</p>
@@ -87,7 +87,7 @@ const template = (item) => `<!DOCTYPE html>
   </section>
 
   <section class="panel source-panel">
-    <div><h2>Sources</h2><p class="panel-sub">Official pages, the verified contract, and every publication cited above.</p></div>
+    <div><h2>Sources</h2><p class="panel-sub">Project pages, the verified contract, and every publication cited above.</p></div>
     <div class="source-links" id="docSources"></div>
   </section>
 

@@ -81,7 +81,7 @@ function renderCard(event) {
         el('strong', {}, fmtDate(event.launchAt)),
       ),
     ),
-    el('span', { class: 'breakout-preview-cta', 'aria-hidden': 'true' }, id ? 'Baca riset →' : 'Read research →'),
+    el('span', { class: 'breakout-preview-cta', 'aria-hidden': 'true' }, id ? 'Baca riset' : 'Read research'),
   );
 }
 

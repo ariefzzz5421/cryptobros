@@ -28,8 +28,8 @@ export async function fetchNftFloors({ force = false, slugs = [] } = {}) {
   return request;
 }
 
-export const fmtEth = (value, digits = 2) =>
-  (Number.isFinite(value) ? `${value.toLocaleString('en-US', { maximumFractionDigits: digits })} ETH` : 'Unavailable');
+export const fmtEth = (value, digits = 2, locale = 'en-US') =>
+  (Number.isFinite(value) ? `${value.toLocaleString(locale, { maximumFractionDigits: digits })} ETH` : 'Unavailable');
 
 export const fmtMonth = (value, locale = 'en-US') => {
   const [year, month] = String(value).split('-');

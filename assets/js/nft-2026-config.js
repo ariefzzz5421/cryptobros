@@ -43,7 +43,7 @@ export const NFT_2026 = [
       claim: 'It counts as a 2026 success because it cleared the threshold, sustained meaningful secondary volume, and developed working on-chain utility after mint.',
       markers: [
         'CoinGecko recorded a 9.70 ETH floor and about $82.7M collection cap on 9 Aug 2026.',
-        'The official documentation confirms 4,444 minted-out ERC-721 items with ERC-6551 wallets.',
+        'Project documentation confirms 4,444 minted-out ERC-721 items with ERC-6551 wallets.',
         'Each broker can hold stock-token rewards and participate in the project’s on-chain distribution system.',
         'The move began from a free mint, making the repricing easy to measure.',
       ],
@@ -51,7 +51,7 @@ export const NFT_2026 = [
     factors: [
       { label: 'First credible native collectible', detail: 'The collection absorbed attention that had few established alternatives on the new chain.' },
       { label: 'Free distribution', detail: 'No paid mint overhang lowered the initial barrier and created a clear zero-to-secondary-market story.' },
-      { label: 'Utility users can verify', detail: 'ERC-6551 wallets and stock-token reward mechanics are documented on the official site and visible on-chain.' },
+      { label: 'Utility users can verify', detail: 'ERC-6551 wallets and stock-token reward mechanics are documented on the project site and visible on-chain.' },
       { label: 'Thin ownership', detail: 'A relatively small owner set can push a floor higher, but it can also accelerate a reversal.' },
     ],
     triggers: [
@@ -66,8 +66,8 @@ export const NFT_2026 = [
       { d: '2026-08-09', eth: null, label: 'Live floor', live: true },
     ],
     sources: [
-      ['Official documentation', 'https://www.stonkbrokers.cash/docs'],
-      ['Official X · Clutch Markets', 'https://x.com/ClutchMarkets'],
+      ['Documentation', 'https://www.stonkbrokers.cash/docs'],
+      ['X · Clutch Markets', 'https://x.com/ClutchMarkets'],
       ['Contract explorer', 'https://robinhoodchain.blockscout.com/address/0x539cdd042c2f3d93ebc5be7dfff0c79f3b4fabf0'],
       ['Robinhood Chain documentation', 'https://robinhood.com/us/en/support/articles/robinhood-chain-testnet/'],
     ],
@@ -116,7 +116,7 @@ export const NFT_2026 = [
       markers: [
         'OpenSea displayed a 0.1998 ETH floor on 9 Aug 2026.',
         'The collection moved from a 0.0014 ETH mint to a documented floor more than 100× higher.',
-        'OpenSea identifies 4,444 items and preserves the official collection contract.',
+        'OpenSea identifies 4,444 items and preserves the collection contract.',
         'The collection developed a distinct community identity instead of relying on a promised revenue stream.',
       ],
     },
@@ -150,6 +150,196 @@ export const NFT_2026 = [
         standfirst: 'Mint 0,0014 ETH ini membangun identitas karakter yang mudah dikenali, mengumpulkan volume besar, lalu menampilkan floor di atas 0,1 ETH di OpenSea.',
         thesis: 'pyopyopyopyo berhasil melalui distribusi, gaya visual yang berbeda, dan social proof. Koleksi ini menjadi PFP budaya Robinhood Chain tanpa janji utilitas yang rumit.',
         whyItPumped: 'Harga mint yang sangat rendah memperluas distribusi sebelum perhatian datang. Desain lembutnya berbeda dari branding finansial chain. Visibilitas OpenSea dan pembelian publik dari figur ekosistem mempercepat discovery, lalu aktivitas pasar menarik aktivitas berikutnya.',
+      },
+    },
+  },
+  {
+    id: 'robinhood-minis',
+    slug: 'robinhood-minis',
+    status: 'confirmed',
+    statusLabel: 'Crossed >0.1 ETH · now retraced',
+    name: 'Robinhood Minis',
+    short: 'MINIS',
+    chain: 'Robinhood Chain',
+    supply: 888,
+    launch: '2026-07-25',
+    launchNote: 'OpenSea SeaDrop contract created 25 Jul 2026; the 888-piece mint completed through three public stages',
+    mint: '0–0.0025 ETH',
+    creator: '392w1f · unverified OpenSea creator',
+    contract: '0xbbe6cf81e74e6325904295e44a51307ff7b06adc',
+    official: 'https://opensea.io/collection/robinhood-minis',
+    officialX: null,
+    marketplace: 'https://opensea.io/collection/robinhood-minis',
+    coingecko: null,
+    logo: '/assets/img/nft/robinhood-minis.jpg',
+    logoFallback: '/assets/img/nft/robinhood-minis.jpg',
+    peakFloor: {
+      eth: 0.129,
+      label: '0.129 ETH',
+      at: '2026-08',
+      note: 'OpenSea search snapshot in Aug 2026; the displayed floor later retraced sharply',
+    },
+    narrative: 'An 888-piece mint whose thin listing book briefly displayed a six-figure floor repricing',
+    standfirst: 'Robinhood Minis briefly displayed a floor above 0.1 ETH, then fell close to mint price. It is a useful lesson in how a small supply and thin asks can create a dramatic headline without durable demand.',
+    thesis: 'The move was driven by scarcity and market structure, not proven utility. With only a small fraction listed, a few repriced asks could move the visible floor much faster than the collection’s realized trading value.',
+    whyItPumped: 'The collection combined an 888-item cap, a low staged mint, and very few active listings. Those conditions made the cheapest ask highly sensitive to listing withdrawals and speculative repricing. OpenSea showed no linked public site or social account, so the move cannot be attributed to a verified product roadmap or creator-led catalyst.',
+    success: {
+      claim: 'It qualifies as a documented threshold event, but not as durable success. The later collapse is part of the record and prevents a temporary listing floor from being mistaken for lasting value.',
+      markers: [
+        'An OpenSea search snapshot displayed a 0.129 ETH floor in Aug 2026.',
+        'OpenSea records 888 items, roughly 369 owners, and only 29 listed in the later snapshot.',
+        'The mint used free, 0.002 ETH, and 0.0025 ETH stages, giving the move a very low starting base.',
+        'The later OpenSea floor was about 0.0015 ETH despite roughly 2.20 ETH of cumulative volume.',
+      ],
+    },
+    factors: [
+      { label: 'Small fixed supply', detail: 'Only 888 items existed, so a small number of listings could define the visible floor.' },
+      { label: 'Low mint base', detail: 'A public mint around 0.0025 ETH made any thin-book repricing look unusually large in percentage terms.' },
+      { label: 'Listing scarcity', detail: 'Few active asks made the floor sensitive to withdrawals and seller repricing.' },
+      { label: 'No durability evidence', detail: 'The retrace and lack of a linked project surface argue against treating the peak as stable adoption.' },
+    ],
+    triggers: [
+      { d: '2026-07-25', t: 'OpenSea records the SeaDrop contract and staged mint for 888 items.' },
+      { d: '2026-07', t: 'The low-cost mint completes and secondary listings begin on Robinhood Chain.' },
+      { d: '2026-08', t: 'An OpenSea search snapshot displays a 0.129 ETH floor.' },
+      { d: '2026-08-09', t: 'The visible OpenSea floor has retraced to about 0.0015 ETH, showing the peak was not durable.' },
+    ],
+    floorMilestones: [
+      { d: '2026-07-25', eth: 0.0025, label: 'Public mint' },
+      { d: '2026-08-01', eth: 0.129, label: 'OpenSea snapshot' },
+      { d: '2026-08-09', eth: null, label: 'Live floor', live: true },
+    ],
+    sources: [
+      ['OpenSea collection record', 'https://opensea.io/collection/robinhood-minis/overview'],
+      ['Contract explorer', 'https://robinhoodchain.blockscout.com/token/0xbbe6cf81e74e6325904295e44a51307ff7b06adc'],
+      ['OpenSea floor methodology', 'https://support.opensea.io/en/articles/10549939-how-do-i-use-the-stats-pages-on-opensea'],
+    ],
+    translations: {
+      id: {
+        statusLabel: 'Pernah >0,1 ETH · kini turun',
+        launchNote: 'Kontrak SeaDrop tercatat di OpenSea pada 25 Jul 2026; mint 888 item selesai melalui tiga tahap',
+        narrative: 'Mint 888 item dengan listing tipis yang sempat menampilkan lonjakan floor besar',
+        standfirst: 'Robinhood Minis sempat menampilkan floor di atas 0,1 ETH lalu turun mendekati harga mint. Kasus ini menunjukkan bagaimana supply kecil dan ask tipis bisa menghasilkan headline besar tanpa demand yang tahan lama.',
+        thesis: 'Pergerakan ini terutama berasal dari kelangkaan dan struktur pasar, bukan utilitas yang terbukti. Saat item yang dijual sedikit, beberapa ask yang dinaikkan dapat menggerakkan floor jauh lebih cepat daripada nilai transaksi riil.',
+        whyItPumped: 'Koleksi ini menggabungkan supply 888 item, mint bertahap yang murah, dan listing aktif yang sangat sedikit. Kondisi itu membuat ask termurah sensitif terhadap penarikan listing dan repricing spekulatif. OpenSea tidak menampilkan situs atau akun sosial proyek, sehingga lonjakan tidak bisa dikaitkan dengan roadmap terverifikasi.',
+        peakFloor: { note: 'Snapshot pencarian OpenSea pada Agu 2026; floor yang ditampilkan kemudian turun tajam' },
+        success: {
+          claim: 'Koleksi ini memenuhi syarat sebagai peristiwa ambang yang terdokumentasi, tetapi bukan keberhasilan tahan lama. Penurunan setelahnya tetap ditampilkan agar floor listing sementara tidak disamakan dengan nilai yang bertahan.',
+          markers: [
+            'Snapshot pencarian OpenSea menampilkan floor 0,129 ETH pada Agu 2026.',
+            'OpenSea mencatat 888 item, sekitar 369 pemilik, dan hanya 29 item terdaftar pada snapshot berikutnya.',
+            'Mint memiliki tahap gratis, 0,002 ETH, dan 0,0025 ETH sehingga basis awalnya sangat rendah.',
+            'Floor OpenSea berikutnya sekitar 0,0015 ETH meski volume kumulatif mendekati 2,20 ETH.',
+          ],
+        },
+        factors: [
+          { label: 'Supply kecil', detail: 'Hanya ada 888 item sehingga sedikit listing dapat menentukan floor yang terlihat.' },
+          { label: 'Basis mint rendah', detail: 'Mint publik sekitar 0,0025 ETH membuat repricing tipis terlihat sangat besar secara persentase.' },
+          { label: 'Listing langka', detail: 'Sedikit ask aktif membuat floor sensitif terhadap penarikan listing dan perubahan harga penjual.' },
+          { label: 'Belum terbukti tahan lama', detail: 'Penurunan besar dan tidak adanya kanal proyek yang jelas tidak mendukung klaim adopsi stabil.' },
+        ],
+        triggers: [
+          { d: '2026-07-25', t: 'OpenSea mencatat kontrak SeaDrop dan mint bertahap untuk 888 item.' },
+          { d: '2026-07', t: 'Mint murah selesai dan perdagangan sekunder dimulai di Robinhood Chain.' },
+          { d: '2026-08', t: 'Snapshot pencarian OpenSea menampilkan floor 0,129 ETH.' },
+          { d: '2026-08-09', t: 'Floor OpenSea turun ke sekitar 0,0015 ETH, menunjukkan puncaknya tidak bertahan.' },
+        ],
+      },
+    },
+  },
+  {
+    id: '8skullz',
+    slug: '8skullz',
+    status: 'confirmed',
+    statusLabel: 'Crossed >0.1 ETH · now retraced',
+    name: '8skullz',
+    short: '8KZ',
+    chain: 'Robinhood Chain',
+    supply: 2999,
+    launch: '2026-07-12',
+    launchNote: 'OpenSea contract creation date; no public SeaDrop mint record is linked',
+    mint: 'No public mint record',
+    creator: '2904df · unverified OpenSea creator',
+    contract: '0xc3c88223d79ab1a664185d55d956d6980fd06e6f',
+    official: 'https://opensea.io/collection/8skullz',
+    officialX: null,
+    marketplace: 'https://opensea.io/collection/8skullz',
+    coingecko: 'https://www.coingecko.com/en/nft/chains/robinhood',
+    logo: '/assets/img/nft/8skullz.jpg',
+    logoFallback: '/assets/img/nft/8skullz.jpg',
+    peakFloor: {
+      eth: 0.4609,
+      label: '0.4609 ETH',
+      at: '2026-07',
+      note: 'Historical OpenSea Robinhood Chain ranking snapshot; the current page later showed a near-total retrace',
+    },
+    narrative: 'A dramatic displayed-floor spike followed by a near-total liquidity reset',
+    standfirst: '8skullz appeared above 0.4 ETH in an OpenSea chain-ranking snapshot, then fell below one-thousandth of that level. The full cycle is more useful than the peak alone.',
+    thesis: 'The evidence supports a temporary listing-floor event, not durable product-market fit. A thin order book and attention around a new chain can move the cheapest ask without proving that buyers repeatedly cleared that level.',
+    whyItPumped: '8skullz launched while Robinhood Chain collections were competing for first-wave visibility. Its skull PFP identity was easy to recognize, but OpenSea links no project site, public social account, or drop record. With relatively few liquid listings, attention and seller repricing could create a sharp displayed-floor move that later reversed.',
+    success: {
+      claim: 'It qualifies under the historical >0.1 ETH screen, but it should be studied as a failed-to-hold breakout rather than a durable success.',
+      markers: [
+        'An OpenSea Robinhood Chain ranking snapshot displayed a 0.4609 ETH floor in Jul 2026.',
+        'The later OpenSea page showed a floor near 0.00015 ETH: a drawdown of more than 99%.',
+        'OpenSea records 2,999 items, roughly 780 owners, 159 listed, and about 13.63 ETH cumulative volume.',
+        'No linked project site, social account, or public drop record was available on the collection page.',
+      ],
+    },
+    factors: [
+      { label: 'New-chain attention', detail: 'Early Robinhood Chain rankings gave emerging collections disproportionate visibility.' },
+      { label: 'Legible PFP identity', detail: 'The skull motif was immediately recognizable in a crowded ranking page.' },
+      { label: 'Thin order book', detail: 'A displayed floor can jump when low asks disappear even when few sales occur near the new level.' },
+      { label: 'No lasting catalyst', detail: 'The later collapse and missing public project surface weaken any durable-success thesis.' },
+    ],
+    triggers: [
+      { d: '2026-07-12', t: 'OpenSea records the 8skullz contract on Robinhood Chain.' },
+      { d: '2026-07', t: 'The collection receives visibility in OpenSea’s new-chain rankings.' },
+      { d: '2026-07', t: 'A ranking snapshot displays a 0.4609 ETH floor.' },
+      { d: '2026-08-09', t: 'The OpenSea page shows a floor near 0.00015 ETH, exposing the lack of durable liquidity.' },
+    ],
+    floorMilestones: [
+      { d: '2026-07-12', eth: null, label: 'Launch' },
+      { d: '2026-07-20', eth: 0.4609, label: 'OpenSea snapshot' },
+      { d: '2026-08-09', eth: null, label: 'Live floor', live: true },
+    ],
+    sources: [
+      ['OpenSea collection record', 'https://opensea.io/collection/8skullz/overview'],
+      ['Contract explorer', 'https://robinhoodchain.blockscout.com/token/0xc3c88223d79ab1a664185d55d956d6980fd06e6f'],
+      ['CoinGecko Robinhood Chain market', 'https://www.coingecko.com/en/nft/chains/robinhood'],
+      ['OpenSea floor methodology', 'https://support.opensea.io/en/articles/10549939-how-do-i-use-the-stats-pages-on-opensea'],
+    ],
+    translations: {
+      id: {
+        statusLabel: 'Pernah >0,1 ETH · kini turun',
+        launchNote: 'Tanggal pembuatan kontrak di OpenSea; tidak ada catatan mint SeaDrop publik yang ditautkan',
+        mint: 'Catatan mint tidak tersedia',
+        narrative: 'Lonjakan floor yang tajam lalu diikuti reset likuiditas hampir total',
+        standfirst: '8skullz sempat tampil di atas 0,4 ETH dalam snapshot peringkat OpenSea, lalu jatuh ke bawah seperseribu level tersebut. Siklus lengkapnya lebih penting daripada puncaknya saja.',
+        thesis: 'Bukti yang tersedia mendukung peristiwa floor listing sementara, bukan product-market fit yang tahan lama. Order book tipis dan perhatian pada chain baru dapat menaikkan ask termurah tanpa membuktikan pembeli berulang kali membayar di level itu.',
+        whyItPumped: '8skullz launch saat koleksi Robinhood Chain bersaing mendapatkan visibilitas gelombang pertama. Identitas PFP tengkoraknya mudah dikenali, tetapi OpenSea tidak menautkan situs, akun sosial, atau catatan drop. Dengan listing likuid yang terbatas, perhatian dan repricing penjual dapat membentuk lonjakan floor yang kemudian berbalik.',
+        peakFloor: { note: 'Snapshot historis peringkat Robinhood Chain di OpenSea; halaman saat ini kemudian menunjukkan penurunan hampir total' },
+        success: {
+          claim: 'Koleksi ini lolos penyaringan historis >0,1 ETH, tetapi lebih tepat dipelajari sebagai breakout yang gagal bertahan daripada keberhasilan tahan lama.',
+          markers: [
+            'Snapshot peringkat Robinhood Chain di OpenSea menampilkan floor 0,4609 ETH pada Jul 2026.',
+            'Halaman OpenSea berikutnya menampilkan floor sekitar 0,00015 ETH, turun lebih dari 99%.',
+            'OpenSea mencatat 2.999 item, sekitar 780 pemilik, 159 item terdaftar, dan volume kumulatif sekitar 13,63 ETH.',
+            'Tidak ada situs proyek, akun sosial, atau catatan drop publik yang ditautkan di halaman koleksi.',
+          ],
+        },
+        factors: [
+          { label: 'Perhatian chain baru', detail: 'Peringkat awal Robinhood Chain memberi koleksi baru visibilitas yang tidak proporsional.' },
+          { label: 'Identitas PFP jelas', detail: 'Motif tengkorak mudah dikenali di halaman peringkat yang padat.' },
+          { label: 'Order book tipis', detail: 'Floor dapat melonjak saat ask rendah hilang walau hanya sedikit transaksi terjadi di level baru.' },
+          { label: 'Tidak ada katalis bertahan', detail: 'Penurunan besar dan minimnya kanal publik proyek melemahkan tesis keberhasilan jangka panjang.' },
+        ],
+        triggers: [
+          { d: '2026-07-12', t: 'OpenSea mencatat kontrak 8skullz di Robinhood Chain.' },
+          { d: '2026-07', t: 'Koleksi mendapat visibilitas di peringkat chain baru OpenSea.' },
+          { d: '2026-07', t: 'Snapshot peringkat menampilkan floor 0,4609 ETH.' },
+          { d: '2026-08-09', t: 'Halaman OpenSea menampilkan floor sekitar 0,00015 ETH dan memperlihatkan likuiditas yang tidak bertahan.' },
+        ],
       },
     },
   },
@@ -189,7 +379,7 @@ export const NFT_2026 = [
       claim: 'It is historically important because it achieved a measurable 2026 ATH and experimented with on-chain evolution, but it does not satisfy this route’s launch-year and ETH-quote rule.',
       markers: [
         'CoinGecko recorded a 5.0 HYPE floor ATH on 30 Jan 2026.',
-        'OpenSea records the collection on HyperEVM with its official contract and creator profile.',
+        'OpenSea records the collection on HyperEVM with its contract and creator profile.',
         'The project used burn rituals to reduce supply and make holder choices affect collection state.',
         'Its large drawdown is shown as part of the history, not hidden behind the peak.',
       ],
@@ -212,7 +402,7 @@ export const NFT_2026 = [
       { d: '2026-08-09', eth: null, label: 'Live floor', live: true },
     ],
     sources: [
-      ['Official X · Mancers', 'https://x.com/Mancers_hl'],
+      ['X · Mancers', 'https://x.com/Mancers_hl'],
       ['OpenSea collection record', 'https://opensea.io/collection/mancers-hyperevm'],
       ['Contract explorer', 'https://hyperevmscan.io/address/0x64550c0f6bf961628ee395ec9d2348f03a2a92f4'],
       ['CoinGecko floor history', 'https://www.coingecko.com/en/nft/mancers-hyperevm'],
@@ -237,11 +427,20 @@ export const NFT_2026_BY_SLUG = Object.fromEntries(NFT_2026.flatMap((item) => [
 ]));
 
 export const SCREENED_OUT = [
-  { name: 'Gremlin Cartel', chain: 'Robinhood Chain', floor: '0.0228 ETH', note: 'Strong activity, but no public record above the line at the cutoff', url: 'https://opensea.io/collection/gremlin-cartel' },
-  { name: 'OnChainHoodies', chain: 'Robinhood Chain', floor: '0.0319 ETH', note: 'Rose from a low mint but remained below 0.1 ETH', url: 'https://www.forbes.com/digital-assets/nfts/onchainhoodies-onchainhoodies/' },
-  { name: 'Robinhood Pengs', chain: 'Robinhood Chain', floor: '0.00018 ETH', note: 'Public floor stayed far below the threshold', url: 'https://www.coingecko.com/en/nft/robinhood-pengs' },
+  { name: 'Gremlin Cartel', chain: 'Robinhood Chain', floor: '0.027 ETH', note: 'Strong activity, but no sourced record above the line at the cutoff', noteId: 'Aktivitas kuat, tetapi tidak ada catatan bersumber di atas batas saat cutoff', url: 'https://opensea.io/collection/gremlin-cartel' },
+  { name: 'OnChainHoodies', chain: 'Robinhood Chain', floor: '0.041 ETH', note: 'Rose from a low mint but remained below 0.1 ETH', noteId: 'Naik dari mint rendah tetapi tetap di bawah 0,1 ETH', url: 'https://opensea.io/collection/onchainhoodies' },
+  { name: 'Robinhood Pengs', chain: 'Robinhood Chain', floor: '0.00018 ETH', note: 'Public floor stayed far below the threshold', noteId: 'Floor publik tetap jauh di bawah ambang', url: 'https://www.coingecko.com/en/nft/robinhood-pengs' },
 ];
 
 export function localizeNft2026(item, locale = 'en') {
-  return locale === 'id' ? { ...item, ...(item.translations?.id || {}) } : item;
+  if (locale !== 'id') return item;
+  const translation = item.translations?.id || {};
+  return {
+    ...item,
+    ...translation,
+    peakFloor: { ...item.peakFloor, ...(translation.peakFloor || {}) },
+    success: { ...item.success, ...(translation.success || {}) },
+    factors: translation.factors || item.factors,
+    triggers: translation.triggers || item.triggers,
+  };
 }

@@ -164,8 +164,8 @@ Use a four-point scale through named tokens only:
 - The overview category total comes from CoinGecko’s `meme-token` category.
   When that category is unavailable, the interface says “tracked basket” and
   never presents the partial sum as the total category.
-- Map provenance uses one short source label and an external-link arrow. It does
-  not repeat field descriptions already explained by the data-boundary note.
+- Map provenance uses one short source label and its locally stored brand mark.
+  It does not repeat field descriptions already explained by the data-boundary note.
 - Background polling updates changed market sections only. Historical routes and
   first-launch evidence use longer server caches, and below-fold dossier
   sections use `content-visibility`.
@@ -180,12 +180,27 @@ Use a four-point scale through named tokens only:
   work without moving page content.
 - Active navigation uses the existing blue signal and an inset rule. Inactive
   routes remain neutral; the panel is navigation, not a decorative accent block.
-- Official source marks are stored locally and shown beside source names. A
+- Source marks are stored locally and shown beside source names. A
   logo never replaces the readable company or project label.
 - Below-fold hourly candles activate near the viewport. Failed background
   refreshes back off instead of producing a ten-second error loop.
 - Detail routes require only the CoinGecko id. Symbols enrich chart labels and
   Yahoo mapping when present, but a missing symbol no longer breaks the page.
+
+## Bilingual market-tape extension
+
+- The EN/ID control uses two speech bubbles on an orbit rather than a generic
+  globe. It updates static copy and data-rendered copy in place and persists the
+  reader's choice locally.
+- The home market tape contains BTC, ETH, SOL, HYPE, and ZEC. CoinGecko is the
+  primary price source and Yahoo Finance fills only a missing asset; a silent
+  ten-second refresh never introduces a manual refresh control.
+- The repeated tape moves left to right, pauses on hover, and becomes static
+  when reduced motion is requested.
+- Source links show a local brand mark plus a short readable name. External-link
+  arrows and the word “Official” are intentionally omitted from link chrome.
+- The light theme is a cool paper surface, while dark remains graphite-blue.
+  Theme changes use a short document transition when the browser supports it.
 
 ## Exports
 

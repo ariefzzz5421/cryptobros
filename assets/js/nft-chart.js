@@ -8,6 +8,7 @@
 
 import { el } from './utils.js';
 import { fmtEth, fmtMonth } from './nft-data.js';
+import { getLocale, localeTag } from './i18n.js';
 
 const ROW = 34;
 const PAD_TOP = 12;
@@ -25,6 +26,28 @@ const svgEl = (tag, attrs = {}) => {
 };
 
 export function renderFloorChart(holder, milestones, { liveFloor = null, currency = 'ETH' } = {}) {
+  const id = getLocale() === 'id';
+  const chartCopy = id ? {
+    empty: 'Belum ada nilai floor bersumber untuk koleksi ini.',
+    aria: `Tonggak floor bersumber dalam ${currency}`,
+    axis: 'Skala logaritmik · hanya titik bersumber, tanpa interpolasi',
+    caption: 'Harga mint, puncak dan titik rendah terdokumentasi, serta floor langsung. Jarak antartitik disengaja: tidak ada nilai yang diperkirakan di antara observasi bersumber.',
+  } : {
+    empty: 'No sourced floor value is available for this collection yet.',
+    aria: `Sourced floor-price milestones in ${currency}`,
+    axis: 'Logarithmic scale · sourced points only, no interpolation',
+    caption: 'Mint price, documented peaks and lows, and the live floor. Gaps between marks are deliberate: no value is estimated between sourced observations.',
+  };
+  const milestoneLabel = (label) => id ? ({
+    'Public mint': 'Mint publik',
+    'Free mint': 'Mint gratis',
+    'OpenSea snapshot': 'Snapshot OpenSea',
+    'Public snapshot': 'Snapshot publik',
+    'Live floor': 'Floor langsung',
+    'Launch': 'Peluncuran',
+    'ATH': 'ATH',
+    'Mint': 'Mint',
+  }[label] || label) : label;
   const points = milestones
     .map((point) => ({
       ...point,
@@ -35,7 +58,7 @@ export function renderFloorChart(holder, milestones, { liveFloor = null, currenc
   holder.replaceChildren();
   if (!points.length) {
     holder.append(el('p', { class: 'doc-note' },
-      'No sourced floor value is available for this collection yet.'));
+      chartCopy.empty));
     return;
   }
 
@@ -52,7 +75,7 @@ export function renderFloorChart(holder, milestones, { liveFloor = null, currenc
   const svg = svgEl('svg', {
     viewBox: `0 0 ${width} ${height}`,
     role: 'img',
-    'aria-label': `Sourced floor-price milestones in ${currency}`,
+    'aria-label': chartCopy.aria,
     preserveAspectRatio: 'xMinYMin meet',
   });
 
@@ -64,13 +87,13 @@ export function renderFloorChart(holder, milestones, { liveFloor = null, currenc
     const label = svgEl('text', {
       x: 0, y: barY + 11, fill: 'var(--muted)', 'font-size': '11.5',
     });
-    label.textContent = fmtMonth(point.d);
+    label.textContent = fmtMonth(point.d, localeTag());
     svg.append(label);
 
     const sub = svgEl('text', {
       x: 0, y: barY + 24, fill: 'var(--muted)', 'font-size': '10', opacity: '.8',
     });
-    sub.textContent = point.label;
+    sub.textContent = milestoneLabel(point.label);
     svg.append(sub);
 
     svg.append(svgEl('rect', {
@@ -83,19 +106,18 @@ export function renderFloorChart(holder, milestones, { liveFloor = null, currenc
       x: LABEL_W + scale(point.eth) + 8, y: barY + 12,
       fill: 'var(--ink)', 'font-size': '12',
     });
-    value.textContent = fmtEth(point.eth, point.eth < 1 ? 3 : 1);
+    value.textContent = fmtEth(point.eth, point.eth < 1 ? 3 : 1, localeTag());
     svg.append(value);
   });
 
   const axis = svgEl('text', {
     x: LABEL_W, y: height - 8, fill: 'var(--muted)', 'font-size': '10.5',
   });
-  axis.textContent = 'Logarithmic scale · sourced points only, no interpolation';
+  axis.textContent = chartCopy.axis;
   svg.append(axis);
 
   const figure = el('figure', { class: 'floor-chart' });
   figure.append(svg);
-  figure.append(el('figcaption', {},
-    'Mint price, documented peaks and lows, and the live floor. Gaps between marks are deliberate: no value is estimated between sourced observations.'));
+  figure.append(el('figcaption', {}, chartCopy.caption));
   holder.append(figure);
 }

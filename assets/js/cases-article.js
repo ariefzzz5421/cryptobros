@@ -44,7 +44,7 @@ function renderSummary() {
   const parts = [`Launch: ${fmtDate(Date.parse(caseDef.launch))} (${caseDef.launchNote}).`];
   if (Number.isFinite(athPrice) && Number.isFinite(athTimestamp)) {
     parts.push(`ATH: ${fmtPrice(athPrice)} on ${fmtDate(athTimestamp)}.`);
-    parts.push(`Launch → ATH: ${fmtDuration(days)}.`);
+    parts.push(`Launch to ATH: ${fmtDuration(days)}.`);
   }
   $('articleSummary').textContent = parts.join(' ');
 }
@@ -166,9 +166,9 @@ function renderIdentityAndSources() {
   );
 
   const definitions = [
-    { label: 'Official X', url: caseDef.officialX, note: new URL(caseDef.officialX).pathname },
+    { label: 'X', url: caseDef.officialX, note: new URL(caseDef.officialX).pathname },
     {
-      label: 'Official site',
+      label: 'Site',
       url: caseDef.officialSite,
       note: new URL(caseDef.officialSite).hostname,
       logo: caseDef.logo,

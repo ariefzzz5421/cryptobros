@@ -28,7 +28,7 @@ function card(item, live) {
   const logo = el('img', {
     class: 'nft-card-logo',
     src: live?.image || item.logo,
-    alt: `${item.name} official logo`,
+    alt: `${item.name} collection logo`,
     width: 52,
     height: 52,
     loading: 'lazy',
@@ -104,7 +104,7 @@ function renderUpdates() {
     el('time', { datetime: update.d }, fmtResearchDate(update.d)),
     el('p', {},
       `${update.t} `,
-      el('a', { href: update.url, target: '_blank', rel: 'noreferrer' }, `${update.label} →`),
+      el('a', { href: update.url, target: '_blank', rel: 'noreferrer' }, update.label),
     ),
   )));
 }

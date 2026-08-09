@@ -199,9 +199,9 @@ function render() {
   );
   const officialHost = curated?.officialSite ? new URL(curated.officialSite).hostname : '';
   const curatedSources = curated ? [
-    { label: 'Official X', url: curated.officialX, note: new URL(curated.officialX).pathname },
+    { label: 'X', url: curated.officialX, note: new URL(curated.officialX).pathname },
     {
-      label: 'Official site',
+      label: 'Site',
       url: curated.officialSite,
       note: new URL(curated.officialSite).hostname,
       logo: curated.logo,

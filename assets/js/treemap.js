@@ -12,12 +12,18 @@ import {
 } from './utils.js';
 import { positionTip } from './hours.js';
 import { escapeHtml } from './worldmap.js';
+import { getLocale } from './i18n.js';
 
 export const CHANGE_FIELDS = {
   '1h': { key: 'ch1h', label: '1 hour', cap: 8 },
   '24h': { key: 'ch24h', label: '24 hours', cap: 20 },
   '7d': { key: 'ch7d', label: '7 days', cap: 40 },
 };
+
+const isId = () => getLocale() === 'id';
+const periodLabel = (field) => isId()
+  ? ({ '1 hour': '1 jam', '24 hours': '24 jam', '7 days': '7 hari' }[field.label] || field.label)
+  : field.label;
 
 export function renderTreemap(container, coins, {
   tooltip, changeField = '24h', limit = 40, onSelect,
@@ -34,7 +40,7 @@ export function renderTreemap(container, coins, {
     .map((c) => ({ value: c.vol, coin: c }));
 
   if (!items.length) {
-    container.append(el('p', { class: 'note' }, 'Memecoin volume data is unavailable.'));
+    container.append(el('p', { class: 'note' }, isId() ? 'Data volume memecoin tidak tersedia.' : 'Memecoin volume data is unavailable.'));
     return;
   }
 
@@ -58,14 +64,16 @@ export function renderTreemap(container, coins, {
       },
       tabindex: '0',
       role: 'listitem',
-      'aria-label': `${c.name}, volume ${fmtUsd(c.vol)}, ${field.label} change ${fmtPct(pct)}`,
+      'aria-label': isId()
+        ? `${c.name}, volume ${fmtUsd(c.vol)}, perubahan ${periodLabel(field)} ${fmtPct(pct)}`
+        : `${c.name}, volume ${fmtUsd(c.vol)}, ${field.label} change ${fmtPct(pct)}`,
     });
 
     const big = t.w > 78 && t.h > 52;
     const mid = t.w > 52 && t.h > 34;
 
     if (big) {
-      node.append(
+      node.append(...[
         image ? el('img', {
           class: 'tile-logo',
           src: image,
@@ -78,9 +86,9 @@ export function renderTreemap(container, coins, {
         el('span', { class: 'tile-sym' }, c.sym),
         el('span', { class: 'tile-pct' }, fmtPct(pct, 1)),
         el('span', { class: 'tile-vol' }, fmtUsd(c.vol, 1)),
-      );
+      ].filter(Boolean));
     } else if (mid) {
-      node.append(
+      node.append(...[
         image && t.w > 66 && t.h > 42 ? el('img', {
           class: 'tile-logo sm',
           src: image,
@@ -92,7 +100,7 @@ export function renderTreemap(container, coins, {
         }) : null,
         el('span', { class: 'tile-sym sm' }, c.sym),
         el('span', { class: 'tile-pct sm' }, fmtPct(pct, 0)),
-      );
+      ].filter(Boolean));
     } else if (t.w > 26 && t.h > 16) {
       node.append(el('span', { class: 'tile-sym xs' }, c.sym));
     }
@@ -108,14 +116,14 @@ export function renderTreemap(container, coins, {
           <span class="tip-rank">${escapeHtml(c.sym)}</span>
         </div>
         <dl class="tip-grid">
-          <dt>Price</dt><dd class="num">${fmtPrice(c.price)}</dd>
-          <dt>24h volume</dt><dd class="num">${fmtUsd(c.vol)}</dd>
-          <dt>Basket share</dt><dd class="num">${(share * 100).toFixed(2)}%</dd>
-          <dt>Market cap</dt><dd class="num">${fmtUsd(c.mcap)}</dd>
+          <dt>${isId() ? 'Harga' : 'Price'}</dt><dd class="num">${fmtPrice(c.price)}</dd>
+          <dt>${isId() ? 'Volume 24 jam' : '24h volume'}</dt><dd class="num">${fmtUsd(c.vol)}</dd>
+          <dt>${isId() ? 'Pangsa keranjang' : 'Basket share'}</dt><dd class="num">${(share * 100).toFixed(2)}%</dd>
+          <dt>${isId() ? 'Kapitalisasi pasar' : 'Market cap'}</dt><dd class="num">${fmtUsd(c.mcap)}</dd>
           <dt>Vol / Kap</dt><dd class="num">${c.mcap ? (c.vol / c.mcap).toFixed(3) : '—'}</dd>
-          <dt>1h change</dt><dd class="num ${sign(c.ch1h)}">${fmtPct(c.ch1h)}</dd>
-          <dt>24h change</dt><dd class="num ${sign(c.ch24h)}">${fmtPct(c.ch24h)}</dd>
-          <dt>7d change</dt><dd class="num ${sign(c.ch7d)}">${fmtPct(c.ch7d)}</dd>
+          <dt>${isId() ? 'Perubahan 1 jam' : '1h change'}</dt><dd class="num ${sign(c.ch1h)}">${fmtPct(c.ch1h)}</dd>
+          <dt>${isId() ? 'Perubahan 24 jam' : '24h change'}</dt><dd class="num ${sign(c.ch24h)}">${fmtPct(c.ch24h)}</dd>
+          <dt>${isId() ? 'Perubahan 7 hari' : '7d change'}</dt><dd class="num ${sign(c.ch7d)}">${fmtPct(c.ch7d)}</dd>
         </dl>`;
       tooltip.hidden = false;
       positionTip(tooltip, container, evt);
@@ -144,11 +152,11 @@ export function renderDivLegend(container, changeField = '24h') {
   for (const c of PALETTE.divUp) bar.append(el('span', { style: { background: c } }));
 
   container.append(
-    el('span', { class: 'legend-title' }, `${field.label} change`),
+    el('span', { class: 'legend-title' }, isId() ? `Perubahan ${periodLabel(field)}` : `${field.label} change`),
     el('span', { class: 'legend-end' }, `≤ −${field.cap}%`),
     bar,
     el('span', { class: 'legend-end' }, `≥ +${field.cap}%`),
-    el('span', { class: 'legend-note' }, 'blue = up · red = down'),
+    el('span', { class: 'legend-note' }, isId() ? 'biru = naik · merah = turun' : 'blue = up · red = down'),
   );
 }
 
@@ -160,14 +168,14 @@ export function renderCoinTable(container, coins, limit = 40) {
   const total = rows.reduce((s, c) => s + c.vol, 0);
 
   const table = el('table', { class: 'data-table' });
-  table.append(el('caption', {}, `Top ${rows.length} memecoins by 24h volume`));
+  table.append(el('caption', {}, isId() ? `${rows.length} memecoin teratas berdasarkan volume 24 jam` : `Top ${rows.length} memecoins by 24h volume`));
   const thead = el('thead', {}, el('tr', {},
     el('th', { scope: 'col' }, '#'),
-    el('th', { scope: 'col' }, 'Coin'),
-    el('th', { scope: 'col', class: 'r' }, 'Price'),
-    el('th', { scope: 'col', class: 'r' }, '24h volume'),
-    el('th', { scope: 'col', class: 'r' }, 'Share'),
-    el('th', { scope: 'col', class: 'r' }, 'Market cap'),
+    el('th', { scope: 'col' }, isId() ? 'Koin' : 'Coin'),
+    el('th', { scope: 'col', class: 'r' }, isId() ? 'Harga' : 'Price'),
+    el('th', { scope: 'col', class: 'r' }, isId() ? 'Volume 24 jam' : '24h volume'),
+    el('th', { scope: 'col', class: 'r' }, isId() ? 'Pangsa' : 'Share'),
+    el('th', { scope: 'col', class: 'r' }, isId() ? 'Kapitalisasi pasar' : 'Market cap'),
     el('th', { scope: 'col', class: 'r' }, '1h'),
     el('th', { scope: 'col', class: 'r' }, '24h'),
     el('th', { scope: 'col', class: 'r' }, '7d'),
