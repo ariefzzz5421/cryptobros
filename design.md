@@ -79,8 +79,8 @@ Use a four-point scale through named tokens only:
 
 - Primary: compact blue rectangular control with a 10px radius.
 - Secondary: transparent control with one-pixel rule.
-- Copy is literal and short in both languages: “Read research” / “Baca riset”,
-  “View source” / “Lihat sumber”, and “Reset”.
+- Copy is English-only, literal, and short: “Read research”, “View source”,
+  and “Reset”.
 
 ## Per-page allowances
 
@@ -101,26 +101,21 @@ Use a four-point scale through named tokens only:
 - Article chart height.
 - Which live metric receives the accent.
 
-## Crypto Bros identity, navigation, and language
+## Crypto Bros identity and navigation
 
 - The user-supplied `Crypto Bros.png` is the canonical brand artwork. A locally
   optimised crop is the header mark and favicon; the full source stays in the
   repository for high-resolution use.
 - The visible product name is **Crypto Bros** on every route. “Memecoin
   Heatmap” is a feature or route label, never the company identity.
-- The desktop header contains the brand at left and three controls at right:
-  language, theme, and a three-line navigation button. The navigation button
+- The desktop header contains the brand at left and two controls at right:
+  theme and a three-line navigation button. The navigation button
   never includes the word “Menu”.
 - The menu opens a viewport drawer/mega-panel organised into Market and
   Research columns. It is keyboard reachable, closes with Escape/backdrop/route
   selection, traps no content, and restores focus to the launcher.
-- EN and ID are equal product languages. The language control uses a globe
-  icon plus the active two-letter code. Shared navigation, controls, status
-  text, research summaries, article headings, and 2026 dossiers translate
-  locally without sending reading behaviour to a third-party translator.
-- English is the default and Indonesian is persisted in local storage. Missing
-  translated dynamic market values keep their number and translate only the
-  surrounding label; research claims are never machine-invented at runtime.
+- English is the sole product language. No translator control is mounted, and
+  stale language preferences are cleared so every route stays consistent.
 
 ## 2026 extension: themes, identity, and source imagery
 
@@ -128,14 +123,15 @@ Use a four-point scale through named tokens only:
 - The supplied neon Crypto Bros duo and Bitcoin mark is the product identity.
 - Official chain marks identify a network in dense tables. Country flags identify jurisdictions in rankings and tables. Neither is decorative background imagery.
 - Source panels use the existing border, radius, and type tokens. External links name both the source and the field it supports.
-- The 2026 index uses short event previews with crossing date, documented peak, and launch date. Creator attribution, contract, current snapshot, article, chart, and direct sources live on one routed dossier per token.
+- The 2026 index uses short evidence previews with launch, crossing, documented market-cap peak, sourced price ATH/date, and calendar days from launch to price ATH. Creator attribution, contract, current snapshot, article, chart, and direct sources live on one routed dossier per token.
 - Light/dark switching redraws canvas and SVG data visualizations with refreshed CSS-token values.
 
 ## Compact evidence-ledger extension
 
 - The 2026 route is a two-column preview ledger on wide screens and a
   single-column ledger on narrow screens. Each preview leads with the token and
-  network, then gives only launch, crossing, and documented peak.
+  network, then gives launch, crossing, documented market-cap peak, price ATH/date,
+  and calendar days to ATH.
 - Each 2026 token has a routed research dossier with a static article-first
   render. Current data enriches in place and the historical chart loads after
   the article so a slow provider never blocks the research.
@@ -187,16 +183,19 @@ Use a four-point scale through named tokens only:
 - Detail routes require only the CoinGecko id. Symbols enrich chart labels and
   Yahoo mapping when present, but a missing symbol no longer breaks the page.
 
-## Bilingual market-tape extension
+## Market-tape and ATH evidence extension
 
-- The EN/ID control uses two speech bubbles on an orbit rather than a generic
-  globe. It updates static copy and data-rendered copy in place and persists the
-  reader's choice locally.
 - The home market tape contains BTC, ETH, SOL, HYPE, and ZEC. CoinGecko is the
-  primary price source and Yahoo Finance fills only a missing asset; a silent
+  primary price source. HYPE falls back only to Hyperliquid's official spot API;
+  validated Yahoo Finance identities fill other missing assets. A silent
   ten-second refresh never introduces a manual refresh control.
-- The repeated tape moves left to right, pauses on hover, and becomes static
+- The repeated tape moves left to right without pausing on hover and becomes static
   when reduced motion is requested.
+- Price ATH values and dates come from the live CoinGecko market record. Days
+  from launch to ATH are UTC calendar-day differences, never estimates.
+- Exact launch price and valuation appear only when a public first-15-minute
+  candle resolves for the contract-matched DEX pair. Otherwise the UI labels
+  the earliest provider row as “First public” and does not call it launch data.
 - Source links show a local brand mark plus a short readable name. External-link
   arrows and the word “Official” are intentionally omitted from link chrome.
 - The light theme is a cool paper surface, while dark remains graphite-blue.

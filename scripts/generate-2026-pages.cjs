@@ -324,6 +324,7 @@ function template(item) {
       <div class="is-emphasis"><span>$100M crossing</span><strong class="num">${date(item.crossedAt)}</strong></div>
       <div><span>Documented peak</span><strong class="num">${item.peak}</strong></div>
     </div>
+    <div class="doc-meta doc-meta-ath" id="athSnapshot" aria-live="polite"><div><span>Price ATH</span><strong>Checking…</strong></div><div><span>Launch → ATH</span><strong>Checking…</strong></div></div>
     <div class="doc-meta" id="liveSnapshot" aria-live="polite"><div><span>Current snapshot</span><strong>Checking…</strong></div></div>
   </header>
 
@@ -388,7 +389,7 @@ function template(item) {
 
   <p class="risk-line">⚠ A historical $100M market cap is not a liquidity guarantee or a repeatable trade setup. Avoid leverage and predefine a small position size.</p>
 </main>
-<footer class="site-foot wrap"><p>Research cutoff: 9 Aug 2026 · live snapshots: CoinGecko · <span id="updatedAt">—</span></p></footer>
+<footer class="site-foot wrap"><p>Research cutoff: 11 Aug 2026 · live snapshots: CoinGecko · <span id="updatedAt">—</span></p></footer>
 <script type="module" src="/assets/js/theme.js"></script>
 <script type="module" src="/assets/js/memecoin-2026-detail.js"></script>
 </body>

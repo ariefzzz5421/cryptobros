@@ -20,7 +20,7 @@ const fmtDate = (value) => new Intl.DateTimeFormat('en-US', {
   day: '2-digit',
   year: 'numeric',
   timeZone: 'UTC',
-}).format(new Date(`${value}T00:00:00Z`));
+}).format(new Date(/^\d{4}-\d{2}-\d{2}$/.test(value) ? `${value}T00:00:00Z` : value));
 
 async function fetchRecords() {
   const response = await fetch('/api/market/?resource=meme2026', {
@@ -38,6 +38,24 @@ function renderCurrent(data) {
   eventRecord = record;
 
   if (record.current?.image) $('eventLogo').src = record.current.image;
+  const ath = record.priceAth;
+  const athSnapshot = $('athSnapshot');
+  if (athSnapshot) {
+    athSnapshot.replaceChildren(
+      el('div', {},
+        el('span', {}, 'Price ATH'),
+        el('strong', { class: 'num' }, ath ? fmtPrice(ath.price) : 'Unavailable'),
+        ath?.at ? el('small', {}, fmtDate(ath.at)) : null,
+      ),
+      el('div', { class: 'is-emphasis' },
+        el('span', {}, 'Launch → ATH'),
+        el('strong', { class: 'num' }, Number.isFinite(ath?.daysFromLaunch)
+          ? `${ath.daysFromLaunch} days`
+          : 'Unavailable'),
+        el('small', {}, ath ? 'UTC calendar days · CoinGecko' : 'No sourced ATH date'),
+      ),
+    );
+  }
   const live = $('liveSnapshot');
   if (record.current) {
     live.replaceChildren(

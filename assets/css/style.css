@@ -1,5 +1,5 @@
 @import url("./tokens.css");
-/* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V4 · genre: modern-minimal · theme: graphite-blue / cool paper · macrostructure: bilingual market tape + evidence dossiers · shell: compact header drawer · enrichment: sourced logos + honest market data · design-system: design.md · nav: N11 · footer: Ft2 · slop/contrast/honesty/chrome/tokens/responsive/mobile/icons: pass */
+/* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V4 · genre: modern-minimal · theme: graphite-blue / cool paper · macrostructure: ATH evidence ledger + dossiers · shell: compact header drawer · enrichment: sourced logos + honest market data · design-system: design.md · nav: N11 · footer: Ft2 · slop/contrast/honesty/chrome/tokens/responsive/mobile/icons: pass */
 @font-face { font-family: "Geist"; src: url("/assets/fonts/geist-400.ttf") format("truetype"); font-style: normal; font-weight: 400; font-display: swap; }
 @font-face { font-family: "Geist"; src: url("/assets/fonts/geist-500.ttf") format("truetype"); font-style: normal; font-weight: 500; font-display: swap; }
 @font-face { font-family: "Geist"; src: url("/assets/fonts/geist-600.ttf") format("truetype"); font-style: normal; font-weight: 600; font-display: swap; }
@@ -1192,6 +1192,13 @@ body {
   font-size: 10px;
   font-weight: 650;
 }
+.history-marker-name {
+  fill: var(--muted);
+  font-size: 9px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+.history-marker-value { fill: var(--ink); }
 .milestone-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1748,7 +1755,7 @@ body {
 .chart-selection span { color: var(--seq-hi); }
 .chart-milestones {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 1px;
   border-top: 1px solid var(--border);
   background: var(--border-2);
@@ -2025,7 +2032,7 @@ body {
 .breakout-preview-facts {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 1px;
   overflow: hidden;
   border: 1px solid var(--border-2);
@@ -2038,7 +2045,8 @@ body {
   background: var(--plane);
 }
 .breakout-preview-facts span,
-.breakout-preview-facts strong { display: block; }
+.breakout-preview-facts strong,
+.breakout-preview-facts small { display: block; }
 .breakout-preview-facts span {
   color: var(--muted);
   font-size: 9px;
@@ -2049,6 +2057,12 @@ body {
   margin-top: 2px;
   overflow-wrap: anywhere;
   font-size: 13px;
+}
+.breakout-preview-facts small {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.35;
 }
 
 .breakout-preview-cta {
@@ -2326,7 +2340,8 @@ body {
   .brand-mark { width: 40px; height: 40px; }
   .brand-sub { display: none; }
   .breakout-preview-card { grid-template-columns: minmax(0, 1fr); }
-  .breakout-preview-facts,
+  .breakout-preview-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .breakout-preview-facts > div:last-child { grid-column: 1 / -1; }
   .event-key-facts,
   .event-timeline-fallback { grid-template-columns: minmax(0, 1fr); }
   .event-identity { align-items: flex-start; }
@@ -2595,26 +2610,6 @@ body { padding-inline-start: 0; }
   border-top: 0;
 }
 
-.language-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  min-width: 58px;
-  height: 44px;
-  padding: 0 var(--space-2);
-  color: var(--ink-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  cursor: pointer;
-  transition: color var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
-}
-.language-toggle svg { width: 17px; height: 17px; }
-.language-code { font: 600 11px/1 var(--font-mono); letter-spacing: .06em; }
-.language-toggle:hover { color: var(--ink); border-color: var(--ink-20); background: var(--surface-hover); }
-.language-toggle:active { transform: translateY(1px); }
-.language-toggle:disabled,
 .nav-launcher:disabled { opacity: .55; cursor: not-allowed; }
 
 /* ---- launcher ----
@@ -2824,8 +2819,6 @@ body[data-nav-open] { overflow: hidden; }
   .brand h1 { font-size: 14px; white-space: nowrap; }
   .brand-mark { width: 40px; height: 40px; }
   .head-actions { gap: var(--space-2); }
-  .language-toggle { min-width: 44px; width: 44px; padding: 0; }
-  .language-code { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   .theme-toggle, .nav-launcher { width: 40px; height: 40px; }
   .primary-nav {
     right: 10px;
@@ -2951,7 +2944,9 @@ body[data-nav-open] { overflow: hidden; }
 }
 .doc-meta span { color: var(--muted); font-size: 11px; letter-spacing: .05em; text-transform: uppercase; }
 .doc-meta strong { color: var(--ink); font-size: 15px; }
+.doc-meta small { color: var(--muted); font-size: 10px; line-height: 1.35; }
 .doc-meta .is-emphasis { border-color: var(--accent-28); background: var(--accent-14); }
+.doc-meta-ath { margin-top: calc(var(--space-2) * -0.25); }
 
 .doc-flags {
   display: flex;
@@ -3288,7 +3283,6 @@ body {
 .market-tape[data-state="partial"] .market-tape-track {
   animation: market-tape-right 34s linear infinite;
 }
-.market-tape:hover .market-tape-track { animation-play-state: paused; }
 .market-tape-group { display: inline-flex; align-items: center; flex: none; }
 .market-tape-item {
   display: inline-flex;
@@ -3332,7 +3326,6 @@ body {
 @keyframes market-tape-right { from { transform: translateX(-50%); } to { transform: translateX(0); } }
 @keyframes tape-skeleton { to { background-position: -200% 0; } }
 
-.language-toggle,
 .theme-toggle {
   position: relative;
   overflow: hidden;
@@ -3343,25 +3336,6 @@ body {
     linear-gradient(135deg, var(--accent-28), var(--border)) border-box;
   box-shadow: 0 8px 24px -20px var(--seq-mid);
 }
-.language-toggle { min-width: 66px; }
-.translation-orbit { width: 22px !important; height: 22px !important; overflow: visible; }
-.translation-orbit-ring,
-.translation-bubble,
-.translation-glyph {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.45;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.translation-orbit-ring { color: var(--seq-mid); stroke-dasharray: 8 4; }
-.translation-bubble-b { color: var(--seq-hi); }
-.translation-glyph { stroke-width: 1.2; }
-.language-toggle:hover .translation-orbit-ring { animation: translation-orbit 1.6s linear infinite; transform-origin: center; }
-.language-toggle.is-switching .translation-bubble-a { animation: bubble-swap-a 480ms var(--ease-out); }
-.language-toggle.is-switching .translation-bubble-b { animation: bubble-swap-b 480ms var(--ease-out); }
-.language-toggle.is-switching .language-code { animation: language-code-flip 480ms var(--ease-out); }
-
 .theme-toggle { width: 44px; height: 44px; }
 .theme-glyph { width: 20px; height: 20px; overflow: visible; }
 .theme-glyph-sun,
@@ -3395,11 +3369,6 @@ body {
   animation: interaction-ripple 520ms var(--ease-out) forwards;
 }
 @keyframes interaction-ripple { to { transform: scale(24); opacity: 0; } }
-@keyframes translation-orbit { to { transform: rotate(1turn); } }
-@keyframes bubble-swap-a { 50% { transform: translate(5px, 4px); opacity: .35; } }
-@keyframes bubble-swap-b { 50% { transform: translate(-5px, -4px); opacity: .35; } }
-@keyframes language-code-flip { 50% { transform: translateY(-4px); opacity: 0; } }
-
 /* Source marks carry identity; labels stay short and literal. */
 .source-link,
 .source-link.source-only.is-branded-source { grid-template-columns: 34px minmax(0, 1fr); }
@@ -3476,16 +3445,12 @@ body {
 .nft-read-link:active,
 .source-button:active { opacity: .72; }
 .theme-toggle:disabled,
-.language-toggle:disabled,
 .source-link[aria-disabled="true"],
 .source-button[aria-disabled="true"] { opacity: .55; cursor: not-allowed; }
 
 @media (prefers-reduced-motion: reduce) {
   .market-tape-track,
   .market-tape-skeleton,
-  .translation-orbit-ring,
-  .translation-bubble,
-  .language-code,
   .interaction-ripple { animation: none !important; }
   ::view-transition-old(root),
   ::view-transition-new(root) { animation-duration: 1ms; }

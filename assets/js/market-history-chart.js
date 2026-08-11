@@ -41,7 +41,7 @@ function markerRows(payload, mode) {
   const milestones = payload.milestones || {};
   const rows = [
     milestones.launch && { ...milestones.launch, label: 'Launch', kind: 'launch' },
-    milestones.first && { ...milestones.first, label: 'First tracked', kind: 'first' },
+    milestones.first && { ...milestones.first, label: 'First public', kind: 'first' },
     milestones.day7 && { ...milestones.day7, label: 'Day 7', kind: 'minor' },
     milestones.day30 && { ...milestones.day30, label: 'Day 30', kind: 'minor' },
   ];
@@ -129,6 +129,7 @@ export function renderMarketHistoryChart(holder, payload, options = {}) {
       live.replaceChildren(el('span', {}, 'Use the sourced event timeline below.'));
       milestoneStrip.replaceChildren(...[
         ['Launch', payload.milestones?.launch],
+        ['First public', payload.milestones?.first],
         ['Day 7', payload.milestones?.day7],
         ['Day 30', payload.milestones?.day30],
         [
@@ -244,28 +245,38 @@ export function renderMarketHistoryChart(holder, payload, options = {}) {
       const point = svgNode(marker.kind === 'peak' ? 'rect' : 'circle', marker.kind === 'peak'
         ? { x: cx - 4, y: cy - 4, width: 8, height: 8, rx: 1, class: 'history-marker is-peak' }
         : { cx, cy, r: marker.kind === 'minor' ? 3 : 5, class: `history-marker is-${marker.kind}` });
+      const pointTitle = svgNode('title');
+      pointTitle.textContent = `${marker.label}: ${hasValue ? formatter(value) : 'unavailable'} · ${fmtDate(marker.t)}`;
+      point.append(pointTitle);
       root.append(point);
 
       if (!labelled.includes(marker)) return;
       const index = labelled.indexOf(marker);
-      const labelY = 18 + index * 24;
-      const labelX = Math.min(Math.max(cx, pad.left + 42), width - pad.right - 74);
+      const labelColumn = plotWidth / Math.max(labelled.length, 1);
+      const labelX = pad.left + labelColumn * (index + 0.5);
       root.append(svgNode('line', {
         x1: labelX,
-        y1: labelY + 5,
+        y1: 48,
         x2: cx,
         y2: Math.max(cy - 8, pad.top + 8),
         class: 'history-arrow',
         'marker-end': `url(#${uid}-arrow)`,
       }));
-      const text = svgNode('text', {
+      const name = svgNode('text', {
         x: labelX,
-        y: labelY,
+        y: 20,
         'text-anchor': 'middle',
-        class: 'history-marker-label',
+        class: 'history-marker-label history-marker-name',
       });
-      text.textContent = `${marker.label} · ${hasValue ? formatter(value) : 'unavailable'}`;
-      root.append(text);
+      name.textContent = marker.label;
+      const labelValue = svgNode('text', {
+        x: labelX,
+        y: 38,
+        'text-anchor': 'middle',
+        class: 'history-marker-label history-marker-value',
+      });
+      labelValue.textContent = hasValue ? formatter(value) : 'Unavailable';
+      root.append(name, labelValue);
     });
 
     const crosshair = svgNode('line', {
@@ -356,6 +367,7 @@ export function renderMarketHistoryChart(holder, payload, options = {}) {
 
     const milestoneDefinitions = [
       ['Launch', payload.milestones?.launch],
+      ['First public', payload.milestones?.first],
       ['Day 7', payload.milestones?.day7],
       ['Day 30', payload.milestones?.day30],
       [

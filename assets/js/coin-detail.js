@@ -137,6 +137,7 @@ function render() {
   const coin = payload.coin;
   const milestones = payload.milestones || {};
   const launch = dexLaunchPayload?.launch || milestones.launch;
+  const firstPublic = milestones.first;
   const lastPrice = payload.priceHistory?.at(-1)?.price;
   const currentPrice = Number.isFinite(coin?.price)
     ? coin.price
@@ -146,6 +147,18 @@ function render() {
   const displayName = coin?.name || curated?.name || symbol;
   const athPrice = Number.isFinite(coin?.ath) ? coin.ath : milestones.ath?.price;
   const athTimestamp = coin?.athDate ? Date.parse(coin.athDate) : milestones.ath?.t;
+  const launchTimestamp = Date.parse(curated?.launch || payload.launchAt || '');
+  const daysToAth = Number.isFinite(launchTimestamp) && Number.isFinite(athTimestamp)
+    ? Math.max(0, Math.round((Date.UTC(
+      new Date(athTimestamp).getUTCFullYear(),
+      new Date(athTimestamp).getUTCMonth(),
+      new Date(athTimestamp).getUTCDate(),
+    ) - Date.UTC(
+      new Date(launchTimestamp).getUTCFullYear(),
+      new Date(launchTimestamp).getUTCMonth(),
+      new Date(launchTimestamp).getUTCDate(),
+    )) / 86_400_000))
+    : null;
   document.title = `${displayName} (${symbol}) — Memecoin Detail`;
   $('tokenName').textContent = displayName;
   $('tokenSym').textContent = symbol;
@@ -174,6 +187,10 @@ function render() {
       Number.isFinite(launch?.valuation) ? fmtUsd(launch.valuation) : 'Unavailable',
       launch?.methodology || 'No value is interpolated',
     ),
+    fact('First public price', Number.isFinite(firstPublic?.price) ? fmtPrice(firstPublic.price) : 'Unavailable',
+      Number.isFinite(firstPublic?.t) ? `${fmtDate(firstPublic.t)} · earliest provider row, not launch` : 'No public row returned'),
+    fact('First public market cap', Number.isFinite(firstPublic?.mcap) ? fmtUsd(firstPublic.mcap) : 'Unavailable',
+      Number.isFinite(firstPublic?.t) ? `${fmtDate(firstPublic.t)} · earliest provider row, not launch` : 'No public row returned'),
     fact('Current price', Number.isFinite(currentPrice) ? fmtPrice(currentPrice) : 'Unavailable',
       Number.isFinite(coin?.ch24h) ? `${fmtPct(coin.ch24h, 1)} / 24h` : payload.source?.priceHistory || ''),
     fact('Market cap', Number.isFinite(coin?.mcap)
@@ -183,6 +200,8 @@ function render() {
         : 'Unavailable',
       coin?.rank ? `Rank #${coin.rank}` : dexLaunchPayload?.pair ? 'DEX Screener exact pair' : payload.source?.marketCapHistory || 'No public series returned'),
     fact('Price ATH', fmtPrice(athPrice), Number.isFinite(athTimestamp) ? fmtDate(athTimestamp) : ''),
+    fact('Launch → price ATH', Number.isFinite(daysToAth) ? `${daysToAth} days` : 'Unavailable',
+      Number.isFinite(athTimestamp) ? 'UTC calendar days · CoinGecko ATH date' : 'No sourced ATH date'),
   ].filter(Boolean);
   $('caseFacts').replaceChildren(...facts);
 

@@ -3,6 +3,7 @@
 
 const CG = 'https://api.coingecko.com/api/v3';
 const YAHOO = 'https://query1.finance.yahoo.com/v8/finance/chart';
+const HYPERLIQUID_INFO = 'https://api.hyperliquid.xyz/info';
 const DEX = 'https://api.dexscreener.com';
 const GECKO_TERMINAL = 'https://api.geckoterminal.com/api/v2';
 const OPENSEA = 'https://opensea.io/collection';
@@ -40,11 +41,11 @@ const NFT_COLLECTIONS = [
 ];
 
 const TICKER_ASSETS = [
-  { id: 'bitcoin', symbol: 'BTC', name: 'Bitcoin', yahoo: 'BTC-USD' },
-  { id: 'ethereum', symbol: 'ETH', name: 'Ethereum', yahoo: 'ETH-USD' },
-  { id: 'solana', symbol: 'SOL', name: 'Solana', yahoo: 'SOL-USD' },
-  { id: 'hyperliquid', symbol: 'HYPE', name: 'Hyperliquid', yahoo: 'HYPE-USD' },
-  { id: 'zcash', symbol: 'ZEC', name: 'Zcash', yahoo: 'ZEC-USD' },
+  { id: 'bitcoin', symbol: 'BTC', name: 'Bitcoin', yahoo: 'BTC-USD', yahooName: /bitcoin/i },
+  { id: 'ethereum', symbol: 'ETH', name: 'Ethereum', yahoo: 'ETH-USD', yahooName: /ethereum/i },
+  { id: 'solana', symbol: 'SOL', name: 'Solana', yahoo: 'SOL-USD', yahooName: /solana/i },
+  { id: 'hyperliquid', symbol: 'HYPE', name: 'Hyperliquid', officialFallback: 'hyperliquid' },
+  { id: 'zcash', symbol: 'ZEC', name: 'Zcash', yahoo: 'ZEC-USD', yahooName: /zcash/i },
 ];
 
 const DEX_PAIRS = {
@@ -401,13 +402,17 @@ function slimCoin(row) {
   };
 }
 
-async function yahooPrice(symbol) {
+async function yahooPrice(symbol, expectedName) {
   const json = await fetchJSON(`${YAHOO}/${encodeURIComponent(symbol)}?range=5d&interval=5m`, {
     timeout: 12_000,
   });
   const result = json?.chart?.result?.[0];
   const meta = result?.meta;
   if (!meta || !Number.isFinite(meta.regularMarketPrice)) throw new Error(`Yahoo ${symbol} empty`);
+  const providerName = `${meta.shortName || ''} ${meta.longName || ''}`.trim();
+  if (expectedName && !expectedName.test(providerName)) {
+    throw new Error(`Yahoo ${symbol} identity mismatch`);
+  }
   const previous = Number(meta.chartPreviousClose);
   return {
     price: meta.regularMarketPrice,
@@ -602,6 +607,47 @@ async function loadOverview() {
   };
 }
 
+async function hyperliquidSpotPrice() {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 12_000);
+  try {
+    const response = await fetch(HYPERLIQUID_INFO, {
+      method: 'POST',
+      signal: controller.signal,
+      headers: {
+        accept: 'application/json',
+        'content-type': 'application/json',
+        'user-agent': 'CryptoBros/1.0',
+      },
+      body: JSON.stringify({ type: 'spotMetaAndAssetCtxs' }),
+    });
+    if (!response.ok) throw new Error(`Hyperliquid ${response.status}`);
+    const payload = await response.json();
+    const meta = payload?.[0];
+    const contexts = payload?.[1];
+    const hype = meta?.tokens?.find((token) => token.name === 'HYPE');
+    const usdc = meta?.tokens?.find((token) => token.name === 'USDC');
+    if (!hype || !usdc || !Array.isArray(meta?.universe) || !Array.isArray(contexts)) {
+      throw new Error('Hyperliquid HYPE metadata unavailable');
+    }
+    const pair = meta.universe.find((candidate) =>
+      candidate?.tokens?.[0] === hype.index && candidate?.tokens?.[1] === usdc.index);
+    const context = Number.isInteger(pair?.index) ? contexts[pair.index] : null;
+    const price = Number(context?.midPx || context?.markPx);
+    const previous = Number(context?.prevDayPx);
+    if (!Number.isFinite(price) || price <= 0) throw new Error('Hyperliquid HYPE price unavailable');
+    return {
+      price,
+      previousClose: Number.isFinite(previous) && previous > 0 ? previous : null,
+      changePct: Number.isFinite(previous) && previous > 0
+        ? ((price - previous) / previous) * 100
+        : null,
+    };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function loadTicker() {
   let coinGeckoRows = [];
   try {
@@ -616,14 +662,16 @@ async function loadTicker() {
 
   const byId = new Map(coinGeckoRows.map((row) => [row.id, row]));
   const missing = TICKER_ASSETS.filter((asset) => !byId.has(asset.id));
-  const yahooRows = new Map();
+  const fallbackRows = new Map();
   if (missing.length) {
     const fallbacks = await Promise.allSettled(missing.map(async (asset) => ({
       asset,
-      value: await yahooPrice(asset.yahoo),
+      value: asset.officialFallback === 'hyperliquid'
+        ? await hyperliquidSpotPrice()
+        : await yahooPrice(asset.yahoo, asset.yahooName),
     })));
     for (const result of fallbacks) {
-      if (result.status === 'fulfilled') yahooRows.set(result.value.asset.id, result.value.value);
+      if (result.status === 'fulfilled') fallbackRows.set(result.value.asset.id, result.value.value);
     }
   }
 
@@ -641,19 +689,19 @@ async function loadTicker() {
         source: 'CoinGecko',
       };
     }
-    const yahoo = yahooRows.get(asset.id);
-    if (!yahoo) return null;
+    const fallback = fallbackRows.get(asset.id);
+    if (!fallback) return null;
     return {
       id: asset.id,
       symbol: asset.symbol,
       name: asset.name,
-      price: yahoo.price,
-      change24h: yahoo.changePct,
-      source: 'Yahoo Finance',
+      price: fallback.price,
+      change24h: fallback.changePct,
+      source: asset.officialFallback === 'hyperliquid' ? 'Hyperliquid API' : 'Yahoo Finance',
     };
   }).filter((asset) => Number.isFinite(asset?.price));
 
-  if (!assets.length) throw new Error('CoinGecko and Yahoo Finance ticker data unavailable');
+  if (!assets.length) throw new Error('CoinGecko and verified fallback ticker data unavailable');
   return {
     ok: true,
     partial: assets.length !== TICKER_ASSETS.length,
@@ -782,24 +830,42 @@ async function loadMeme2026() {
   }
 
   const currentById = new Map(marketRows.map((row) => [row.id, slimCoin(row)]));
+  const calendarDaysBetween = (start, end) => {
+    const startDay = Date.parse(`${String(start || '').slice(0, 10)}T00:00:00Z`);
+    const endDay = Date.parse(`${String(end || '').slice(0, 10)}T00:00:00Z`);
+    return Number.isFinite(startDay) && Number.isFinite(endDay)
+      ? Math.max(0, Math.round((endDay - startDay) / 86_400_000))
+      : null;
+  };
   return {
     ok: true,
     partial: Boolean(marketWarning) || currentById.size < MEME_2026_EVENTS.length,
     fetchedAt: Date.now(),
-    cutoffAt: '2026-08-09T23:59:59+07:00',
+    cutoffAt: '2026-08-11T23:59:59+07:00',
     source: 'CoinGecko live snapshots + linked threshold evidence',
     warning: marketWarning,
     methodology: {
       thresholdUsd: 100_000_000,
       windowStart: '2026-01-01',
-      windowEnd: '2026-08-09',
+      windowEnd: '2026-08-11',
       rule: 'The documented market-cap crossing must occur inside the window; the token may have launched earlier.',
       completeness: 'Public-source set verified under the stated two-source method at the research cutoff; not an exhaustive on-chain census.',
     },
-    events: MEME_2026_EVENTS.map((event) => ({
-      ...event,
-      current: currentById.get(event.marketId || event.id) || null,
-    })),
+    events: MEME_2026_EVENTS.map((event) => {
+      const current = currentById.get(event.marketId || event.id) || null;
+      const athAt = current?.athDate || null;
+      const athPrice = Number(current?.ath);
+      return {
+        ...event,
+        current,
+        priceAth: Number.isFinite(athPrice) && athPrice > 0 && athAt ? {
+          price: athPrice,
+          at: athAt,
+          daysFromLaunch: calendarDaysBetween(event.launchAt, athAt),
+          source: 'CoinGecko',
+        } : null,
+      };
+    }),
   };
 }
 

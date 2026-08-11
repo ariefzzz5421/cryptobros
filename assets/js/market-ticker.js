@@ -1,5 +1,5 @@
 import { startAutoRefresh } from './autorefresh.js';
-import { getLocale, localeTag } from './i18n.js';
+import { localeTag } from './i18n.js';
 
 const ICONS = {
   bitcoin: '/assets/img/coins/majors/btc.png',
@@ -50,10 +50,7 @@ function render(data) {
   latest = data;
   const message = root.querySelector('[data-ticker-error]');
   if (message) message.hidden = true;
-  const label = getLocale() === 'id'
-    ? 'Harga kripto langsung, diperbarui otomatis'
-    : 'Live crypto prices, updated automatically';
-  root.setAttribute('aria-label', label);
+  root.setAttribute('aria-label', 'Live crypto prices, updated automatically');
   root.dataset.state = data.partial ? 'partial' : 'ready';
   root.querySelector('.market-tape-track')?.replaceChildren(
     group(data.assets),
@@ -86,7 +83,6 @@ function init() {
     if (message) message.hidden = false;
   });
   startAutoRefresh([{ every: 10_000, run: refresh }]);
-  window.addEventListener('localechange', () => latest && render(latest));
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

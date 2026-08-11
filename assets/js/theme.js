@@ -83,7 +83,5 @@ function initSharedUi() {
   initMotion();
 }
 
-window.addEventListener('localechange', () => applyTheme(root.dataset.theme || 'dark'));
-
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initSharedUi);
 else initSharedUi();

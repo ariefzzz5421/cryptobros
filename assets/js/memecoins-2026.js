@@ -1,6 +1,5 @@
-import { fmtClock, fmtUsd, el } from './utils.js';
+import { fmtClock, fmtPrice, fmtUsd, el } from './utils.js';
 import { startAutoRefresh } from './autorefresh.js';
-import { getLocale, localeTag } from './i18n.js';
 
 const $ = (id) => document.getElementById(id);
 const CHAIN_LOGOS = {
@@ -18,12 +17,12 @@ const TOKEN_LOGOS = {
   troll: '/assets/img/coins/troll.png',
 };
 
-const fmtDate = (value) => new Intl.DateTimeFormat(localeTag(), {
+const fmtDate = (value) => new Intl.DateTimeFormat('en-US', {
   day: '2-digit',
   month: 'short',
   year: 'numeric',
   timeZone: 'UTC',
-}).format(new Date(`${value}T00:00:00Z`));
+}).format(new Date(/^\d{4}-\d{2}-\d{2}$/.test(value) ? `${value}T00:00:00Z` : value));
 
 function setStatus(text, kind = 'busy') {
   $('statusText').textContent = text;
@@ -42,12 +41,12 @@ async function fetchRecords() {
 
 function renderCard(event) {
   const chainLogo = CHAIN_LOGOS[event.chain];
-  const id = getLocale() === 'id';
+  const priceAth = event.priceAth;
 
   return el('a', {
     class: 'breakout-preview-card',
     href: `/2026-memecoins/${event.id}/`,
-    'aria-label': `${id ? 'Buka riset' : 'Open research'} ${event.name}`,
+    'aria-label': `Open research ${event.name}`,
   },
     el('div', { class: 'breakout-preview-main' },
       el('img', {
@@ -69,19 +68,31 @@ function renderCard(event) {
     ),
     el('div', { class: 'breakout-preview-facts', 'aria-label': 'Key facts' },
       el('div', {},
-        el('span', {}, id ? 'Tembus $100 juta' : '$100M crossing'),
+        el('span', {}, 'Launch'),
+        el('strong', {}, fmtDate(event.launchAt)),
+      ),
+      el('div', {},
+        el('span', {}, '$100M crossing'),
         el('strong', {}, fmtDate(event.crossedAt)),
       ),
       el('div', {},
-        el('span', {}, id ? 'Puncak terdokumentasi' : 'Documented peak'),
+        el('span', {}, 'Peak market cap'),
         el('strong', { class: 'num' }, fmtUsd(event.documentedPeak, 0)),
       ),
       el('div', {},
-        el('span', {}, id ? 'Peluncuran' : 'Launch'),
-        el('strong', {}, fmtDate(event.launchAt)),
+        el('span', {}, 'Price ATH'),
+        el('strong', { class: 'num' }, priceAth ? fmtPrice(priceAth.price) : 'Unavailable'),
+        priceAth?.at ? el('small', {}, fmtDate(priceAth.at)) : null,
+      ),
+      el('div', {},
+        el('span', {}, 'Launch → ATH'),
+        el('strong', { class: 'num' }, Number.isFinite(priceAth?.daysFromLaunch)
+          ? `${priceAth.daysFromLaunch} days`
+          : 'Unavailable'),
+        el('small', {}, priceAth ? 'Calendar days · CoinGecko' : 'No sourced ATH date'),
       ),
     ),
-    el('span', { class: 'breakout-preview-cta', 'aria-hidden': 'true' }, id ? 'Baca riset' : 'Read research'),
+    el('span', { class: 'breakout-preview-cta', 'aria-hidden': 'true' }, 'Read research'),
   );
 }
 
@@ -115,7 +126,6 @@ function init() {
       $('updatedAt').textContent = fmtClock(data.fetchedAt);
     },
   }]);
-  window.addEventListener('localechange', () => load().catch(showError));
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

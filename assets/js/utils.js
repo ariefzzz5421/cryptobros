@@ -158,6 +158,8 @@ export function fmtPrice(v) {
   if (a === 0) return '$0';
   if (a >= 1) return `$${v.toLocaleString('en-US', { maximumFractionDigits: 4 })}`;
   if (a >= 0.001) return `$${v.toFixed(6)}`;
+  if (a >= 0.000001) return `$${v.toFixed(8)}`;
+  if (a >= 0.00000001) return `$${v.toFixed(10)}`;
   return `$${v.toExponential(3)}`;
 }
 

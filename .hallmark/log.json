@@ -1,5 +1,14 @@
 [
   {
+    "date": "2026-08-11",
+    "macrostructure": "ATH Evidence Ledger Repair",
+    "theme": "custom",
+    "theme_axes": "graphite and cool paper / Geist / electric blue / restrained neon brand mark",
+    "vibe": "source-explicit lifecycle evidence with uncluttered chart annotations",
+    "enrichment": "CoinGecko ATH records, Hyperliquid spot identity, contract-matched DEX evidence",
+    "brief": "Add ATH date and days-to-ATH fields, repair clustered chart labels, remove translation controls, keep the ticker moving, and prevent HYPE symbol collisions."
+  },
+  {
     "date": "2026-08-09",
     "macrostructure": "Bilingual Market Tape + Evidence Dossiers",
     "theme": "custom",
