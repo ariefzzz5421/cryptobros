@@ -393,6 +393,8 @@ function slimCoin(row) {
     ch1h: row.price_change_percentage_1h_in_currency,
     ch24h: row.price_change_percentage_24h_in_currency ?? row.price_change_percentage_24h,
     ch7d: row.price_change_percentage_7d_in_currency,
+    ch30d: row.price_change_percentage_30d_in_currency,
+    ch1y: row.price_change_percentage_1y_in_currency,
     high24: row.high_24h,
     low24: row.low_24h,
     ath: row.ath,
@@ -400,6 +402,47 @@ function slimCoin(row) {
     athPct: row.ath_change_percentage,
     circulatingSupply: row.circulating_supply,
   };
+}
+
+const MOVER_TIMEFRAMES = {
+  '1d': 'ch24h',
+  '1w': 'ch7d',
+  '1m': 'ch30d',
+  '1y': 'ch1y',
+};
+
+export function buildMemeMovers(memecoins = []) {
+  const eligibility = {
+    categoryLimit: 100,
+    minimumMarketCapUsd: 10_000_000,
+    minimumVolume24hUsd: 100_000,
+  };
+  const eligible = memecoins.filter((coin) =>
+    Number.isFinite(coin?.mcap)
+    && coin.mcap >= eligibility.minimumMarketCapUsd
+    && Number.isFinite(coin?.vol)
+    && coin.vol >= eligibility.minimumVolume24hUsd);
+
+  const frames = Object.fromEntries(Object.entries(MOVER_TIMEFRAMES).map(([timeframe, field]) => {
+    const covered = eligible.filter((coin) => Number.isFinite(coin?.[field]));
+    const gainers = covered
+      .filter((coin) => coin[field] > 0)
+      .sort((a, b) => b[field] - a[field])
+      .slice(0, 5);
+    const losers = covered
+      .filter((coin) => coin[field] < 0)
+      .sort((a, b) => a[field] - b[field])
+      .slice(0, 5);
+    return [timeframe, {
+      field,
+      covered: covered.length,
+      eligible: eligible.length,
+      gainers,
+      losers,
+    }];
+  }));
+
+  return { eligibility, frames };
 }
 
 async function yahooPrice(symbol, expectedName) {
@@ -446,6 +489,8 @@ async function yahooCryptoScreener() {
         ch1h: null,
         ch24h: Number.isFinite(row.regularMarketChangePercent) ? row.regularMarketChangePercent : null,
         ch7d: null,
+        ch30d: null,
+        ch1y: null,
         high24: Number(row.regularMarketDayHigh) || null,
         low24: Number(row.regularMarketDayLow) || null,
         ath: null,
@@ -489,7 +534,7 @@ async function loadOverview() {
   ]);
   const memesPromise = fetchJSON(
     `${CG}/coins/markets?vs_currency=usd&category=meme-token&order=market_cap_desc` +
-    '&per_page=100&page=1&sparkline=false&price_change_percentage=1h,24h,7d',
+    '&per_page=100&page=1&sparkline=false&price_change_percentage=1h,24h,7d,30d,1y',
   );
   const categoriesPromise = fetchJSON(`${CG}/coins/categories?order=market_cap_desc`);
 
@@ -597,6 +642,7 @@ async function loadOverview() {
     exchanges: exchangeRows,
     memecoins,
     memeMarket,
+    movers: buildMemeMovers(memecoins),
     leaders: memecoins
       .filter((coin) => Number.isFinite(coin.ch24h))
       .sort((a, b) => b.ch24h - a.ch24h)

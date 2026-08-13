@@ -201,6 +201,23 @@ Use a four-point scale through named tokens only:
 - The light theme is a cool paper surface, while dark remains graphite-blue.
   Theme changes use a short document transition when the browser supports it.
 
+## Homepage Command Deck extension
+
+- The homepage opens with a Stat-Led Command Deck: one short market thesis,
+  one dominant memecoin market-cap metric, a four-value market rail, market
+  composition, and paired gainers/losers lists.
+- Gainers and losers use the same eligible universe: CoinGecko's top 100
+  memecoin-category records with market cap of at least $10M and reported 24h
+  volume of at least $100K. Missing timeframe values are excluded, never read
+  as zero.
+- The timeframe control is limited to 1D, 1W, 1M, and 1Y. Every row keeps token
+  identity, current market cap, and percentage performance visible.
+- Existing maps, trading-hour analysis, heatmap, and research routes remain
+  below the Command Deck. Their introductory copy is reduced to one factual
+  sentence so the data surface carries the page.
+- Entry motion is one short opacity/vertical cut and is removed when reduced
+  motion is requested. The command surface uses no decorative imagery.
+
 ## Exports
 
 The portable source of truth is `assets/css/tokens.css`.

@@ -38,6 +38,7 @@ const state = {
   basket: 'meme',
   timeframe: '30d',
   changeField: '24h',
+  moverTimeframe: '1d',
   memeView: 'map',
   hourly: null,
   analysis: null,
@@ -583,43 +584,78 @@ function renderMemeSection() {
   }
 
   renderMemeInsights(coins);
-  renderPerformanceLeaderboard(coins);
+  renderMarketMovers(coins);
 }
 
-function renderPerformanceLeaderboard(coins) {
-  const holder = $('memeLeaders');
-  if (!holder) return;
-  const rows = coins
-    .filter((coin) => Number.isFinite(coin.ch24h))
-    .sort((a, b) => b.ch24h - a.ch24h)
-    .slice(0, 10);
+const MOVER_TIMEFRAMES = {
+  '1d': { field: 'ch24h', label: '1D' },
+  '1w': { field: 'ch7d', label: '1W' },
+  '1m': { field: 'ch30d', label: '1M' },
+  '1y': { field: 'ch1y', label: '1Y' },
+};
+
+function moverRow(coin, field, index) {
+  return el('a', {
+    class: 'mover-row',
+    href: `/cases/detail/?id=${encodeURIComponent(coin.id)}&symbol=${encodeURIComponent(coin.sym)}`,
+  },
+    el('span', { class: 'mover-rank num' }, String(index + 1).padStart(2, '0')),
+    el('img', {
+      class: 'row-logo',
+      src: coin.image,
+      alt: '',
+      width: '30',
+      height: '30',
+      loading: 'lazy',
+      decoding: 'async',
+    }),
+    el('span', { class: 'mover-name' },
+      el('strong', {}, coin.sym),
+      el('small', {}, coin.name),
+    ),
+    el('span', { class: 'mover-market-cap' },
+      el('small', {}, 'Market cap'),
+      el('strong', { class: 'num' }, fmtUsd(coin.mcap)),
+    ),
+    el('strong', { class: `mover-change num ${coin[field] >= 0 ? 'up' : 'down'}` }, fmtPct(coin[field], 1)),
+  );
+}
+
+function renderMoverList(holder, rows, field) {
   holder.replaceChildren();
-  rows.forEach((coin, index) => {
-    holder.append(el('a', {
-      class: 'leader-row',
-      href: `/cases/detail/?id=${encodeURIComponent(coin.id)}&symbol=${encodeURIComponent(coin.sym)}`,
-    },
-      el('span', { class: 'leader-rank num' }, String(index + 1).padStart(2, '0')),
-      el('img', {
-        class: 'row-logo',
-        src: coin.image,
-        alt: '',
-        width: '24',
-        height: '24',
-        loading: 'lazy',
-        decoding: 'async',
-      }),
-      el('span', { class: 'leader-name' },
-        el('strong', {}, coin.sym),
-        el('small', {}, coin.name),
-      ),
-      el('span', { class: 'leader-mcap' },
-        el('small', {}, isId() ? 'Kapitalisasi pasar' : 'Market cap'),
-        el('strong', { class: 'num' }, fmtUsd(coin.mcap)),
-      ),
-      el('strong', { class: `leader-change num ${coin.ch24h >= 0 ? 'up' : 'down'}` }, fmtPct(coin.ch24h, 1)),
-    ));
-  });
+  if (!rows.length) {
+    holder.append(el('p', { class: 'mover-empty' }, 'No source coverage for this timeframe.'));
+    return;
+  }
+  rows.forEach((coin, index) => holder.append(moverRow(coin, field, index)));
+}
+
+function renderMarketMovers(coins) {
+  const gainersHolder = $('topGainers');
+  const losersHolder = $('topLosers');
+  if (!gainersHolder || !losersHolder) return;
+
+  const timeframe = MOVER_TIMEFRAMES[state.moverTimeframe] || MOVER_TIMEFRAMES['1d'];
+  const eligible = coins.filter((coin) =>
+    Number.isFinite(coin.mcap)
+    && coin.mcap >= 10_000_000
+    && Number.isFinite(coin.vol)
+    && coin.vol >= 100_000);
+  const covered = eligible.filter((coin) => Number.isFinite(coin[timeframe.field]));
+  const gainers = covered
+    .filter((coin) => coin[timeframe.field] > 0)
+    .sort((a, b) => b[timeframe.field] - a[timeframe.field])
+    .slice(0, 5);
+  const losers = covered
+    .filter((coin) => coin[timeframe.field] < 0)
+    .sort((a, b) => a[timeframe.field] - b[timeframe.field])
+    .slice(0, 5);
+
+  $('gainersTimeframe').textContent = timeframe.label;
+  $('losersTimeframe').textContent = timeframe.label;
+  $('moverCoverage').textContent = `${covered.length}/${eligible.length} eligible tokens have ${timeframe.label} provider coverage · missing values excluded`;
+  renderMoverList(gainersHolder, gainers, timeframe.field);
+  renderMoverList(losersHolder, losers, timeframe.field);
 }
 
 function renderMemeMarketShare() {
@@ -639,16 +675,22 @@ function renderMemeMarketShare() {
   ];
   const denominator = Number.isFinite(total) && total > 0 ? total : covered;
 
-  $('memeMarketCap').textContent = fmtUsd(total);
-  $('memeMarketChange').textContent = Number.isFinite(market.change24h)
+  $('heroMemeMarketCap').textContent = fmtUsd(total);
+  $('heroMemeMarketChange').textContent = Number.isFinite(market.change24h)
     ? `${fmtPct(market.change24h, 1)} · 24h`
     : coverageLabel(market.coverage);
-  $('memeMarketDominance').textContent = Number.isFinite(market.shareOfCrypto)
+  $('heroMemeMarketChange').classList.toggle('up', Number.isFinite(market.change24h) && market.change24h >= 0);
+  $('heroMemeMarketChange').classList.toggle('down', Number.isFinite(market.change24h) && market.change24h < 0);
+  $('commandMemeVolume').textContent = fmtUsd(market.volume24hUsd);
+  $('commandMemeShare').textContent = Number.isFinite(market.shareOfCrypto)
     ? `${market.shareOfCrypto.toFixed(2)}%`
-    : (isId() ? 'Tidak tersedia' : 'Unavailable');
+    : 'Unavailable';
   $('memeMarketCoverage').textContent = market.isCategoryTotal
-    ? (isId() ? 'Pangsa dari total kapitalisasi pasar kripto' : 'Share of total crypto market cap')
-    : `${isId() ? 'Sebagian' : 'Partial'} · ${coverageLabel(market.coverage)}`;
+    ? 'CoinGecko category total · top holdings by market cap'
+    : `Partial · ${coverageLabel(market.coverage)}`;
+  $('heroMarketSource').textContent = market.isCategoryTotal
+    ? `CoinGecko category · ${fmtClock(market.updatedAt || Date.now())}`
+    : `${coverageLabel(market.coverage)} fallback · ${fmtClock(market.updatedAt || Date.now())}`;
 
   holder.replaceChildren(
     el('div', { class: 'market-share-bar', role: 'img', 'aria-label': isId() ? 'Pangsa kapitalisasi pasar memecoin per token' : 'Memecoin market-cap share by token' },
@@ -670,6 +712,7 @@ function renderMemeMarketShare() {
 
 function renderMemeInsights(coins) {
   const g = $('memeInsights');
+  if (!g) return;
   g.innerHTML = '';
   const field = CHANGE_FIELDS[state.changeField];
   const fieldLabel = isId() ? ({ '1 hour': '1 jam', '24 hours': '24 jam', '7 days': '7 hari' }[field.label] || field.label) : field.label;
@@ -679,8 +722,6 @@ function renderMemeInsights(coins) {
   const leader = top[0];
   const withCh = top.filter((c) => Number.isFinite(c[field.key]));
   const gainers = withCh.filter((c) => c[field.key] > 0).length;
-  const best = [...withCh].sort((a, b) => b[field.key] - a[field.key])[0];
-  const worst = [...withCh].sort((a, b) => a[field.key] - b[field.key])[0];
   const turnover = totalMcap > 0 ? totalVol / totalMcap : 0;
   const top3Share = totalVol > 0 ? top.slice(0, 3).reduce((s, c) => s + c.vol, 0) / totalVol : 0;
 
@@ -689,10 +730,6 @@ function renderMemeInsights(coins) {
       body: isId() ? `Rasio volume terhadap kapitalisasi 24 jam: ${(turnover * 100).toFixed(1)}% dari ${fmtUsd(totalMcap)}.` : `24h volume-to-market-cap ratio: ${(turnover * 100).toFixed(1)}% of ${fmtUsd(totalMcap)}.` },
     { tag: isId() ? 'Volume terbesar' : 'Largest volume', big: leader.sym, sub: fmtUsd(leader.vol),
       body: isId() ? `${leader.name}: ${((leader.vol / totalVol) * 100).toFixed(1)}% dari volume keranjang. Tiga teratas: ${(top3Share * 100).toFixed(0)}%.` : `${leader.name}: ${((leader.vol / totalVol) * 100).toFixed(1)}% of basket volume. Top three: ${(top3Share * 100).toFixed(0)}%.` },
-    { tag: `${isId() ? 'Kenaikan terkuat' : 'Strongest gain'} · ${fieldLabel}`, big: best ? best.sym : '—', sub: best ? fmtPct(best[field.key]) : '—',
-      body: best ? (isId() ? `${best.name} di ${fmtPrice(best.price)}, volume ${fmtUsd(best.vol)}.` : `${best.name} at ${fmtPrice(best.price)}, volume ${fmtUsd(best.vol)}.`) : (isId() ? 'Data perubahan tidak tersedia.' : 'Change data unavailable.') },
-    { tag: `${isId() ? 'Penurunan terdalam' : 'Deepest drop'} · ${fieldLabel}`, big: worst ? worst.sym : '—', sub: worst ? fmtPct(worst[field.key]) : '—',
-      body: worst ? (isId() ? `${worst.name} di ${fmtPrice(worst.price)}, volume ${fmtUsd(worst.vol)}.` : `${worst.name} at ${fmtPrice(worst.price)}, volume ${fmtUsd(worst.vol)}.`) : (isId() ? 'Data perubahan tidak tersedia.' : 'Change data unavailable.') },
     { tag: isId() ? 'Koin naik' : 'Coins up', big: `${gainers}/${withCh.length}`, sub: `${isId() ? 'selama' : 'over'} ${fieldLabel}`,
       body: isId() ? `${gainers} dari ${withCh.length} koin mencatat perubahan positif selama ${fieldLabel}.` : `${gainers} of ${withCh.length} coins recorded a positive ${field.label} change.` },
   ];
@@ -712,26 +749,10 @@ function renderMemeInsights(coins) {
    ============================================================ */
 
 function updateTopKpi() {
-  const { agg, global: g } = state;
+  const { global: g } = state;
   if (g) {
-    $('kpiGlobalVol').textContent = fmtUsd(g.volUsd);
-    $('kpiGlobalSub').textContent =
-      isId()
-        ? `Kapitalisasi pasar ${fmtUsd(g.mcapUsd)} (${fmtPct(g.mcapChange24h, 1)} · 24 jam) · dominasi BTC ${g.btcDom.toFixed(1)}%`
-        : `Market cap ${fmtUsd(g.mcapUsd)} (${fmtPct(g.mcapChange24h, 1)} · 24h) · BTC dominance ${g.btcDom.toFixed(1)}%`;
-  }
-  if (agg) {
-    const t = agg.rows[0];
-    $('kpiTopPlace').textContent = t.name;
-    $('kpiTopSub').textContent =
-      isId()
-        ? `${fmtUsd(t.volUsd)} · ${(t.share * 100).toFixed(1)}% dari volume terpetakan · ${t.count} bursa`
-        : `${fmtUsd(t.volUsd)} · ${(t.share * 100).toFixed(1)}% of mapped volume · ${t.count} exchanges`;
-    $('kpiAvgEx').textContent = fmtUsd(agg.avgPerExchange);
-    $('kpiAvgExSub').textContent =
-      isId()
-        ? `${fmtNum(agg.exchangeCount)} bursa · ${agg.rows.length} yurisdiksi · ${agg.top80} teratas = 80% volume`
-        : `${fmtNum(agg.exchangeCount)} exchanges · ${agg.rows.length} jurisdictions · top ${agg.top80} = 80% of volume`;
+    $('commandGlobalMarketCap').textContent = fmtUsd(g.mcapUsd);
+    $('commandBtcDominance').textContent = `${g.btcDom.toFixed(1)}%`;
   }
 }
 
@@ -855,6 +876,17 @@ function wireControls() {
       state.changeField = b.dataset.change;
       document.querySelectorAll('[data-change]').forEach((x) => x.classList.toggle('is-on', x === b));
       renderMemeSection();
+    });
+  });
+
+  document.querySelectorAll('[data-mover-timeframe]').forEach((button) => {
+    button.addEventListener('click', () => {
+      if (state.moverTimeframe === button.dataset.moverTimeframe) return;
+      state.moverTimeframe = button.dataset.moverTimeframe;
+      document.querySelectorAll('[data-mover-timeframe]').forEach((item) => {
+        item.classList.toggle('is-on', item === button);
+      });
+      renderMarketMovers(state.coins);
     });
   });
 

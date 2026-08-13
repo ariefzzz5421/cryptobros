@@ -51,53 +51,64 @@
 </section>
 
 <main class="wrap">
-  <section class="kpi-strip" aria-label="Market summary">
-    <article class="kpi">
-      <h2>Global crypto volume · 24h</h2>
-      <p class="kpi-val" id="kpiGlobalVol">—</p>
-      <p class="kpi-sub" id="kpiGlobalSub">all spot markets</p>
-    </article>
-    <article class="kpi">
-      <h2>Largest volume hub</h2>
-      <p class="kpi-val" id="kpiTopPlace">—</p>
-      <p class="kpi-sub" id="kpiTopSub">—</p>
-    </article>
-    <article class="kpi">
-      <h2>Average volume per exchange</h2>
-      <p class="kpi-val" id="kpiAvgEx">—</p>
-      <p class="kpi-sub" id="kpiAvgExSub">—</p>
-    </article>
-    <article class="kpi kpi-accent">
-      <h2>Most active hour</h2>
-      <p class="kpi-val" id="kpiPeakHour">—</p>
-      <p class="kpi-sub" id="kpiPeakSub">—</p>
-    </article>
-  </section>
-
-  <section class="panel meme-market-panel" aria-labelledby="memeMarketTitle">
-    <div class="meme-market-copy">
-      <p class="eyebrow">Memecoin category · 24h</p>
-      <h2 id="memeMarketTitle">Market size and share</h2>
-      <p class="panel-sub">CoinGecko category total with a clearly labeled tracked-basket fallback.</p>
-    </div>
-    <div class="meme-market-metrics">
-      <article><span>Total market cap</span><strong class="num" id="memeMarketCap">—</strong><small id="memeMarketChange">Loading…</small></article>
-      <article><span>Crypto market share</span><strong class="num" id="memeMarketDominance">—</strong><small id="memeMarketCoverage">Loading…</small></article>
-    </div>
-    <div class="meme-market-share" id="memeMarketShare" aria-live="polite"></div>
-  </section>
-
-  <section class="panel performance-panel" aria-labelledby="leadersTitle">
-    <div class="panel-head">
-      <div>
-        <p class="eyebrow">Live movers · 24h</p>
-        <h2 id="leadersTitle">Memecoin leaderboard</h2>
-        <p class="panel-sub">Largest percentage moves in CoinGecko's memecoin category. Open any coin for price and market-cap history.</p>
+  <section class="command-deck" aria-labelledby="commandDeckTitle">
+    <div class="command-hero">
+      <div class="command-copy">
+        <p class="eyebrow">Memecoin market · live snapshot</p>
+        <h2 id="commandDeckTitle">Know the move.<br>Read the history.</h2>
+        <p>Market direction, liquidity, and token research in one focused view.</p>
+        <div class="command-links">
+          <a class="command-link is-primary" href="#movers">View market movers</a>
+          <a class="command-link" href="/cases/">Read token research</a>
+        </div>
       </div>
-      <a class="text-link" href="/cases/">Explore $100M+ coins</a>
+      <article class="command-primary-metric" aria-label="Memecoin market capitalization">
+        <span>Memecoin market cap</span>
+        <strong class="num" id="heroMemeMarketCap">—</strong>
+        <small class="num" id="heroMemeMarketChange">Loading…</small>
+        <p id="heroMarketSource">Waiting for a verified source</p>
+      </article>
     </div>
-    <div class="leaderboard-grid" id="memeLeaders">
-      <div class="panel-loading"><span class="spinner"></span> Loading leaderboard…</div>
+
+    <div class="command-metric-rail" aria-label="Live market summary">
+      <article><span>Meme volume · 24h</span><strong class="num" id="commandMemeVolume">—</strong></article>
+      <article><span>Crypto market share</span><strong class="num" id="commandMemeShare">—</strong></article>
+      <article><span>Global market cap</span><strong class="num" id="commandGlobalMarketCap">—</strong></article>
+      <article><span>BTC dominance</span><strong class="num" id="commandBtcDominance">—</strong></article>
+    </div>
+
+    <div class="command-composition" aria-labelledby="compositionTitle">
+      <div>
+        <h3 id="compositionTitle">Market composition</h3>
+        <p id="memeMarketCoverage">Loading source coverage…</p>
+      </div>
+      <div class="meme-market-share" id="memeMarketShare" aria-live="polite"></div>
+    </div>
+
+    <div class="command-movers" id="movers">
+      <div class="movers-head">
+        <div>
+          <p class="eyebrow">Percentage performance</p>
+          <h3>Top gainers &amp; losers</h3>
+        </div>
+        <div class="seg" role="group" aria-label="Mover timeframe">
+          <button class="seg-btn is-on" data-mover-timeframe="1d" type="button">1D</button>
+          <button class="seg-btn" data-mover-timeframe="1w" type="button">1W</button>
+          <button class="seg-btn" data-mover-timeframe="1m" type="button">1M</button>
+          <button class="seg-btn" data-mover-timeframe="1y" type="button">1Y</button>
+        </div>
+      </div>
+      <div class="movers-grid">
+        <section aria-labelledby="gainersTitle">
+          <div class="mover-column-head"><h4 id="gainersTitle">Top gainers</h4><span id="gainersTimeframe">1D</span></div>
+          <div class="mover-list" id="topGainers"><div class="panel-loading"><span class="spinner"></span> Loading…</div></div>
+        </section>
+        <section aria-labelledby="losersTitle">
+          <div class="mover-column-head"><h4 id="losersTitle">Top losers</h4><span id="losersTimeframe">1D</span></div>
+          <div class="mover-list" id="topLosers"><div class="panel-loading"><span class="spinner"></span> Loading…</div></div>
+        </section>
+      </div>
+      <p class="mover-coverage" id="moverCoverage">Top 100 category · market cap ≥ $10M · 24h volume ≥ $100K</p>
     </div>
   </section>
 
@@ -105,7 +116,7 @@
     <div class="panel-head">
       <div>
         <h2>Global crypto volume map</h2>
-        <p class="panel-sub">Bubble size and color represent reported 24h exchange volume grouped by legal jurisdiction. Scroll to zoom, drag to pan, and click to lock details.</p>
+        <p class="panel-sub">Reported 24h exchange volume grouped by legal jurisdiction.</p>
       </div>
       <div class="panel-tools">
         <button class="btn sm" id="btnZoomIn" type="button" aria-label="Zoom in">+</button>
@@ -144,7 +155,7 @@
     <div class="panel-head">
       <div>
         <h2>Most active trading hours</h2>
-        <p class="panel-sub">Average quote volume from real 1-hour candles. The primary axis is WIB (UTC+7), with UTC shown for comparison.</p>
+        <p class="panel-sub">Average quote volume from 1-hour candles, shown in WIB.</p>
       </div>
       <div class="panel-tools">
         <div class="seg" role="group" aria-label="Coin basket">
@@ -178,7 +189,7 @@
     <div class="panel-head">
       <div>
         <h2>Memecoin volume heatmap</h2>
-        <p class="panel-sub">Tile area is 24h volume share. Color is price change (<span class="sw up"></span> blue up, <span class="sw down"></span> red down).</p>
+        <p class="panel-sub">Area = 24h volume. Color = price change.</p>
       </div>
       <div class="panel-tools">
         <div class="seg" role="group" aria-label="Change period">

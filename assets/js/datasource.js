@@ -287,6 +287,11 @@ export async function fetchMemecoins({ limit = 100, force = false } = {}) {
     const snapshot = await fetchBackendSnapshot({ force });
     if (snapshot.memecoins?.length) {
       const rows = snapshot.memecoins.slice(0, limit);
+      const previous = cacheGetStale(key);
+      const isThinFallback = previous?.value?.length >= 20
+        && rows.length < Math.max(10, Math.floor(previous.value.length * .5))
+        && previous.ageMs <= TTL.markets * 3;
+      if (isThinFallback) return previous.value;
       cacheSet(key, rows);
       return rows;
     }
@@ -312,8 +317,21 @@ export async function fetchGlobal({ force = false } = {}) {
 }
 
 export async function fetchMemeMarket({ force = false } = {}) {
+  const key = 'meme:market';
+  if (!force) {
+    const hit = cacheGet(key, TTL.markets);
+    if (hit) return hit;
+  }
   const snapshot = await fetchBackendSnapshot({ force });
-  return snapshot.memeMarket || null;
+  const market = snapshot.memeMarket || null;
+  if (!market) return cacheGetStale(key)?.value || null;
+  const previous = cacheGetStale(key);
+  const preserveCategoryTotal = !market.isCategoryTotal
+    && previous?.value?.isCategoryTotal
+    && previous.ageMs <= TTL.markets * 3;
+  if (preserveCategoryTotal) return previous.value;
+  cacheSet(key, market);
+  return market;
 }
 
 /* ============================================================
