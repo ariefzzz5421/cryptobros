@@ -11,13 +11,16 @@ fs.mkdirSync(client, { recursive: true });
 fs.mkdirSync(server, { recursive: true });
 
 fs.copyFileSync(path.join(root, 'index.html'), path.join(client, 'index.html'));
-for (const directory of ['assets', 'maps', 'sentiment', 'cases', '2026-memecoins', 'nft', 'nft-2026']) {
+for (const directory of ['assets', 'maps', 'sentiment', 'launchpads', 'cases', '2026-memecoins', 'nft', 'nft-2026']) {
   fs.cpSync(path.join(root, directory), path.join(client, directory), { recursive: true });
 }
 fs.copyFileSync(
   path.join(root, 'server', 'market-service.mjs'),
   path.join(server, 'market-service.mjs'),
 );
+for (const file of ['token-utils.mjs', 'launchpad-config.mjs']) {
+  fs.copyFileSync(path.join(root, 'server', file), path.join(server, file));
+}
 
 fs.writeFileSync(
   path.join(server, 'index.js'),

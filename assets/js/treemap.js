@@ -133,7 +133,15 @@ export function renderTreemap(container, coins, {
     node.addEventListener('focus', show);
     node.addEventListener('mouseleave', () => { if (tooltip) tooltip.hidden = true; });
     node.addEventListener('blur', () => { if (tooltip) tooltip.hidden = true; });
-    if (onSelect) node.addEventListener('click', () => onSelect(c));
+    if (onSelect) {
+      node.setAttribute('role', 'link');
+      node.addEventListener('click', () => onSelect(c));
+      node.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        onSelect(c);
+      });
+    }
 
     container.append(node);
   }
@@ -162,7 +170,7 @@ export function renderDivLegend(container, changeField = '24h') {
 
 /* ---------------- Tampilan tabel (kanal pemulihan a11y) ---------------- */
 
-export function renderCoinTable(container, coins, limit = 40) {
+export function renderCoinTable(container, coins, limit = 40, { onSelect, hrefFor } = {}) {
   container.innerHTML = '';
   const rows = coins.slice(0, limit);
   const total = rows.reduce((s, c) => s + c.vol, 0);
@@ -183,9 +191,21 @@ export function renderCoinTable(container, coins, limit = 40) {
   const tbody = el('tbody');
   rows.forEach((c, i) => {
     const image = /^https?:\/\//i.test(c.image || '') ? c.image : '';
-    tbody.append(el('tr', {},
+    const href = hrefFor ? hrefFor(c) : '';
+    const row = el('tr', {
+      class: onSelect ? 'clickable' : '',
+      tabindex: onSelect ? '0' : null,
+      onclick: onSelect ? () => onSelect(c) : null,
+      onkeydown: onSelect ? (event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        onSelect(c);
+      } : null,
+    },
       el('td', { class: 'muted' }, String(i + 1)),
-      el('td', {}, el('span', { class: 'coin-cell compact-coin-cell' },
+      el('td', {}, el(href ? 'a' : 'span', href ? {
+        class: 'coin-cell compact-coin-cell table-token-link', href,
+      } : { class: 'coin-cell compact-coin-cell' },
         image ? el('img', {
           class: 'row-logo',
           src: image,
@@ -207,7 +227,8 @@ export function renderCoinTable(container, coins, limit = 40) {
       el('td', { class: `r num ${sign(c.ch1h)}` }, fmtPct(c.ch1h, 1)),
       el('td', { class: `r num ${sign(c.ch24h)}` }, fmtPct(c.ch24h, 1)),
       el('td', { class: `r num ${sign(c.ch7d)}` }, fmtPct(c.ch7d, 1)),
-    ));
+    );
+    tbody.append(row);
   });
   table.append(thead, tbody);
   container.append(table);

@@ -11,6 +11,7 @@ import { aggregateJurisdictions, mergeHourly, analyzeHours } from './analytics.j
 import { WorldMap, escapeHtml } from './worldmap.js';
 import { renderHourProfile, renderHourMatrix, renderSeqLegend } from './hours.js';
 import { renderTreemap, renderDivLegend, renderCoinTable, CHANGE_FIELDS } from './treemap.js';
+import { tokenDetailHref } from './token-registry.js';
 import {
   fmtUsd, fmtUsdShort, fmtPct, fmtNum, fmtPrice, fmtClock,
   pad2, hourRange, DOW_ID, el, debounce, seqColor, perceptual,
@@ -576,11 +577,15 @@ function renderMemeSection() {
       tooltip: $('memeTip'),
       changeField: state.changeField,
       limit: 40,
+      onSelect: (coin) => { location.href = tokenDetailHref(coin); },
     });
   } else {
     $('treemap').hidden = true;
     $('memeTable').hidden = false;
-    renderCoinTable($('memeTable'), coins, 60);
+    renderCoinTable($('memeTable'), coins, 60, {
+      onSelect: (coin) => { location.href = tokenDetailHref(coin); },
+      hrefFor: tokenDetailHref,
+    });
   }
 
   renderMemeInsights(coins);
@@ -597,7 +602,7 @@ const MOVER_TIMEFRAMES = {
 function moverRow(coin, field, index) {
   return el('a', {
     class: 'mover-row',
-    href: `/cases/detail/?id=${encodeURIComponent(coin.id)}&symbol=${encodeURIComponent(coin.sym)}`,
+    href: tokenDetailHref(coin),
   },
     el('span', { class: 'mover-rank num' }, String(index + 1).padStart(2, '0')),
     el('img', {
@@ -911,6 +916,7 @@ function wireControls() {
     if (state.coins.length && state.memeView === 'map') {
       renderTreemap($('treemap'), state.coins, {
         tooltip: $('memeTip'), changeField: state.changeField, limit: 40,
+        onSelect: (coin) => { location.href = tokenDetailHref(coin); },
       });
     }
   });

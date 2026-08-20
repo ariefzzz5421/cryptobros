@@ -3,6 +3,8 @@ import { renderMarketHistoryChart } from './market-history-chart.js';
 import { brandedSourceLink } from './source-brands.js';
 import { startAutoRefresh } from './autorefresh.js';
 import { fetchDexLaunch, renderDexScreenerChart } from './dexscreener.js';
+import { findToken } from './token-registry.js';
+import { renderTokenLore } from './token-lore.js';
 
 const $ = (id) => document.getElementById(id);
 const slug = document.body.dataset.event;
@@ -36,6 +38,15 @@ function renderCurrent(data) {
   const record = data.events.find((event) => event.id === slug);
   if (!record) throw new Error('This research record was not found');
   eventRecord = record;
+  const registryToken = findToken({ id: record.marketId || record.id }) || findToken({ id: slug });
+  renderTokenLore($('tokenLore'), registryToken || {
+    id: record.id,
+    symbol: record.symbol,
+    name: record.name,
+    chain: record.chain,
+    contract: record.contract,
+    explorer: record.explorer,
+  });
 
   if (record.current?.image) $('eventLogo').src = record.current.image;
   const ath = record.priceAth;
@@ -171,7 +182,12 @@ function withDexLaunch(data) {
 }
 
 async function loadDex() {
-  const data = await fetchDexLaunch(slug);
+  const registryToken = findToken({ id: eventRecord?.marketId || eventRecord?.id }) || findToken({ id: slug });
+  const data = await fetchDexLaunch(registryToken || {
+    id: eventRecord?.marketId || eventRecord?.id || slug,
+    chain: eventRecord?.chain,
+    contract: eventRecord?.contract,
+  });
   dexLaunchPayload = data;
   if (!eventRecord?.current && data.pair) {
     $('liveSnapshot').replaceChildren(

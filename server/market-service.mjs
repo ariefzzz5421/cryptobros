@@ -1,6 +1,18 @@
 /* Market data service shared by Vercel Functions and the Sites worker.
    Upstream refresh is controlled here; the UI only polls this same-origin API. */
 
+import { LAUNCHPAD_DEFINITIONS } from './launchpad-config.mjs';
+import {
+  PLATFORM_TO_DEX_CHAIN,
+  buildCoinDirectory,
+  calculateMarketCapComparison,
+  chooseDexPair,
+  enrichMarketCoins,
+  pairMatchesContract,
+  rankVerifiedLaunches,
+  resolveCoinIdentity,
+} from './token-utils.mjs';
+
 const CG = 'https://api.coingecko.com/api/v3';
 const YAHOO = 'https://query1.finance.yahoo.com/v8/finance/chart';
 const HYPERLIQUID_INFO = 'https://api.hyperliquid.xyz/info';
@@ -8,6 +20,7 @@ const DEX = 'https://api.dexscreener.com';
 const GECKO_TERMINAL = 'https://api.geckoterminal.com/api/v2';
 const OPENSEA = 'https://opensea.io/collection';
 const cache = new Map();
+const inflight = new Map();
 
 const TTL = {
   overview: 30_000,
@@ -16,7 +29,12 @@ const TTL = {
   sentiment: 60_000,
   meme2026: 60_000,
   caseWeekly: 6 * 60 * 60 * 1000,
-  dexLaunch: 24 * 60 * 60 * 1000,
+  dexLaunch: 30_000,
+  dexPair: 15 * 60_000,
+  dexCandle: 24 * 60 * 60_000,
+  tokenDirectory: 15 * 60_000,
+  tokenSnapshot: 20_000,
+  launchpads: 10 * 60_000,
   nftFloors: 5 * 60_000,
 };
 
@@ -72,17 +90,6 @@ const GECKO_NETWORKS = {
   polygon: 'polygon_pos',
   avalanche: 'avax',
   optimism: 'optimism',
-};
-
-const PLATFORM_TO_DEX_CHAIN = {
-  ethereum: 'ethereum',
-  solana: 'solana',
-  'binance-smart-chain': 'bsc',
-  base: 'base',
-  'arbitrum-one': 'arbitrum',
-  'polygon-pos': 'polygon',
-  'avalanche-c-chain': 'avalanche',
-  'optimistic-ethereum': 'optimism',
 };
 
 const PLATFORMS = [
@@ -343,15 +350,36 @@ async function fetchText(url, { timeout = 18_000 } = {}) {
   }
 }
 
-async function cached(key, ttl, loader) {
+function startCachedLoad(key, loader) {
+  if (inflight.has(key)) return inflight.get(key);
+  const job = Promise.resolve()
+    .then(loader)
+    .then((value) => {
+      cache.set(key, { savedAt: Date.now(), value });
+      return value;
+    })
+    .finally(() => inflight.delete(key));
+  inflight.set(key, job);
+  return job;
+}
+
+async function cached(key, ttl, loader, { staleWhileRevalidate = true } = {}) {
   const now = Date.now();
   const hit = cache.get(key);
   if (hit && now - hit.savedAt < ttl) {
     return { ...hit.value, cache: 'hit', ageMs: now - hit.savedAt };
   }
+  if (hit && staleWhileRevalidate) {
+    startCachedLoad(key, loader).catch(() => {});
+    return {
+      ...hit.value,
+      cache: 'stale',
+      ageMs: now - hit.savedAt,
+      revalidating: true,
+    };
+  }
   try {
-    const value = await loader();
-    cache.set(key, { savedAt: now, value });
+    const value = await startCachedLoad(key, loader);
     return { ...value, cache: 'miss', ageMs: 0 };
   } catch (error) {
     if (hit) {
@@ -402,6 +430,20 @@ function slimCoin(row) {
     athPct: row.ath_change_percentage,
     circulatingSupply: row.circulating_supply,
   };
+}
+
+async function loadCoinDirectory() {
+  const rows = await fetchJSON(`${CG}/coins/list?include_platform=true`, {
+    timeout: 25_000,
+    retries: 1,
+  });
+  return buildCoinDirectory(rows || []);
+}
+
+function coinDirectory() {
+  return cached('coin-directory', TTL.tokenDirectory, loadCoinDirectory, {
+    staleWhileRevalidate: true,
+  });
 }
 
 const MOVER_TIMEFRAMES = {
@@ -537,14 +579,16 @@ async function loadOverview() {
     '&per_page=100&page=1&sparkline=false&price_change_percentage=1h,24h,7d,30d,1y',
   );
   const categoriesPromise = fetchJSON(`${CG}/coins/categories?order=market_cap_desc`);
+  const directoryPromise = coinDirectory();
 
-  const [globalResult, btcResult, exchangesResult, memesResult, categoriesResult] =
+  const [globalResult, btcResult, exchangesResult, memesResult, categoriesResult, directoryResult] =
     await Promise.allSettled([
       globalPromise,
       btcPromise,
       exchangesPromise,
       memesPromise,
       categoriesPromise,
+      directoryPromise,
     ]);
 
   const cgGlobal = globalResult.status === 'fulfilled' ? globalResult.value?.data : null;
@@ -571,6 +615,9 @@ async function loadOverview() {
       .catch(() => {}));
   }
   if (fallbackJobs.length) await Promise.all(fallbackJobs);
+  if (directoryResult.status === 'fulfilled') {
+    memecoins = enrichMarketCoins(memecoins, directoryResult.value);
+  }
 
   const btcUsd = Number.isFinite(cgBtc) ? cgBtc : yahooBtc?.price ?? null;
   if (!exchangeRows.length && Number.isFinite(btcUsd)) {
@@ -628,6 +675,9 @@ async function loadOverview() {
         ? 'CoinGecko'
         : yahooMemecoins.length ? 'Yahoo Finance' : null,
       memeMarket: categoryRow ? 'CoinGecko category market data' : 'Tracked basket fallback',
+      tokenIdentity: directoryResult.status === 'fulfilled'
+        ? 'CoinGecko platforms directory'
+        : null,
       fallbackReady: Boolean(yahooBtc || yahooMemecoins.length),
     },
     btcUsd,
@@ -858,6 +908,186 @@ async function loadSentiment() {
     hottestChain: chains[0] || null,
     fetchedAt: Date.now(),
     source: 'DeFiLlama',
+  };
+}
+
+async function llamaOverview(dataType) {
+  const params = new URLSearchParams({
+    excludeTotalDataChart: 'true',
+    excludeTotalDataChartBreakdown: 'true',
+    dataType,
+  });
+  return fetchJSON(`https://api.llama.fi/overview/fees?${params}`, {
+    timeout: 20_000,
+    retries: 1,
+  });
+}
+
+function sumProtocolMetric(protocolsBySlug, slugs, field) {
+  const values = slugs
+    .map((slug) => Number(protocolsBySlug.get(slug)?.[field]))
+    .filter(Number.isFinite);
+  return values.length ? values.reduce((sum, value) => sum + value, 0) : null;
+}
+
+function launchpadMetric(definition, feesBySlug, revenueBySlug) {
+  return {
+    fees24h: sumProtocolMetric(feesBySlug, definition.feeSlugs, 'total24h'),
+    fees7d: sumProtocolMetric(feesBySlug, definition.feeSlugs, 'total7d'),
+    fees30d: sumProtocolMetric(feesBySlug, definition.feeSlugs, 'total30d'),
+    revenue24h: sumProtocolMetric(revenueBySlug, definition.feeSlugs, 'total24h'),
+    revenue7d: sumProtocolMetric(revenueBySlug, definition.feeSlugs, 'total7d'),
+    revenue30d: sumProtocolMetric(revenueBySlug, definition.feeSlugs, 'total30d'),
+  };
+}
+
+async function categoryMarketRows(categoryId) {
+  return fetchJSON(
+    `${CG}/coins/markets?vs_currency=usd&category=${encodeURIComponent(categoryId)}` +
+    '&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=24h',
+    { timeout: 20_000, retries: 1 },
+  );
+}
+
+async function launchTokenMarkets(definitions) {
+  const ids = [...new Set(definitions.flatMap((item) => [
+    item.nativeToken?.id,
+    ...(item.verifiedCoinIds || []),
+  ]).filter(Boolean))];
+  if (!ids.length) return new Map();
+  const rows = await fetchJSON(
+    `${CG}/coins/markets?vs_currency=usd&ids=${encodeURIComponent(ids.join(','))}` +
+    '&order=market_cap_desc&sparkline=false&price_change_percentage=24h',
+    { timeout: 18_000, retries: 1 },
+  );
+  return new Map((rows || []).map((row) => [row.id, slimCoin(row)]));
+}
+
+function sourceCoverage(definition, categoryAvailable, fallbackAvailable, metricsAvailable) {
+  return {
+    fees: metricsAvailable ? 'DeFiLlama' : null,
+    launches: categoryAvailable
+      ? 'CoinGecko launchpad ecosystem category'
+      : fallbackAvailable ? 'Curated CoinGecko category set + current market snapshot' : null,
+    provenance: definition.docsUrl || definition.officialUrl,
+    market: categoryAvailable || fallbackAvailable ? 'CoinGecko current market snapshot' : null,
+  };
+}
+
+async function loadLaunchpads() {
+  const [feesResult, revenueResult, directoryResult, nativeResult] = await Promise.allSettled([
+    llamaOverview('dailyFees'),
+    llamaOverview('dailyRevenue'),
+    coinDirectory(),
+    launchTokenMarkets(LAUNCHPAD_DEFINITIONS),
+  ]);
+  if (feesResult.status !== 'fulfilled') {
+    throw new Error(`DeFiLlama fee ranking unavailable: ${feesResult.reason?.message || 'unknown error'}`);
+  }
+
+  const feesBySlug = new Map((feesResult.value?.protocols || []).map((row) => [row.slug, row]));
+  const revenueBySlug = new Map(
+    (revenueResult.status === 'fulfilled' ? revenueResult.value?.protocols : [])
+      .map((row) => [row.slug, row]),
+  );
+  const directory = directoryResult.status === 'fulfilled' ? directoryResult.value : null;
+  const launchMarketById = nativeResult.status === 'fulfilled' ? nativeResult.value : new Map();
+  const ranked = LAUNCHPAD_DEFINITIONS
+    .map((definition) => ({
+      ...definition,
+      metrics: launchpadMetric(definition, feesBySlug, revenueBySlug),
+    }))
+    .filter((definition) => Number.isFinite(definition.metrics.fees30d))
+    .sort((left, right) => right.metrics.fees30d - left.metrics.fees30d)
+    .slice(0, 5);
+
+  const launchpads = [];
+  for (const [index, definition] of ranked.entries()) {
+    let categoryRows = [];
+    let categoryWarning = null;
+    try {
+      categoryRows = await categoryMarketRows(definition.categoryId);
+    } catch (error) {
+      categoryWarning = `Launch ranking unavailable: ${error.message}`;
+    }
+    if (index < ranked.length - 1) await pause(350);
+
+    const verifiedIds = new Set(definition.verifiedCoinIds || []);
+    const categoryAvailable = categoryRows.length > 0;
+    const fallbackRows = categoryAvailable
+      ? []
+      : [...verifiedIds].map((id) => launchMarketById.get(id)).filter(Boolean);
+    const marketRows = categoryAvailable ? categoryRows.map(slimCoin) : fallbackRows;
+    if (!categoryAvailable && fallbackRows.length) {
+      categoryWarning = `Live category ranking delayed; showing ${fallbackRows.length} sourced fallback record${fallbackRows.length === 1 ? '' : 's'}.`;
+    }
+    const candidates = enrichMarketCoins(marketRows, directory)
+      .map((coin) => {
+        const categoryVerifiesLaunch = categoryAvailable && definition.provenanceMode === 'category';
+        const fallbackVerifiesLaunch = !categoryAvailable && verifiedIds.has(coin.id);
+        const allowlistVerifiesLaunch = definition.provenanceMode === 'allowlist' && verifiedIds.has(coin.id);
+        return {
+          ...coin,
+          launchpadVerified: Boolean(coin.identityVerified
+            && (categoryVerifiesLaunch || fallbackVerifiesLaunch || allowlistVerifiesLaunch)),
+          launchpadSource: definition.categoryUrl,
+          dexScreenerUrl: coin.chain && coin.contract
+            ? `https://dexscreener.com/${encodeURIComponent(coin.chain)}/${encodeURIComponent(coin.contract)}`
+            : null,
+        };
+      });
+    const projects = rankVerifiedLaunches(candidates, {
+      excludeIds: definition.excludeProjectIds,
+      maximum: 10,
+    });
+    const nativeMarket = definition.nativeToken
+      ? launchMarketById.get(definition.nativeToken.id) || null
+      : null;
+    const projectsWithComparison = projects.map((project) => ({
+      ...project,
+      platformComparison: nativeMarket
+        ? calculateMarketCapComparison(nativeMarket.mcap, project.mcap)
+        : null,
+    }));
+    launchpads.push({
+      id: definition.id,
+      rank: index + 1,
+      name: definition.name,
+      chain: definition.chain,
+      category: definition.category,
+      logo: definition.logo,
+      metrics: definition.metrics,
+      nativeToken: definition.nativeToken ? {
+        ...definition.nativeToken,
+        marketCap: nativeMarket?.mcap || null,
+        price: nativeMarket?.price || null,
+      } : null,
+      verifiedLaunchedTokens: candidates.filter((coin) => coin.launchpadVerified).length,
+      topLaunchedToken: projectsWithComparison[0] || null,
+      projects: projectsWithComparison,
+      warning: categoryWarning,
+      coverage: sourceCoverage(definition, categoryAvailable, fallbackRows.length > 0, true),
+      sources: [
+        { label: definition.name, url: definition.officialUrl, logo: definition.logo },
+        definition.docsUrl ? { label: 'Docs', url: definition.docsUrl, logo: definition.logo } : null,
+        { label: 'DeFiLlama', url: `https://defillama.com/protocol/${definition.feeSlugs[0]}?fees=true` },
+        { label: 'CoinGecko category', url: definition.categoryUrl },
+      ].filter(Boolean),
+    });
+  }
+
+  return {
+    ok: true,
+    fetchedAt: Date.now(),
+    metric: {
+      key: 'fees30d',
+      label: '30-day platform fees',
+      source: 'DeFiLlama',
+    },
+    partial: launchpads.some((item) => item.warning || item.projects.length === 0),
+    launchpads,
+    candidateCount: LAUNCHPAD_DEFINITIONS.length,
+    methodology: 'Candidates are ranked dynamically by DeFiLlama 30-day fees. Project rows require an exact chain and contract plus explicit launchpad-category provenance; a maximum of ten verified rows is shown.',
   };
 }
 
@@ -1301,6 +1531,57 @@ async function currentCoin(id) {
   return slimCoin(rows[0]);
 }
 
+async function loadTokenResearch({ id, chain, contract }) {
+  let directory = null;
+  try {
+    directory = await coinDirectory();
+  } catch {
+    directory = null;
+  }
+  const identity = resolveCoinIdentity(directory, { id, chain, contract }) || {
+    id: id || null,
+    coingeckoId: id || null,
+    symbol: null,
+    name: null,
+    chain: chain || null,
+    contract: contract || null,
+    explorer: null,
+    verified: false,
+  };
+
+  let coin = null;
+  let marketWarning = null;
+  if (identity.coingeckoId) {
+    try {
+      coin = await currentCoin(identity.coingeckoId);
+    } catch (error) {
+      marketWarning = `Current market data unavailable: ${error.message}`;
+    }
+  } else {
+    marketWarning = 'Market research unavailable for this token.';
+  }
+
+  return {
+    ok: true,
+    fetchedAt: Date.now(),
+    identity: {
+      ...identity,
+      symbol: identity.symbol || coin?.sym || null,
+      name: identity.name || coin?.name || null,
+    },
+    coin,
+    partial: !coin,
+    warning: marketWarning,
+    sources: [
+      identity.explorer ? { label: 'Explorer', url: identity.explorer } : null,
+      identity.coingeckoId ? {
+        label: 'CoinGecko',
+        url: `https://www.coingecko.com/en/coins/${encodeURIComponent(identity.coingeckoId)}`,
+      } : null,
+    ].filter(Boolean),
+  };
+}
+
 function slimDexPair(pair) {
   if (!pair) return null;
   return {
@@ -1322,35 +1603,58 @@ function slimDexPair(pair) {
   };
 }
 
-async function configuredDexPair(id) {
-  const config = DEX_PAIRS[id];
+async function configuredDexPair({ id, chain, contract, pairAddress }) {
+  const config = pairAddress && chain ? { chain, pairAddress } : DEX_PAIRS[id];
   if (!config) return null;
   const json = await fetchJSON(
     `${DEX}/latest/dex/pairs/${encodeURIComponent(config.chain)}/${encodeURIComponent(config.pairAddress)}`,
     { timeout: 12_000, retries: 1 },
   );
-  return slimDexPair(json?.pair || json?.pairs?.[0]);
+  const rawPair = json?.pair || json?.pairs?.[0];
+  if (contract && !pairMatchesContract(rawPair, config.chain, contract)) return null;
+  return slimDexPair(rawPair);
 }
 
-async function discoverDexPair(id) {
-  const metadata = await fetchJSON(
-    `${CG}/coins/${encodeURIComponent(id)}?localization=false&tickers=false&market_data=false` +
-    '&community_data=false&developer_data=false&sparkline=false',
-    { timeout: 18_000, retries: 0 },
-  );
-  const platformEntry = Object.entries(metadata?.platforms || {})
-    .find(([platform, address]) => PLATFORM_TO_DEX_CHAIN[platform] && String(address || '').trim());
-  if (!platformEntry) return null;
-  const [platform, address] = platformEntry;
-  const chain = PLATFORM_TO_DEX_CHAIN[platform];
+async function discoverDexPair({ id, chain: requestedChain, contract: requestedContract }) {
+  let chain = requestedChain;
+  let address = requestedContract;
+  if (!chain || !address || address === 'native') {
+    if (!id) return null;
+    const metadata = await fetchJSON(
+      `${CG}/coins/${encodeURIComponent(id)}?localization=false&tickers=false&market_data=false` +
+      '&community_data=false&developer_data=false&sparkline=false',
+      { timeout: 18_000, retries: 0 },
+    );
+    const platformEntry = Object.entries(metadata?.platforms || {})
+      .find(([platform, contract]) => PLATFORM_TO_DEX_CHAIN[platform] && String(contract || '').trim());
+    if (!platformEntry) return null;
+    const [platform, contract] = platformEntry;
+    chain = PLATFORM_TO_DEX_CHAIN[platform];
+    address = contract;
+  }
   const rows = await fetchJSON(
     `${DEX}/token-pairs/v1/${encodeURIComponent(chain)}/${encodeURIComponent(address)}`,
     { timeout: 12_000, retries: 1 },
   );
-  const valid = (Array.isArray(rows) ? rows : [])
-    .filter((pair) => Number(pair.pairCreatedAt) > 0)
-    .sort((a, b) => Number(a.pairCreatedAt) - Number(b.pairCreatedAt));
-  return slimDexPair(valid[0] || rows?.[0]);
+  return slimDexPair(chooseDexPair(Array.isArray(rows) ? rows : [], chain, address));
+}
+
+async function resolveDexPair(args) {
+  let pair = null;
+  let warning = null;
+  try {
+    pair = await configuredDexPair(args);
+  } catch {
+    pair = null;
+  }
+  if (!pair) {
+    try {
+      pair = await discoverDexPair(args);
+    } catch {
+      warning = 'DEX pair discovery is temporarily unavailable.';
+    }
+  }
+  return { pair, warning };
 }
 
 async function firstFifteenMinuteCandle(pair) {
@@ -1377,20 +1681,25 @@ async function firstFifteenMinuteCandle(pair) {
   return candles.find((row) => row.t >= lower && row.t <= upper) || null;
 }
 
-async function loadDexLaunch(id) {
-  let pair = null;
-  let discoveryWarning = null;
-  try {
-    pair = await configuredDexPair(id);
-  } catch {
-    pair = null;
-  }
-  if (!pair) {
+async function loadDexLaunch({ id, chain, contract, pairAddress }) {
+  const resolutionKey = `dexpair:${chain || 'auto'}:${contract || id}:${pairAddress || 'resolve'}`;
+  const resolved = await cached(
+    resolutionKey,
+    TTL.dexPair,
+    () => resolveDexPair({ id, chain, contract, pairAddress }),
+  );
+  let pair = resolved.pair || null;
+  let discoveryWarning = resolved.warning || null;
+  if (pair && resolved.cache !== 'miss') {
     try {
-      pair = await discoverDexPair(id);
+      pair = await configuredDexPair({
+        chain: pair.chain,
+        contract: contract || pair.baseAddress,
+        pairAddress: pair.pairAddress,
+      });
     } catch {
-      pair = null;
-      discoveryWarning = 'DEX pair discovery is temporarily unavailable.';
+      pair = { ...pair, stale: true };
+      discoveryWarning = 'Live DEX refresh delayed; the last exact-pair snapshot is shown.';
     }
   }
   if (!pair) {
@@ -1398,6 +1707,8 @@ async function loadDexLaunch(id) {
       ok: true,
       fetchedAt: Date.now(),
       id,
+      chain: chain || null,
+      contract: contract || null,
       pair: null,
       launch: null,
       warning: discoveryWarning || 'No exact contract-matched DEX pair was found.',
@@ -1406,7 +1717,14 @@ async function loadDexLaunch(id) {
 
   let candle = null;
   try {
-    candle = await firstFifteenMinuteCandle(pair);
+    const candleKey = `dexcandle:${pair.chain}:${pair.pairAddress}`;
+    const priorCandle = cache.get(candleKey)?.value?.candle;
+    const candleResult = await cached(
+      candleKey,
+      priorCandle ? TTL.dexCandle : 60 * 60_000,
+      async () => ({ candle: await firstFifteenMinuteCandle(pair) }),
+    );
+    candle = candleResult.candle;
   } catch {
     candle = null;
   }
@@ -1422,6 +1740,8 @@ async function loadDexLaunch(id) {
     ok: true,
     fetchedAt: Date.now(),
     id,
+    chain: chain || pair.chain,
+    contract: contract || pair.baseAddress,
     pair,
     launch: candle ? {
       t: candle.t,
@@ -1434,9 +1754,9 @@ async function loadDexLaunch(id) {
         ? `First 15m close multiplied by current implied ${pair.marketCap > 0 ? 'circulating' : 'fully diluted'} supply.`
         : 'First 15m close; valuation unavailable because current implied supply is unavailable.',
     } : null,
-    warning: candle
+    warning: discoveryWarning || (candle
       ? 'Launch valuation is a proxy, not an exact historical circulating-supply snapshot.'
-      : 'The first 15-minute OHLCV candle was not returned by the public source.',
+      : 'The first 15-minute OHLCV candle was not returned by the public source.'),
   };
 }
 
@@ -1527,6 +1847,16 @@ export async function getMarketPayload(urlLike) {
   if (resource === 'ticker') {
     return cached('ticker', TTL.ticker, loadTicker);
   }
+  if (resource === 'token') {
+    const id = url.searchParams.get('id');
+    const chain = url.searchParams.get('chain');
+    const contract = url.searchParams.get('contract');
+    if (!id && !(chain && contract)) {
+      return { ok: false, status: 400, error: 'chain + contract or id is required' };
+    }
+    const key = `token:${chain || 'auto'}:${contract || id}`;
+    return cached(key, TTL.tokenSnapshot, () => loadTokenResearch({ id, chain, contract }));
+  }
   if (resource === 'history') {
     const id = url.searchParams.get('id');
     const symbol = url.searchParams.get('symbol');
@@ -1539,11 +1869,20 @@ export async function getMarketPayload(urlLike) {
   }
   if (resource === 'dexlaunch') {
     const id = url.searchParams.get('id');
-    if (!id) return { ok: false, status: 400, error: 'id is required' };
-    return cached(`dexlaunch:${id}`, TTL.dexLaunch, () => loadDexLaunch(id));
+    const chain = url.searchParams.get('chain');
+    const contract = url.searchParams.get('contract');
+    const pairAddress = url.searchParams.get('pairAddress');
+    if (!id && !(chain && contract)) {
+      return { ok: false, status: 400, error: 'chain + contract or id is required' };
+    }
+    const key = `dexlaunch:${chain || 'auto'}:${contract || id}:${pairAddress || 'resolve'}`;
+    return cached(key, TTL.dexLaunch, () => loadDexLaunch({ id, chain, contract, pairAddress }));
   }
   if (resource === 'sentiment') {
     return cached('sentiment', TTL.sentiment, loadSentiment);
+  }
+  if (resource === 'launchpads') {
+    return cached('launchpads', TTL.launchpads, loadLaunchpads);
   }
   if (resource === 'meme2026') {
     return cached('meme2026', TTL.meme2026, loadMeme2026);

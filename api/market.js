@@ -7,7 +7,11 @@ export default async function handler(request, response) {
     const status = payload.status || (payload.ok === false ? 500 : 200);
     const resource = url.searchParams.get('resource') || 'overview';
     const cacheControl = resource === 'dexlaunch'
-      ? 'public, s-maxage=86400, stale-while-revalidate=604800'
+      ? 'public, s-maxage=30, stale-while-revalidate=120'
+      : resource === 'launchpads'
+        ? 'public, s-maxage=300, stale-while-revalidate=900'
+      : resource === 'token'
+        ? 'public, s-maxage=20, stale-while-revalidate=120'
       : resource === 'ticker'
         ? 'public, s-maxage=10, stale-while-revalidate=60'
       : resource === 'history'

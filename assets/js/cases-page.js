@@ -1,6 +1,7 @@
 import { CASES } from './cases-config.js';
 import { fmtUsd, fmtPrice, fmtPct, fmtClock, el } from './utils.js';
 import { startAutoRefresh } from './autorefresh.js';
+import { findToken, tokenDetailHref } from './token-registry.js';
 
 const $ = (id) => document.getElementById(id);
 const state = { overview: null, sentiment: null, sort: 'mcap' };
@@ -16,10 +17,6 @@ async function market(resource) {
   const payload = await response.json();
   if (!payload?.ok) throw new Error(payload?.error || 'Data is unavailable');
   return payload;
-}
-
-function detailHref(coin) {
-  return `/cases/detail/?id=${encodeURIComponent(coin.id)}&symbol=${encodeURIComponent(coin.sym)}`;
 }
 
 function renderUniverse() {
@@ -46,7 +43,7 @@ function renderUniverse() {
   const body = el('tbody');
   coins.forEach((coin, index) => {
     const wrapped = /peg|wrapped/i.test(`${coin.id} ${coin.name}`);
-    body.append(el('tr', { class: 'clickable', onclick: () => { location.href = detailHref(coin); } },
+    body.append(el('tr', { class: 'clickable', onclick: () => { location.href = tokenDetailHref(coin); } },
       el('td', { class: 'muted num' }, String(index + 1)),
       el('td', {},
         el('span', { class: 'coin-cell' },
@@ -62,7 +59,7 @@ function renderUniverse() {
       el('td', { class: `r num ${coin.ch24h >= 0 ? 'up' : 'down'}` }, fmtPct(coin.ch24h, 1)),
       el('td', { class: 'r num' }, fmtUsd(coin.mcap)),
       el('td', { class: 'r num' }, fmtUsd(coin.vol)),
-      el('td', { class: 'r' }, el('a', { class: 'table-link', href: detailHref(coin) }, 'Detail')),
+      el('td', { class: 'r' }, el('a', { class: 'table-link', href: tokenDetailHref(coin) }, 'Detail')),
     ));
   });
   table.append(body);
@@ -75,7 +72,8 @@ function renderCurated() {
   grid.replaceChildren();
   CASES.forEach((item) => {
     const live = byId.get(item.id);
-    grid.append(el('a', { class: 'case-card research-card', href: `/cases/${item.slug}/` },
+    const registryToken = findToken({ id: item.id });
+    grid.append(el('a', { class: 'case-card research-card', href: registryToken?.articlePath || `/cases/${item.slug}/` },
       el('img', { class: 'case-card-logo', src: item.logo, alt: '', width: '52', height: '52' }),
       el('div', { class: 'case-card-body' },
         el('div', { class: 'case-card-head' },

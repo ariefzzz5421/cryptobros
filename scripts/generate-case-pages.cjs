@@ -38,6 +38,8 @@ const template = (item) => `<!DOCTYPE html>
     <div class="doc-meta" id="docMeta"></div>
   </header>
 
+  <section class="token-lore-section" id="tokenLore" aria-label="Token lore"></section>
+
   <section class="panel doc-section">
     <p class="eyebrow">Thesis</p>
     <h2>What this token actually priced</h2>

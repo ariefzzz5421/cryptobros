@@ -25,10 +25,11 @@ npm run build
 |---|---|
 | `/` | Global overview, active-hour analysis, and live memecoin leaderboard |
 | `/maps/` | Exchange legal-jurisdiction volume map with ranked markers and country flags |
-| `/sentiment/` | Launchpad/protocol volume and revenue, with chain ranking |
+| `/sentiment/` | Trading tools, launchpads, and protocol activity with explicit categories |
+| `/launchpads/` | Dynamic Top 5 by DeFiLlama 30-day fees and contract-verified launched tokens |
 | `/cases/` | Live `$100M+` memecoin leaderboard and sourced historical studies |
 | `/cases/{slug}/` | Curated launch-to-ATH study with chart, identity, contracts, and sources |
-| `/cases/detail/?id=…&symbol=…` | Dynamic market dossier using CoinGecko/Yahoo data |
+| `/cases/detail/?chain=…&contract=…&id=…` | Contract-first market dossier with progressive market and DexScreener hydration |
 | `/2026-memecoins/` | Tokens publicly verified to have first crossed `$100M` market cap in 2026 |
 | `/nft/` | NFT collections with a documented floor above `0.5 ETH` |
 | `/nft/{slug}/` | Collection case study: launch, mint, peak and live floor, factors, triggers |
@@ -52,6 +53,19 @@ NFT collections carry their official artwork from the CoinGecko NFT image CDN,
 with a local mark as the `onerror` fallback so a blocked or slow CDN never
 leaves a broken image. Every collection links to its OpenSea page.
 
+### Contract-first token identity
+
+`assets/js/token-registry.js` is the curated identity and Lore registry. The
+canonical key is `chain + contract`; ticker symbols are display metadata and
+are never used to resolve a project or DexScreener pair. Provider-only tokens
+still open a complete detail shell and show explicit unavailable states while
+live sources hydrate progressively.
+
+`/launchpads/` ranks candidates dynamically by DeFiLlama 30-day fees. Its
+project rows require an exact contract and a launchpad-specific provenance
+source. Native and ecosystem platform tokens are excluded from their own
+project rankings.
+
 ## Data and provenance
 
 | Dataset | Primary source | Fallback or supporting source |
@@ -64,11 +78,13 @@ leaves a broken image. Every collection links to its OpenSea page.
 | Country flags | FlagCDN | Bundled local images |
 | NFT floor prices | CoinGecko NFT collections API | Sourced peak/mint values shown as documented history |
 | Project identity | Official websites and X accounts | CoinGecko and chain explorers |
+| Launchpad fees and revenue | DeFiLlama normalized protocol data | Explicit unavailable state |
+| Launchpad project provenance | Official launchpad feeds/docs and CoinGecko launchpad categories | Exact-contract curated category set |
+| Live DEX pair | DexScreener exact contract or stored pair | Explicit no-verified-pair state |
 
-The browser polls the same backend endpoint every 10 seconds. The backend applies
-source-specific caches to protect public API quotas and keeps the last valid
-response when a provider is temporarily unavailable. There is no manual refresh
-button or visible countdown.
+Fast market snapshots refresh silently. Slow-changing launchpad rankings use a
+longer cache and stale-while-revalidate behavior; static Lore is never polled.
+Missing provider data remains visible as unavailable instead of being estimated.
 
 ### Important data boundary
 
@@ -110,10 +126,12 @@ CoinGecko NFT API, so a blocked or rate-limited upstream still renders a mark.
 
 ```text
 index.html
-maps/  sentiment/  cases/  2026-memecoins/  nft/  nft-2026/
+maps/  sentiment/  launchpads/  cases/  2026-memecoins/  nft/  nft-2026/
 assets/css/style.css
 assets/js/
 server/market-service.mjs
+server/token-utils.mjs
+server/launchpad-config.mjs
 scripts/dev-server.cjs
 scripts/build.cjs
 scripts/generate-case-pages.cjs
