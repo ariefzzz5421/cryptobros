@@ -2,13 +2,12 @@
    cases-article.js — halaman artikel per token.
    Token ditentukan oleh <body data-case="slug">.
    Susunan: logo + judul, ringkasan terhitung (launch, ATH,
-   durasi), artikel, chart mingguan, fakta, katalis.
+   durasi), artikel, fakta, chart DEX exact-pair, katalis.
    ============================================================ */
 
 import { CASE_BY_SLUG } from './cases-config.js';
-import { fetchCaseMarkets, fetchHistory } from './cases-data.js';
+import { fetchCaseMarkets } from './cases-data.js';
 import { fmtDate, fmtDuration, DAY } from './cases-chart.js';
-import { renderMarketHistoryChart } from './market-history-chart.js';
 import { fetchDexLaunch, renderDexScreenerChart } from './dexscreener.js';
 import { brandedSourceLink } from './source-brands.js';
 import { fmtUsd, fmtPrice, fmtPct, fmtClock, el } from './utils.js';
@@ -21,7 +20,7 @@ const $ = (id) => document.getElementById(id);
 const slug = document.body.dataset.case;
 const caseDef = CASE_BY_SLUG[slug];
 
-const state = { m: null, history: null, dexLaunch: null };
+const state = { m: null, dexLaunch: null };
 
 function setStatus(text, kind = 'busy') {
   $('statusText').textContent = text;
@@ -29,9 +28,7 @@ function setStatus(text, kind = 'busy') {
 }
 
 function launchToAthDays(m) {
-  const athTimestamp = m?.athDate
-    ? Date.parse(m.athDate)
-    : state.history?.milestones?.ath?.t;
+  const athTimestamp = m?.athDate ? Date.parse(m.athDate) : null;
   if (!Number.isFinite(athTimestamp)) return null;
   return (athTimestamp - Date.parse(caseDef.launch)) / DAY;
 }
@@ -40,9 +37,8 @@ function launchToAthDays(m) {
 function renderSummary() {
   const m = state.m;
   const days = launchToAthDays(m);
-  const historyAth = state.history?.milestones?.ath;
-  const athPrice = Number.isFinite(m?.ath) ? m.ath : historyAth?.price;
-  const athTimestamp = m?.athDate ? Date.parse(m.athDate) : historyAth?.t;
+  const athPrice = Number.isFinite(m?.ath) ? m.ath : null;
+  const athTimestamp = m?.athDate ? Date.parse(m.athDate) : null;
   const parts = [`Launch: ${fmtDate(Date.parse(caseDef.launch))} (${caseDef.launchNote}).`];
   if (Number.isFinite(athPrice) && Number.isFinite(athTimestamp)) {
     parts.push(`ATH: ${fmtPrice(athPrice)} on ${fmtDate(athTimestamp)}.`);
@@ -63,10 +59,9 @@ function renderFacts() {
   const m = state.m;
   const dexPair = state.dexLaunch?.pair;
   const days = launchToAthDays(m);
-  const historyAth = state.history?.milestones?.ath;
-  const athPrice = Number.isFinite(m?.ath) ? m.ath : historyAth?.price;
-  const athTimestamp = m?.athDate ? Date.parse(m.athDate) : historyAth?.t;
-  const launch = state.dexLaunch?.launch || state.history?.milestones?.launch;
+  const athPrice = Number.isFinite(m?.ath) ? m.ath : null;
+  const athTimestamp = m?.athDate ? Date.parse(m.athDate) : null;
+  const launch = state.dexLaunch?.launch;
   const launchPrice = Number.isFinite(launch?.price) ? fmtPrice(launch.price) : 'Unavailable';
   const launchValuation = Number.isFinite(launch?.valuation) ? fmtUsd(launch.valuation) : 'Unavailable';
 
@@ -106,7 +101,7 @@ function renderArticle() {
 /* Masthead facts. Live values are filled in by renderFacts once markets load. */
 function renderMeta() {
   const m = state.m;
-  const athTimestamp = m?.athDate ? Date.parse(m.athDate) : state.history?.milestones?.ath?.t;
+  const athTimestamp = m?.athDate ? Date.parse(m.athDate) : null;
   $('docMeta').replaceChildren(
     el('div', {},
       el('span', {}, 'Launch'),
@@ -118,9 +113,7 @@ function renderMeta() {
     ),
     el('div', {},
       el('span', {}, 'ATH'),
-      el('strong', { class: 'num' }, Number.isFinite(m?.ath) ? fmtPrice(m.ath)
-        : Number.isFinite(state.history?.milestones?.ath?.price) ? fmtPrice(state.history.milestones.ath.price)
-          : 'Unavailable'),
+      el('strong', { class: 'num' }, Number.isFinite(m?.ath) ? fmtPrice(m.ath) : 'Unavailable'),
     ),
     el('div', {},
       el('span', {}, 'ATH date'),
@@ -181,10 +174,6 @@ function renderIdentityAndSources() {
       url: contract.explorer,
       note: contract.address ? 'verified contract' : 'native chain',
     })),
-    ...(state.history?.sources || []).map((source) => ({
-      ...source,
-      note: source.label.includes('Yahoo') ? 'daily price history' : 'historical market data',
-    })),
     ...(caseDef.researchSources || []),
     ...(caseDef.dexScreener ? [{
       label: 'DEX Screener',
@@ -196,43 +185,7 @@ function renderIdentityAndSources() {
   $('caseSources').replaceChildren(...definitions.map((source) => brandedSourceLink(source)));
 }
 
-function renderChartSection() {
-  if (state.history) {
-    let history = Number.isFinite(state.m?.ath) && state.m?.athDate
-      ? {
-          ...state.history,
-          milestones: {
-            ...state.history.milestones,
-            ath: {
-              t: Date.parse(state.m.athDate),
-              price: state.m.ath,
-              source: 'CoinGecko',
-            },
-          },
-        }
-      : state.history;
-    if (state.dexLaunch?.launch) {
-      history = {
-        ...history,
-        milestones: {
-          ...history.milestones,
-          launch: {
-            t: state.dexLaunch.launch.t,
-            price: state.dexLaunch.launch.price,
-            mcap: state.dexLaunch.launch.metricKind === 'market-cap proxy'
-              ? state.dexLaunch.launch.valuation
-              : null,
-            source: state.dexLaunch.launch.source,
-          },
-        },
-        source: { ...history.source, launchMilestones: state.dexLaunch.launch.source },
-      };
-    }
-    renderMarketHistoryChart($('caseChart'), history, {
-      launchAt: caseDef.launch,
-      symbol: caseDef.sym,
-    });
-  }
+function renderDexSection() {
   renderDexScreenerChart(
     $('dexScreenerChart'),
     state.dexLaunch?.pair || caseDef.dexScreener,
@@ -257,38 +210,18 @@ async function load() {
   renderSummary();
   renderFacts();
   renderMeta();
-
-  $('caseChart').replaceChildren(el('div', { class: 'chart-loading' },
-    el('span', { class: 'spinner' }), ` Loading ${caseDef.sym} history…`));
-
-  renderMeta();
-
-  const marketsP = refreshMarkets()
-    .catch((e) => console.warn('market snapshot:', e.message));
-
-  const historyResult = await Promise.resolve(fetchHistory(caseDef))
-    .then((value) => ({ status: 'fulfilled', value }))
-    .catch((reason) => ({ status: 'rejected', reason }));
-  if (historyResult.status === 'fulfilled') {
-    state.history = historyResult.value;
-  } else {
-    $('caseChart').replaceChildren(el('p', { class: 'error' },
-      `Historical chart is unavailable: ${historyResult.reason.message}`));
-  }
-  await marketsP;
-  renderChartSection();
-  renderFacts();
-  renderMeta();
-  renderIdentityAndSources();
-  setStatus('Case data ready', 'ok');
-
-  fetchDexLaunch(findToken({ id: caseDef.id }) || { id: caseDef.id })
+  const marketsP = refreshMarkets().catch((error) => console.warn('market snapshot:', error.message));
+  const dexP = fetchDexLaunch(findToken({ id: caseDef.id }) || { id: caseDef.id })
     .then((value) => {
       state.dexLaunch = value;
       renderFacts();
-      renderChartSection();
+      renderDexSection();
     })
     .catch((error) => console.warn('DEX launch:', error.message));
+  await Promise.allSettled([marketsP, dexP]);
+  renderIdentityAndSources();
+  setStatus(state.m || state.dexLaunch?.pair ? 'Case data ready' : 'Case research ready · live market unavailable',
+    state.m || state.dexLaunch?.pair ? 'ok' : 'busy');
 }
 
 function init() {
@@ -311,27 +244,7 @@ function init() {
     setStatus(`Could not load: ${e.message}`, 'err');
   });
 
-  /* Current values refresh silently; historical series use their natural
-     daily/weekly cadence instead of hammering public APIs. */
-  startAutoRefresh([
-    { every: 10 * 1000, run: () => refreshMarkets({ force: true }) },
-    {
-      every: 60 * 60 * 1000,
-      run: async () => {
-        state.history = await fetchHistory(caseDef, { force: true });
-        renderChartSection();
-        renderFacts();
-        renderIdentityAndSources();
-      },
-    },
-  ]);
-  window.addEventListener('themechange', () => {
-    if (!state.history) return;
-    renderMarketHistoryChart($('caseChart'), state.history, {
-      launchAt: caseDef.launch,
-      symbol: caseDef.sym,
-    });
-  });
+  startAutoRefresh([{ every: 10 * 1000, run: () => refreshMarkets({ force: true }) }]);
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

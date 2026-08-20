@@ -3,6 +3,7 @@ import { el } from './utils.js';
 const BRANDS = [
   { test: (host) => host === 'defillama.com' || host.endsWith('.defillama.com'), name: 'DeFiLlama', logo: '/assets/img/sources/defillama.ico' },
   { test: (host) => host === 'dexscreener.com' || host.endsWith('.dexscreener.com'), name: 'DEX Screener', logo: '/assets/img/sources/dexscreener.ico' },
+  { test: (host) => host === 'ansem.io' || host.endsWith('.ansem.io'), name: 'Ansem.io', logo: '/assets/img/platforms/ansem.ico' },
   { test: (host) => host === 'x.com' || host.endsWith('.x.com'), name: 'X', logo: '/assets/img/sources/x.svg', lightAsset: true },
   { test: (host) => host === 'opensea.io' || host.endsWith('.opensea.io'), name: 'OpenSea', logo: '/assets/img/sources/opensea.svg' },
   { test: (host) => host.includes('coingecko.com'), name: 'CoinGecko', logo: '/assets/img/sources/coingecko.svg' },

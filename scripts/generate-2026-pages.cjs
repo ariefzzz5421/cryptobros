@@ -296,7 +296,7 @@ function template(item) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${item.name} (${item.symbol}) — 2026 Memecoin Research</title>
-<meta name="description" content="${item.name} research dossier: launch, $100M crossing, thesis, why it pumped, factors, dated triggers, contract attribution, and public market history.">
+<meta name="description" content="${item.name} research dossier: launch, $100M crossing, thesis, dated triggers, contract attribution, live market facts, and exact-pair DEX data.">
 <link rel="stylesheet" href="/assets/css/style.css">
 <link rel="icon" type="image/png" href="/assets/img/brand/crypto-bros-favicon.png">
 </head>
@@ -308,7 +308,7 @@ function template(item) {
     <nav class="primary-nav"></nav>
     <div class="head-actions"><button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme"><span class="theme-icon theme-icon-sun" aria-hidden="true">☀</span><span class="theme-icon theme-icon-moon" aria-hidden="true">☾</span></button></div>
   </div>
-  <div class="status-bar wrap"><span class="dot busy" id="statusDot"></span><span id="statusText">Article ready · loading market history</span></div>
+  <div class="status-bar wrap"><span class="dot busy" id="statusDot"></span><span id="statusText">Article ready · loading live market data</span></div>
 </header>
 
 <main class="wrap case-doc" id="article">
@@ -357,11 +357,6 @@ function template(item) {
     <p class="eyebrow">Reasons and factors</p>
     <h2>What carried the market cap</h2>
     <ul class="doc-factors">${factors}</ul>
-  </section>
-
-  <section class="panel doc-section event-history-panel">
-    <div class="panel-head"><div><p class="eyebrow">Market history</p><h2>Launch-to-market chart</h2><p class="panel-sub">Public time-series data loads after the article. Missing data becomes a sourced event timeline; dates are never estimated.</p></div><span class="chart-load-state" id="chartLoadState">Loading chart…</span></div>
-    <div class="market-history-chart" id="eventChart"><div class="chart-loading-shell"><span class="spinner"></span><p>Loading public market history…</p></div></div>
   </section>
 
   <section class="panel dex-panel" aria-label="On-chain DEX chart">

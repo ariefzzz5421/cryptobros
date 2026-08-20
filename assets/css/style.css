@@ -369,6 +369,14 @@
   letter-spacing: .12em;
 }
 
+.launchpad-rank.is-unranked {
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 10px;
+  letter-spacing: .08em;
+}
+
 .launchpad-card-title h2 { margin: 3px 0 0; font-size: clamp(24px, 2.8vw, 34px); }
 .launchpad-asof { color: var(--muted); font-size: 12px; }
 
@@ -407,6 +415,16 @@
 .coverage-count { color: var(--muted); font-size: 12px; }
 .launchpad-token-table { min-width: 1180px; }
 .launchpad-token-table td { vertical-align: middle; }
+.market-source-note {
+  display: block;
+  max-width: 160px;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.25;
+  white-space: normal;
+}
 
 .contract-cell {
   display: block;

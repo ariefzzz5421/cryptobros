@@ -91,22 +91,24 @@ assert.equal(new Set(registryKeys).size, registryKeys.length, 'duplicate registr
 const launchpads = await loadPayload('launchpads');
 assert.equal(launchpads.ok, true);
 assert.equal(launchpads.metric?.key, 'fees30d');
-assert.ok(launchpads.launchpads.length <= 5);
+const rankedLaunchpads = launchpads.launchpads.filter((row) => Number.isFinite(row.rank));
+assert.ok(rankedLaunchpads.length <= 5);
 assert.deepEqual(
-  launchpads.launchpads.map((row) => row.metrics.fees30d),
-  [...launchpads.launchpads].map((row) => row.metrics.fees30d).sort((a, b) => b - a),
+  rankedLaunchpads.map((row) => row.metrics.fees30d),
+  [...rankedLaunchpads].map((row) => row.metrics.fees30d).sort((a, b) => b - a),
 );
 for (const launchpad of launchpads.launchpads) {
   assert.ok(launchpad.projects.length <= 10);
   if (process.env.AUDIT_REQUIRE_COVERAGE === '1') {
     assert.ok(launchpad.projects.length > 0, `${launchpad.id} has no verified project coverage`);
   }
-  assert.deepEqual(
-    launchpad.projects.map((row) => row.mcap),
-    [...launchpad.projects].map((row) => row.mcap).sort((a, b) => b - a),
-  );
+  const priced = launchpad.projects.filter((row) => Number.isFinite(row.mcap) && row.mcap > 0);
+  assert.deepEqual(priced.map((row) => row.mcap), [...priced].map((row) => row.mcap).sort((a, b) => b - a));
+  assert.equal(launchpad.projects.slice(0, priced.length).every((row) => Number.isFinite(row.mcap) && row.mcap > 0), true);
   const keys = launchpad.projects.map((row) => registryKey(row.chain, row.contract));
   assert.equal(new Set(keys).size, keys.length, `${launchpad.id} has duplicate contracts`);
+  assert.equal(new Set(launchpad.projects.map((row) => row.id)).size, launchpad.projects.length,
+    `${launchpad.id} has duplicate provider ids`);
   assert.equal(launchpad.projects.some((row) => row.id === launchpad.nativeToken?.id), false);
   for (const row of launchpad.projects) {
     assert.equal(row.launchpadVerified, true);
