@@ -206,7 +206,54 @@ const BREAKOUT_TOKENS = [
   },
 ];
 
-export const TOKEN_REGISTRY = Object.freeze([...CASE_TOKENS, ...BREAKOUT_TOKENS]);
+const ANSEM_LAUNCH_TOKENS = [
+  {
+    id: 'ansem-bulls-eye',
+    symbol: 'EYE',
+    name: "BULLS'S EYE",
+    chain: 'solana',
+    contract: 'RmtMAYVTTFv2iK9muMrXEoAnSSsZPPgRPbqZCKwNDYk',
+    coingeckoId: null,
+    logo: '/assets/img/brand/crypto-bros-mark.webp',
+    officialSite: 'https://ansem.io/launch/coin/RmtMAYVTTFv2iK9muMrXEoAnSSsZPPgRPbqZCKwNDYk',
+    officialX: null,
+    explorer: 'https://solscan.io/token/RmtMAYVTTFv2iK9muMrXEoAnSSsZPPgRPbqZCKwNDYk',
+    launchpadId: 'ansemio',
+    launchpadVerifiedSource: 'https://ansem.io/launch/coin/RmtMAYVTTFv2iK9muMrXEoAnSSsZPPgRPbqZCKwNDYk',
+    lore: "BULLS'S EYE is a Solana token published through Ansem.io's exact-contract launch page. Ansem.io positions the launch as part of its attention and token-distribution layer, while the underlying token is routed through Pump.fun. A separate named creator or a deeper origin story has not been sufficiently verified, so this record does not infer one from the EYE ticker.",
+    loreSources: [
+      'https://ansem.io/launch/coin/RmtMAYVTTFv2iK9muMrXEoAnSSsZPPgRPbqZCKwNDYk',
+      'https://solscan.io/token/RmtMAYVTTFv2iK9muMrXEoAnSSsZPPgRPbqZCKwNDYk',
+      'https://dexscreener.com/solana/NSP5KUp9PcXVRx6nxQgyDGGrSKamkexVpHBprvGZuKE',
+      'https://www.kucoin.com/news/flash/ansem-launches-platform-for-token-teams-to-buy-his-attention-via-airdrops',
+    ],
+    dexScreener: { chain: 'solana', pairAddress: 'NSP5KUp9PcXVRx6nxQgyDGGrSKamkexVpHBprvGZuKE', url: 'https://dexscreener.com/solana/NSP5KUp9PcXVRx6nxQgyDGGrSKamkexVpHBprvGZuKE' },
+  },
+  {
+    id: 'ansem-z',
+    symbol: 'Z',
+    name: 'Z',
+    chain: 'solana',
+    contract: '7MQSupJTpY31HGChEHUAsS1pQhLSrHS5CCsB9bnaN3eS',
+    coingeckoId: null,
+    logo: '/assets/img/brand/crypto-bros-mark.webp',
+    officialSite: 'https://ansem.io/launch/coin/7MQSupJTpY31HGChEHUAsS1pQhLSrHS5CCsB9bnaN3eS',
+    officialX: null,
+    explorer: 'https://solscan.io/token/7MQSupJTpY31HGChEHUAsS1pQhLSrHS5CCsB9bnaN3eS',
+    launchpadId: 'ansemio',
+    launchpadVerifiedSource: 'https://ansem.io/launch/coin/7MQSupJTpY31HGChEHUAsS1pQhLSrHS5CCsB9bnaN3eS',
+    lore: "Z is a Solana token published through Ansem.io's contract-specific launch page and routed through the platform's Pump.fun launch flow. The verified public record establishes the contract and launch provenance, but it does not yet establish a distinct named creator or a source-backed narrative beyond the project name. Crypto Bros therefore keeps the interpretation deliberately narrow.",
+    loreSources: [
+      'https://ansem.io/launch/coin/7MQSupJTpY31HGChEHUAsS1pQhLSrHS5CCsB9bnaN3eS',
+      'https://solscan.io/token/7MQSupJTpY31HGChEHUAsS1pQhLSrHS5CCsB9bnaN3eS',
+      'https://dexscreener.com/solana/EHDht6efDab3GNd6N9sgHYnMR7nW2Wv5rZ4W3zuDvLKo',
+      'https://www.kucoin.com/news/flash/ansem-launches-platform-for-token-teams-to-buy-his-attention-via-airdrops',
+    ],
+    dexScreener: { chain: 'solana', pairAddress: 'EHDht6efDab3GNd6N9sgHYnMR7nW2Wv5rZ4W3zuDvLKo', url: 'https://dexscreener.com/solana/EHDht6efDab3GNd6N9sgHYnMR7nW2Wv5rZ4W3zuDvLKo' },
+  },
+];
+
+export const TOKEN_REGISTRY = Object.freeze([...CASE_TOKENS, ...BREAKOUT_TOKENS, ...ANSEM_LAUNCH_TOKENS]);
 
 const BY_KEY = new Map(TOKEN_REGISTRY.map((token) => [registryKey(token.chain, token.contract), token]));
 const BY_ID = new Map();

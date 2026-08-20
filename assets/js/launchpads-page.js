@@ -12,10 +12,16 @@ function setStatus(text, kind = 'busy') {
 function comparisonView(launchpad, project) {
   const comparison = project.platformComparison;
   const platformSymbol = launchpad.nativeToken?.symbol;
-  if (!platformSymbol || !comparison) {
+  if (!platformSymbol) {
     return el('div', { class: 'launchpad-ratio is-unavailable' },
       el('strong', {}, 'N/A'),
       el('small', {}, 'No verified native token'),
+    );
+  }
+  if (!comparison) {
+    return el('div', { class: 'launchpad-ratio is-unavailable' },
+      el('strong', {}, 'N/A'),
+      el('small', {}, 'Market cap comparison unavailable'),
     );
   }
   if (comparison.direction === 'platform-larger') {
@@ -54,7 +60,9 @@ function tokenRow(launchpad, project, index) {
       }),
       el('span', {}, el('strong', {}, project.name), el('small', {}, project.sym)),
     )),
-    el('td', { class: 'r num' }, fmtUsd(project.mcap)),
+    el('td', { class: 'r num' },
+      fmtUsd(project.mcap),
+      project.marketSource ? el('small', { class: 'market-source-note' }, project.marketSource) : null),
     el('td', { class: 'r num' }, fmtUsd(project.vol)),
     el('td', {}, el('code', { class: 'contract-cell', title: project.contract }, project.contract)),
     el('td', {}, project.chain),
@@ -91,9 +99,14 @@ function projectsTable(launchpad) {
 
 function launchpadCard(launchpad, fetchedAt) {
   const native = launchpad.nativeToken;
+  const isRanked = Number.isFinite(launchpad.rank);
+  const metricNote = launchpad.metricsStale
+    ? `fallback snapshot · ${fmtClock(launchpad.metricsAsOf)}`
+    : isRanked ? 'ranking metric' : 'not separately indexed';
   return el('article', { class: 'panel launchpad-analytics-card' },
     el('header', { class: 'launchpad-card-header' },
-      el('span', { class: 'launchpad-rank num' }, String(launchpad.rank).padStart(2, '0')),
+      el('span', { class: `launchpad-rank num${isRanked ? '' : ' is-unranked'}` },
+        isRanked ? String(launchpad.rank).padStart(2, '0') : 'TRACKED'),
       el('img', {
         class: 'platform-logo', src: launchpad.logo, alt: `${launchpad.name} logo`,
         width: '48', height: '48', loading: 'lazy', decoding: 'async',
@@ -107,13 +120,15 @@ function launchpadCard(launchpad, fetchedAt) {
         `As of ${fmtClock(fetchedAt)}`),
     ),
     el('div', { class: 'launchpad-metric-grid' },
-      metric('30d fees', fmtUsd(launchpad.metrics.fees30d), 'ranking metric'),
-      metric('30d revenue', fmtUsd(launchpad.metrics.revenue30d)),
+      metric('30d fees', fmtUsd(launchpad.metrics.fees30d), metricNote),
+      metric('30d revenue', fmtUsd(launchpad.metrics.revenue30d), launchpad.metricsStale
+        ? 'DeFiLlama fallback' : Number.isFinite(launchpad.metrics.revenue30d) ? '' : 'not separately indexed'),
       metric('Platform token', native ? native.symbol : 'None verified', native
         ? `${native.relationship} · ${fmtUsd(native.marketCap)}` : 'ratio disabled'),
       metric('Verified launches', String(launchpad.verifiedLaunchedTokens), 'current category coverage'),
       metric('Top launched token', launchpad.topLaunchedToken?.sym || 'Unavailable',
-        launchpad.topLaunchedToken ? fmtUsd(launchpad.topLaunchedToken.mcap) : ''),
+        Number.isFinite(launchpad.topLaunchedToken?.mcap)
+          ? fmtUsd(launchpad.topLaunchedToken.mcap) : launchpad.topLaunchedToken ? 'market cap unavailable' : ''),
     ),
     el('div', { class: 'launchpad-table-head' },
       el('div', {}, el('p', { class: 'eyebrow' }, 'Contract-verified ranking'), el('h3', {}, 'Top tokens launched here')),
@@ -125,6 +140,7 @@ function launchpadCard(launchpad, fetchedAt) {
         ...launchpad.sources.map((source) => brandedSourceLink({ ...source, className: 'lore-source-chip' })),
       ),
       launchpad.warning ? el('p', { class: 'note warn' }, launchpad.warning) : null,
+      launchpad.note ? el('p', { class: 'note' }, launchpad.note) : null,
     ),
   );
 }

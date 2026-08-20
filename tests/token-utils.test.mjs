@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { LAUNCHPAD_DEFINITIONS } from '../server/launchpad-config.mjs';
+import { launchpadMetricWithFallback } from '../server/market-service.mjs';
 import {
   buildCoinDirectory,
   calculateMarketCapComparison,
@@ -24,6 +25,22 @@ test('Dex resolver rejects ticker matches and chooses deepest exact pair', () =>
   ];
   assert.equal(chooseDexPair(rows, 'solana', 'ExactMint')?.pairAddress, 'deepest');
   assert.equal(chooseDexPair(rows, 'solana', 'exactmint'), null);
+});
+
+test('Dex resolver prefers a conventional quote over a deeper manipulated pool', () => {
+  const rows = [
+    {
+      chainId: 'solana', pairAddress: 'manipulated',
+      baseToken: { address: 'ExactMint' }, quoteToken: { symbol: 'UNKNOWN' },
+      liquidity: { usd: 9_000_000 }, volume: { h24: 9_000_000 },
+    },
+    {
+      chainId: 'solana', pairAddress: 'canonical',
+      baseToken: { address: 'ExactMint' }, quoteToken: { symbol: 'USDC' },
+      liquidity: { usd: 100_000 }, volume: { h24: 100_000 },
+    },
+  ];
+  assert.equal(chooseDexPair(rows, 'solana', 'ExactMint')?.pairAddress, 'canonical');
 });
 
 test('exact contract wins over a conflicting provider id', () => {
@@ -53,6 +70,14 @@ test('launch rankings are verified, deduplicated, sorted, bounded and native-exc
   assert.equal(new Set(ranked.map((row) => `${row.chain}:${row.contract.toLowerCase()}`)).size, ranked.length);
 });
 
+test('verified identities remain visible when every market provider is unavailable', () => {
+  const ranked = rankVerifiedLaunches([
+    { id: 'b', name: 'Beta', chain: 'solana', contract: 'Beta', mcap: null, launchpadVerified: true },
+    { id: 'a', name: 'Alpha', chain: 'solana', contract: 'Alpha', mcap: null, launchpadVerified: true },
+  ]);
+  assert.deepEqual(ranked.map((row) => row.id), ['a', 'b']);
+});
+
 test('platform/project ratios state the numerator unambiguously', () => {
   const platformLarger = calculateMarketCapComparison(1_000, 125);
   assert.equal(platformLarger.platformToProjectMultiple, 8);
@@ -65,11 +90,37 @@ test('platform/project ratios state the numerator unambiguously', () => {
 
 test('launchpad definitions exclude their own platform token and carry explicit provenance sets', () => {
   for (const definition of LAUNCHPAD_DEFINITIONS) {
-    assert.ok(definition.categoryUrl);
-    assert.ok(definition.feeSlugs.length);
+    assert.ok(definition.officialUrl);
+    assert.ok(Array.isArray(definition.feeSlugs));
+    if (definition.rankingStatus !== 'unranked') {
+      assert.ok(definition.feeSlugs.length, `${definition.id} needs a fee source`);
+      assert.ok(Number.isFinite(definition.metricsFallback?.fees30d), `${definition.id} needs a fee fallback`);
+      assert.ok(definition.metricsFallback?.asOf, `${definition.id} fallback needs an as-of timestamp`);
+    }
+    if (definition.provenanceMode === 'category') assert.ok(definition.categoryUrl);
     assert.ok(definition.verifiedCoinIds?.length, `${definition.id} needs a sourced fallback set`);
+    assert.ok(definition.verifiedLaunches?.length, `${definition.id} needs exact-contract fallbacks`);
+    for (const launch of definition.verifiedLaunches) {
+      assert.ok(launch.chain, `${definition.id}/${launch.id} needs a chain`);
+      assert.ok(launch.contract, `${definition.id}/${launch.id} needs a contract`);
+    }
     if (definition.nativeToken) {
       assert.ok(definition.excludeProjectIds.includes(definition.nativeToken.id));
+      assert.ok(definition.nativeToken.chain);
+      assert.ok(definition.nativeToken.contract);
     }
   }
+  const ansem = LAUNCHPAD_DEFINITIONS.find((row) => row.id === 'ansemio');
+  assert.equal(ansem?.rankingStatus, 'unranked');
+  assert.equal(ansem?.category, 'Pump.fun launch layer');
+  assert.ok(ansem?.verifiedLaunches.every((row) => row.source?.startsWith('https://ansem.io/launch/coin/')));
+});
+
+test('launchpad fee snapshots prevent a blank ranking when DeFiLlama is unavailable', () => {
+  const pump = LAUNCHPAD_DEFINITIONS.find((row) => row.id === 'pumpfun');
+  const result = launchpadMetricWithFallback(pump, new Map(), new Map());
+  assert.equal(result.metrics.fees30d, pump.metricsFallback.fees30d);
+  assert.equal(result.metrics.revenue30d, pump.metricsFallback.revenue30d);
+  assert.equal(result.metricsStale, true);
+  assert.equal(result.metricsAsOf, pump.metricsFallback.asOf);
 });

@@ -151,9 +151,17 @@ export function pairMatchesContract(pair, chain, contract) {
 }
 
 export function chooseDexPair(rows = [], chain, contract) {
-  return [...rows]
+  const exact = [...rows]
     .filter((pair) => normalizeChain(pair.chainId) === normalizeChain(chain))
-    .filter((pair) => pairMatchesContract(pair, chain, contract))
+    .filter((pair) => pairMatchesContract(pair, chain, contract));
+  const baseMatches = exact.filter((pair) => sameContract(chain, pair.baseToken?.address, contract));
+  const baseFirst = baseMatches.length ? baseMatches : exact;
+  const preferredQuotes = new Set([
+    'USDC', 'USDT', 'USDG', 'SOL', 'WSOL', 'ETH', 'WETH', 'BNB', 'WBNB',
+    'VIRTUAL', 'PONS', 'BONK',
+  ]);
+  const preferred = baseFirst.filter((pair) => preferredQuotes.has(String(pair.quoteToken?.symbol || '').toUpperCase()));
+  return (preferred.length ? preferred : baseFirst)
     .sort((left, right) =>
       (Number(right?.liquidity?.usd) || 0) - (Number(left?.liquidity?.usd) || 0)
       || (Number(right?.volume?.h24) || 0) - (Number(left?.volume?.h24) || 0))[0] || null;
@@ -176,9 +184,14 @@ export function rankVerifiedLaunches(rows = [], { excludeIds = [], maximum = 10 
   return rows
     .filter((row) => row?.launchpadVerified === true)
     .filter((row) => row?.chain && row?.contract)
-    .filter((row) => Number.isFinite(row?.mcap) && row.mcap > 0)
     .filter((row) => !exclusions.has(row.id))
-    .sort((left, right) => right.mcap - left.mcap)
+    .sort((left, right) => {
+      const leftHasMarket = Number.isFinite(left?.mcap) && left.mcap > 0;
+      const rightHasMarket = Number.isFinite(right?.mcap) && right.mcap > 0;
+      if (leftHasMarket !== rightHasMarket) return rightHasMarket ? 1 : -1;
+      if (leftHasMarket) return right.mcap - left.mcap;
+      return String(left?.name || left?.id || '').localeCompare(String(right?.name || right?.id || ''));
+    })
     .filter((row) => {
       const key = registryKey(row.chain, row.contract);
       if (!key || seen.has(key)) return false;

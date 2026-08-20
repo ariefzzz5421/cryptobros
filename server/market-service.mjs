@@ -35,6 +35,7 @@ const TTL = {
   tokenDirectory: 15 * 60_000,
   tokenSnapshot: 20_000,
   launchpads: 10 * 60_000,
+  launchpadToken: 5 * 60_000,
   nftFloors: 5 * 60_000,
 };
 
@@ -918,8 +919,8 @@ async function llamaOverview(dataType) {
     dataType,
   });
   return fetchJSON(`https://api.llama.fi/overview/fees?${params}`, {
-    timeout: 20_000,
-    retries: 1,
+    timeout: 6_000,
+    retries: 0,
   });
 }
 
@@ -941,12 +942,195 @@ function launchpadMetric(definition, feesBySlug, revenueBySlug) {
   };
 }
 
+export function launchpadMetricWithFallback(definition, feesBySlug, revenueBySlug) {
+  const live = launchpadMetric(definition, feesBySlug, revenueBySlug);
+  const fallback = definition.metricsFallback || {};
+  const fields = ['fees24h', 'fees7d', 'fees30d', 'revenue24h', 'revenue7d', 'revenue30d'];
+  const metrics = Object.fromEntries(fields.map((field) => [
+    field,
+    Number.isFinite(live[field]) ? live[field] : Number.isFinite(fallback[field]) ? fallback[field] : null,
+  ]));
+  const staleFields = fields.filter((field) => !Number.isFinite(live[field]) && Number.isFinite(fallback[field]));
+  return {
+    metrics,
+    metricsStale: staleFields.length > 0,
+    metricsAsOf: staleFields.length ? fallback.asOf || null : new Date().toISOString(),
+    metricsSource: fallback.source || 'DeFiLlama',
+  };
+}
+
 async function categoryMarketRows(categoryId) {
+  if (!categoryId) return [];
   return fetchJSON(
     `${CG}/coins/markets?vs_currency=usd&category=${encodeURIComponent(categoryId)}` +
     '&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=24h',
-    { timeout: 20_000, retries: 1 },
+    { timeout: 6_000, retries: 0 },
   );
+}
+
+function launchpadCoinDirectory() {
+  return cached('launchpad-coin-directory', TTL.tokenDirectory, async () => {
+    const rows = await fetchJSON(`${CG}/coins/list?include_platform=true`, {
+      timeout: 6_000,
+      retries: 0,
+    });
+    return buildCoinDirectory(rows || []);
+  });
+}
+
+function explorerFor(chain, contract) {
+  const normalized = String(chain || '').toLowerCase();
+  if (normalized === 'solana') return `https://solscan.io/token/${contract}`;
+  if (normalized === 'base') return `https://basescan.org/token/${contract}`;
+  if (normalized === 'bsc') return `https://bscscan.com/token/${contract}`;
+  if (normalized === 'ethereum') return `https://etherscan.io/token/${contract}`;
+  if (normalized === 'robinhood') return `https://robinhoodchain.blockscout.com/token/${contract}`;
+  return null;
+}
+
+function verifiedLaunchIdentity(definition, launch) {
+  return {
+    id: launch.id,
+    sym: launch.symbol,
+    name: launch.name,
+    image: launch.image || null,
+    price: null,
+    mcap: null,
+    vol: null,
+    ch24h: null,
+    chain: launch.chain,
+    contract: launch.contract,
+    explorer: launch.explorer || explorerFor(launch.chain, launch.contract),
+    identityVerified: true,
+    launchpadVerified: true,
+    launchpadSource: launch.source || definition.categoryUrl || definition.officialUrl,
+    marketSource: null,
+    marketStatus: 'unavailable',
+    dexScreenerUrl: `https://dexscreener.com/${encodeURIComponent(launch.chain)}/${encodeURIComponent(launch.contract)}`,
+  };
+}
+
+function mergeVerifiedMarket(definition, launch, market = {}) {
+  const identity = verifiedLaunchIdentity(definition, launch);
+  return {
+    ...identity,
+    ...market,
+    id: launch.id,
+    sym: market.sym || launch.symbol,
+    name: market.name || launch.name,
+    chain: launch.chain,
+    contract: launch.contract,
+    explorer: identity.explorer,
+    identityVerified: true,
+    launchpadVerified: true,
+    launchpadSource: identity.launchpadSource,
+  };
+}
+
+function dexMarketRow(definition, launch, pair) {
+  if (!pair) return null;
+  return mergeVerifiedMarket(definition, launch, {
+    sym: pair.baseToken?.symbol,
+    name: pair.baseToken?.name,
+    image: pair.info?.imageUrl || null,
+    price: Number(pair.priceUsd) || null,
+    mcap: Number(pair.marketCap) || null,
+    fdv: Number(pair.fdv) || null,
+    vol: Number(pair.volume?.h24) || 0,
+    ch24h: Number.isFinite(Number(pair.priceChange?.h24)) ? Number(pair.priceChange.h24) : null,
+    marketSource: 'DEX Screener exact contract',
+    marketStatus: Number(pair.marketCap) > 0 ? 'live' : 'partial',
+    marketAsOf: Date.now(),
+    dexScreenerUrl: pair.url || `https://dexscreener.com/${launch.chain}/${pair.pairAddress}`,
+  });
+}
+
+function geckoMarketRow(definition, launch, payload) {
+  const attributes = payload?.data?.attributes;
+  if (!attributes) return null;
+  const network = GECKO_NETWORKS[launch.chain];
+  return mergeVerifiedMarket(definition, launch, {
+    sym: attributes.symbol,
+    name: attributes.name,
+    image: attributes.image_url || null,
+    price: Number(attributes.price_usd) || null,
+    mcap: Number(attributes.market_cap_usd) || null,
+    fdv: Number(attributes.fdv_usd) || null,
+    vol: Number(attributes.volume_usd?.h24) || 0,
+    marketSource: 'GeckoTerminal exact contract',
+    marketStatus: Number(attributes.market_cap_usd) > 0 ? 'live' : 'partial',
+    marketAsOf: Date.now(),
+    geckoTerminalUrl: `https://www.geckoterminal.com/${network}/tokens/${launch.contract}`,
+  });
+}
+
+async function loadExactContractMarket(definition, launch) {
+  const cacheKey = `launchpad-token:${launch.chain}:${String(launch.contract).toLowerCase()}`;
+  return cached(cacheKey, TTL.launchpadToken, async () => {
+    try {
+      const pairs = await fetchJSON(
+        `${DEX}/token-pairs/v1/${encodeURIComponent(launch.chain)}/${encodeURIComponent(launch.contract)}`,
+        { timeout: 5_000, retries: 0 },
+      );
+      const pair = chooseDexPair(Array.isArray(pairs) ? pairs : [], launch.chain, launch.contract);
+      const dexRow = dexMarketRow(definition, launch, pair);
+      if (dexRow) return dexRow;
+    } catch {
+      // GeckoTerminal remains an independent exact-contract fallback.
+    }
+
+    const geckoNetwork = GECKO_NETWORKS[launch.chain];
+    if (geckoNetwork) {
+      try {
+        const payload = await fetchJSON(
+          `${GECKO_TERMINAL}/networks/${geckoNetwork}/tokens/${encodeURIComponent(launch.contract)}`,
+          { timeout: 5_000, retries: 0 },
+        );
+        const geckoRow = geckoMarketRow(definition, launch, payload);
+        if (geckoRow) return geckoRow;
+      } catch {
+        // Identity-only output below is intentional; values are never guessed.
+      }
+    }
+    return verifiedLaunchIdentity(definition, launch);
+  });
+}
+
+async function verifiedContractMarkets(definition, coinGeckoMarkets = new Map()) {
+  return Promise.all((definition.verifiedLaunches || []).map(async (launch) => {
+    const coinGecko = coinGeckoMarkets.get(launch.id);
+    if (coinGecko) {
+      return mergeVerifiedMarket(definition, launch, {
+        ...coinGecko,
+        marketSource: 'CoinGecko current market snapshot',
+        marketStatus: Number(coinGecko.mcap) > 0 ? 'live' : 'partial',
+        marketAsOf: Date.now(),
+      });
+    }
+    return loadExactContractMarket(definition, launch);
+  }));
+}
+
+function preferCoinGeckoLaunchMarkets(definition, coinGeckoMarkets, exactRows = []) {
+  const exactById = new Map(exactRows.map((row) => [row.id, row]));
+  return (definition.verifiedLaunches || []).map((launch) => {
+    const coinGecko = coinGeckoMarkets.get(launch.id);
+    if (!coinGecko) return exactById.get(launch.id) || verifiedLaunchIdentity(definition, launch);
+    return mergeVerifiedMarket(definition, launch, {
+      ...coinGecko,
+      marketSource: 'CoinGecko current market snapshot',
+      marketStatus: Number(coinGecko.mcap) > 0 ? 'live' : 'partial',
+      marketAsOf: Date.now(),
+    });
+  });
+}
+
+async function exactNativeMarket(definition) {
+  if (!definition.nativeToken?.chain || !definition.nativeToken?.contract) return null;
+  return loadExactContractMarket(definition, {
+    ...definition.nativeToken,
+    name: definition.nativeToken.symbol,
+  });
 }
 
 async function launchTokenMarkets(definitions) {
@@ -958,91 +1142,120 @@ async function launchTokenMarkets(definitions) {
   const rows = await fetchJSON(
     `${CG}/coins/markets?vs_currency=usd&ids=${encodeURIComponent(ids.join(','))}` +
     '&order=market_cap_desc&sparkline=false&price_change_percentage=24h',
-    { timeout: 18_000, retries: 1 },
+    { timeout: 6_000, retries: 0 },
   );
   return new Map((rows || []).map((row) => [row.id, slimCoin(row)]));
 }
 
-function sourceCoverage(definition, categoryAvailable, fallbackAvailable, metricsAvailable) {
+function sourceCoverage(definition, categoryAvailable, fallbackRows, metricsAvailable, metricsStale = false) {
+  const marketSources = [...new Set(fallbackRows.map((row) => row.marketSource).filter(Boolean))];
   return {
-    fees: metricsAvailable ? 'DeFiLlama' : null,
+    fees: metricsAvailable ? `DeFiLlama${metricsStale ? ' fallback snapshot' : ''}` : null,
     launches: categoryAvailable
       ? 'CoinGecko launchpad ecosystem category'
-      : fallbackAvailable ? 'Curated CoinGecko category set + current market snapshot' : null,
+      : fallbackRows.length ? 'Curated exact-contract provenance set' : null,
     provenance: definition.docsUrl || definition.officialUrl,
-    market: categoryAvailable || fallbackAvailable ? 'CoinGecko current market snapshot' : null,
+    market: categoryAvailable
+      ? 'CoinGecko current market snapshot'
+      : marketSources.length ? marketSources.join(' + ') : 'Identity only; live market unavailable',
   };
 }
 
 async function loadLaunchpads() {
-  const [feesResult, revenueResult, directoryResult, nativeResult] = await Promise.allSettled([
+  const categoryPromise = Promise.all(LAUNCHPAD_DEFINITIONS.map(async (definition) => {
+    if (!definition.categoryId) return [definition.id, { rows: [], warning: null }];
+    try {
+      return [definition.id, { rows: await categoryMarketRows(definition.categoryId), warning: null }];
+    } catch {
+      return [definition.id, { rows: [], warning: 'CoinGecko category delayed; exact-contract fallbacks are active.' }];
+    }
+  }));
+  const exactProjectsPromise = Promise.all(LAUNCHPAD_DEFINITIONS.map(async (definition) => [
+    definition.id,
+    await verifiedContractMarkets(definition, new Map()),
+  ]));
+  const exactNativesPromise = Promise.all(LAUNCHPAD_DEFINITIONS.map(async (definition) => [
+    definition.id,
+    await exactNativeMarket(definition),
+  ]));
+  const [feesResult, revenueResult, directoryResult, nativeResult, categoryResult, exactProjectsResult, exactNativesResult] = await Promise.allSettled([
     llamaOverview('dailyFees'),
     llamaOverview('dailyRevenue'),
-    coinDirectory(),
+    launchpadCoinDirectory(),
     launchTokenMarkets(LAUNCHPAD_DEFINITIONS),
+    categoryPromise,
+    exactProjectsPromise,
+    exactNativesPromise,
   ]);
-  if (feesResult.status !== 'fulfilled') {
-    throw new Error(`DeFiLlama fee ranking unavailable: ${feesResult.reason?.message || 'unknown error'}`);
-  }
-
-  const feesBySlug = new Map((feesResult.value?.protocols || []).map((row) => [row.slug, row]));
+  const feesBySlug = new Map(
+    (feesResult.status === 'fulfilled' ? feesResult.value?.protocols : []).map((row) => [row.slug, row]),
+  );
   const revenueBySlug = new Map(
     (revenueResult.status === 'fulfilled' ? revenueResult.value?.protocols : [])
       .map((row) => [row.slug, row]),
   );
   const directory = directoryResult.status === 'fulfilled' ? directoryResult.value : null;
   const launchMarketById = nativeResult.status === 'fulfilled' ? nativeResult.value : new Map();
-  const ranked = LAUNCHPAD_DEFINITIONS
-    .map((definition) => ({
-      ...definition,
-      metrics: launchpadMetric(definition, feesBySlug, revenueBySlug),
-    }))
+  const categoryByLaunchpad = new Map(categoryResult.status === 'fulfilled' ? categoryResult.value : []);
+  const exactProjectsByLaunchpad = new Map(exactProjectsResult.status === 'fulfilled' ? exactProjectsResult.value : []);
+  const exactNativesByLaunchpad = new Map(exactNativesResult.status === 'fulfilled' ? exactNativesResult.value : []);
+  const measuredDefinitions = LAUNCHPAD_DEFINITIONS
+    .map((definition) => ({ ...definition, ...launchpadMetricWithFallback(definition, feesBySlug, revenueBySlug) }));
+  const ranked = measuredDefinitions
     .filter((definition) => Number.isFinite(definition.metrics.fees30d))
     .sort((left, right) => right.metrics.fees30d - left.metrics.fees30d)
     .slice(0, 5);
+  const unranked = measuredDefinitions.filter((definition) =>
+    definition.alwaysDisplay && !ranked.some((row) => row.id === definition.id));
+  const selected = [...ranked, ...unranked];
 
   const launchpads = [];
-  for (const [index, definition] of ranked.entries()) {
-    let categoryRows = [];
-    let categoryWarning = null;
-    try {
-      categoryRows = await categoryMarketRows(definition.categoryId);
-    } catch (error) {
-      categoryWarning = `Launch ranking unavailable: ${error.message}`;
-    }
-    if (index < ranked.length - 1) await pause(350);
+  for (const [index, definition] of selected.entries()) {
+    const categoryState = categoryByLaunchpad.get(definition.id) || { rows: [], warning: definition.categoryId
+      ? 'CoinGecko category delayed; exact-contract fallbacks are active.' : null };
+    const categoryRows = categoryState.rows;
+    let categoryWarning = categoryState.warning;
 
     const verifiedIds = new Set(definition.verifiedCoinIds || []);
     const categoryAvailable = categoryRows.length > 0;
-    const fallbackRows = categoryAvailable
-      ? []
-      : [...verifiedIds].map((id) => launchMarketById.get(id)).filter(Boolean);
-    const marketRows = categoryAvailable ? categoryRows.map(slimCoin) : fallbackRows;
-    if (!categoryAvailable && fallbackRows.length) {
-      categoryWarning = `Live category ranking delayed; showing ${fallbackRows.length} sourced fallback record${fallbackRows.length === 1 ? '' : 's'}.`;
-    }
-    const candidates = enrichMarketCoins(marketRows, directory)
+    const fallbackRows = preferCoinGeckoLaunchMarkets(
+      definition,
+      launchMarketById,
+      exactProjectsByLaunchpad.get(definition.id) || [],
+    );
+    const fallbackIds = new Set(fallbackRows.map((row) => row.id));
+    const dynamicCandidates = categoryAvailable && directory
+      ? enrichMarketCoins(categoryRows.map(slimCoin), directory)
       .map((coin) => {
-        const categoryVerifiesLaunch = categoryAvailable && definition.provenanceMode === 'category';
-        const fallbackVerifiesLaunch = !categoryAvailable && verifiedIds.has(coin.id);
         const allowlistVerifiesLaunch = definition.provenanceMode === 'allowlist' && verifiedIds.has(coin.id);
         return {
           ...coin,
           launchpadVerified: Boolean(coin.identityVerified
-            && (categoryVerifiesLaunch || fallbackVerifiesLaunch || allowlistVerifiesLaunch)),
-          launchpadSource: definition.categoryUrl,
+            && (definition.provenanceMode === 'category' || allowlistVerifiesLaunch)),
+          launchpadSource: definition.categoryUrl || definition.officialUrl,
+          marketSource: 'CoinGecko current market snapshot',
+          marketStatus: 'live',
           dexScreenerUrl: coin.chain && coin.contract
             ? `https://dexscreener.com/${encodeURIComponent(coin.chain)}/${encodeURIComponent(coin.contract)}`
             : null,
         };
-      });
+      })
+      : [];
+    const fallbackKeys = new Set(fallbackRows.map((row) => `${row.chain}:${String(row.contract).toLowerCase()}`));
+    const candidates = [
+      ...dynamicCandidates.filter((row) => !fallbackIds.has(row.id)
+        && !fallbackKeys.has(`${row.chain}:${String(row.contract).toLowerCase()}`)),
+      ...fallbackRows,
+    ];
+    if (!categoryAvailable && fallbackRows.length && !categoryWarning && definition.categoryId) {
+      categoryWarning = `Showing ${fallbackRows.length} exact-contract fallback record${fallbackRows.length === 1 ? '' : 's'}.`;
+    }
     const projects = rankVerifiedLaunches(candidates, {
       excludeIds: definition.excludeProjectIds,
       maximum: 10,
     });
-    const nativeMarket = definition.nativeToken
-      ? launchMarketById.get(definition.nativeToken.id) || null
-      : null;
+    let nativeMarket = definition.nativeToken ? launchMarketById.get(definition.nativeToken.id) || null : null;
+    if (!nativeMarket) nativeMarket = exactNativesByLaunchpad.get(definition.id) || null;
     const projectsWithComparison = projects.map((project) => ({
       ...project,
       platformComparison: nativeMarket
@@ -1051,12 +1264,15 @@ async function loadLaunchpads() {
     }));
     launchpads.push({
       id: definition.id,
-      rank: index + 1,
+      rank: ranked.some((row) => row.id === definition.id) ? index + 1 : null,
+      rankingStatus: definition.rankingStatus || 'ranked',
       name: definition.name,
       chain: definition.chain,
       category: definition.category,
       logo: definition.logo,
       metrics: definition.metrics,
+      metricsStale: definition.metricsStale,
+      metricsAsOf: definition.metricsAsOf,
       nativeToken: definition.nativeToken ? {
         ...definition.nativeToken,
         marketCap: nativeMarket?.mcap || null,
@@ -1066,12 +1282,24 @@ async function loadLaunchpads() {
       topLaunchedToken: projectsWithComparison[0] || null,
       projects: projectsWithComparison,
       warning: categoryWarning,
-      coverage: sourceCoverage(definition, categoryAvailable, fallbackRows.length > 0, true),
+      note: definition.note || null,
+      coverage: sourceCoverage(
+        definition,
+        categoryAvailable,
+        fallbackRows,
+        Number.isFinite(definition.metrics.fees30d),
+        definition.metricsStale,
+      ),
       sources: [
         { label: definition.name, url: definition.officialUrl, logo: definition.logo },
-        definition.docsUrl ? { label: 'Docs', url: definition.docsUrl, logo: definition.logo } : null,
-        { label: 'DeFiLlama', url: `https://defillama.com/protocol/${definition.feeSlugs[0]}?fees=true` },
-        { label: 'CoinGecko category', url: definition.categoryUrl },
+        definition.docsUrl ? { label: definition.docsLabel || 'Docs', url: definition.docsUrl, logo: definition.logo } : null,
+        ...(definition.researchSources || []),
+        definition.feeSlugs[0]
+          ? { label: 'DeFiLlama', url: `https://defillama.com/protocol/${definition.feeSlugs[0]}?fees=true` }
+          : null,
+        definition.categoryUrl ? { label: 'CoinGecko category', url: definition.categoryUrl } : null,
+        { label: 'DEX Screener API', url: 'https://docs.dexscreener.com/api/reference' },
+        { label: 'GeckoTerminal API', url: 'https://api.geckoterminal.com/docs/index.html' },
       ].filter(Boolean),
     });
   }
@@ -1084,10 +1312,10 @@ async function loadLaunchpads() {
       label: '30-day platform fees',
       source: 'DeFiLlama',
     },
-    partial: launchpads.some((item) => item.warning || item.projects.length === 0),
+    partial: launchpads.some((item) => item.warning || item.metricsStale || item.projects.length === 0),
     launchpads,
     candidateCount: LAUNCHPAD_DEFINITIONS.length,
-    methodology: 'Candidates are ranked dynamically by DeFiLlama 30-day fees. Project rows require an exact chain and contract plus explicit launchpad-category provenance; a maximum of ten verified rows is shown.',
+    methodology: 'The ranked Top 5 uses DeFiLlama 30-day fees. Ansem.io is shown as an unranked Pump.fun launch layer because separate fee data is not indexed. Project rows require an exact contract and explicit provenance; CoinGecko, DEX Screener, and GeckoTerminal are used in that order without ticker matching.',
   };
 }
 
