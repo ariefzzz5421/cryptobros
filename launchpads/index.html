@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Launchpad Analytics — Crypto Bros</title>
+<meta name="description" content="Contract-verified launchpad rankings by 30-day fees with live token market caps and source-backed provenance.">
+<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="icon" type="image/png" href="/assets/img/brand/crypto-bros-favicon.png">
+</head>
+<body>
+<a class="skip" href="#launchpadRanking">Skip to launchpad ranking</a>
+<header class="site-head">
+  <div class="wrap head-inner">
+    <a class="brand brand-link" href="/"><img class="brand-mark" src="/assets/img/brand/crypto-bros-mark.webp" alt="" width="44" height="44" decoding="async"><div><h1>Crypto Bros</h1><p class="brand-sub">Contract-first launchpad research</p></div></a>
+    <nav class="primary-nav"></nav>
+    <div class="head-actions"><button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme"><span class="theme-icon theme-icon-sun" aria-hidden="true">☀</span><span class="theme-icon theme-icon-moon" aria-hidden="true">☾</span></button></div>
+  </div>
+  <div class="status-bar wrap"><span class="dot busy" id="statusDot"></span><span id="statusText">Loading verified launchpad data…</span></div>
+</header>
+<main class="wrap launchpads-page">
+  <section class="route-hero launchpad-hero">
+    <div>
+      <p class="eyebrow">Launchpad intelligence</p>
+      <h2>Largest launchpads</h2>
+      <p>Ranked by 30-day platform fees. Token rows require an exact contract and explicit launchpad provenance.</p>
+    </div>
+    <div class="source-chip"><span class="dot ok"></span>DeFiLlama fees · CoinGecko market data</div>
+  </section>
+  <section class="kpi-strip launchpad-kpis" aria-label="Launchpad ranking summary">
+    <article class="kpi"><h2>Ranking metric</h2><p class="kpi-val">30d fees</p><p class="kpi-sub">DeFiLlama normalized protocols</p></article>
+    <article class="kpi kpi-accent"><h2>Current leader</h2><p class="kpi-val" id="launchpadLeader">—</p><p class="kpi-sub" id="launchpadLeaderFees">Waiting for data</p></article>
+    <article class="kpi"><h2>Launchpads shown</h2><p class="kpi-val" id="launchpadCount">—</p><p class="kpi-sub" id="candidateCount">— candidates monitored</p></article>
+    <article class="kpi"><h2>Verified rows shown</h2><p class="kpi-val" id="verifiedProjectCount">—</p><p class="kpi-sub">exact chain + contract</p></article>
+  </section>
+  <section id="launchpadRanking" class="launchpad-ranking" aria-live="polite">
+    <div class="launchpad-loading-grid">
+      <div class="launchpad-skeleton"></div><div class="launchpad-skeleton"></div><div class="launchpad-skeleton"></div>
+    </div>
+  </section>
+  <section class="panel methodology-compact">
+    <div class="panel-head"><div><p class="eyebrow">Method</p><h2>What qualifies</h2></div></div>
+    <p id="launchpadMethod">Ranking positions are live, never hardcoded. Native or ecosystem tokens are excluded from their own launched-project table.</p>
+  </section>
+</main>
+<footer class="site-foot wrap"><p>Updated <span id="updatedAt">—</span> · unavailable fields are not estimated.</p></footer>
+<script type="module" src="/assets/js/theme.js"></script>
+<script type="module" src="/assets/js/launchpads-page.js"></script>
+</body>
+</html>

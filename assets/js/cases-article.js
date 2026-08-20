@@ -13,6 +13,8 @@ import { fetchDexLaunch, renderDexScreenerChart } from './dexscreener.js';
 import { brandedSourceLink } from './source-brands.js';
 import { fmtUsd, fmtPrice, fmtPct, fmtClock, el } from './utils.js';
 import { startAutoRefresh } from './autorefresh.js';
+import { findToken } from './token-registry.js';
+import { renderTokenLore } from './token-lore.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -280,7 +282,7 @@ async function load() {
   renderIdentityAndSources();
   setStatus('Case data ready', 'ok');
 
-  fetchDexLaunch(caseDef.id)
+  fetchDexLaunch(findToken({ id: caseDef.id }) || { id: caseDef.id })
     .then((value) => {
       state.dexLaunch = value;
       renderFacts();
@@ -302,6 +304,7 @@ function init() {
   const img = $('tokenLogo');
   img.src = caseDef.logo;
   img.alt = `${caseDef.name} logo`;
+  renderTokenLore($('tokenLore'), findToken({ id: caseDef.id }) || caseDef);
 
   load().catch((e) => {
     console.error(e);

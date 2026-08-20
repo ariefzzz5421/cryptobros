@@ -328,6 +328,8 @@ function template(item) {
     <div class="doc-meta" id="liveSnapshot" aria-live="polite"><div><span>Current snapshot</span><strong>Checking…</strong></div></div>
   </header>
 
+  <section class="token-lore-section" id="tokenLore" aria-label="Token lore"></section>
+
   <section class="panel doc-section">
     <p class="eyebrow">Thesis</p>
     <h2>What this token actually priced</h2>

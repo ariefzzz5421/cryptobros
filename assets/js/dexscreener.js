@@ -15,12 +15,19 @@ function embedUrl(pair) {
 
 function pairUrl(pair) {
   return pair?.url || (pair?.chain && pair?.pairAddress
-    ? `https://dexscreener.com/${pair.chain}/${pair.pairAddress}`
+    ? `https://dexscreener.com/${encodeURIComponent(pair.chain)}/${encodeURIComponent(pair.pairAddress)}`
     : '');
 }
 
-export async function fetchDexLaunch(id) {
-  const response = await fetch(`/api/market/?resource=dexlaunch&id=${encodeURIComponent(id)}`, {
+export async function fetchDexLaunch(input) {
+  const token = typeof input === 'string' ? { id: input } : (input || {});
+  const query = new URLSearchParams({ resource: 'dexlaunch' });
+  const id = token.coingeckoId || token.id;
+  if (id) query.set('id', id);
+  if (token.chain) query.set('chain', token.chain);
+  if (token.contract) query.set('contract', token.contract);
+  if (token.dexScreener?.pairAddress) query.set('pairAddress', token.dexScreener.pairAddress);
+  const response = await fetch(`/api/market/?${query}`, {
     headers: { accept: 'application/json' },
   });
   if (!response.ok) throw new Error(`DEX launch HTTP ${response.status}`);
@@ -51,7 +58,7 @@ export function renderDexScreenerChart(holder, pair, tokenName, launchPayload = 
   const copy = el('div', { class: 'dex-chart-copy' },
     el('div', {},
       el('p', { class: 'eyebrow' }, 'On-chain market'),
-      el('h3', {}, 'DEX chart'),
+      el('h3', {}, 'Live DEX chart'),
       el('p', {}, resolvedPair
         ? `${resolvedPair.dexName || pair?.dexName || 'DEX'} · ${resolvedPair.base || pair?.base || tokenName}/${resolvedPair.quote || pair?.quote || 'quote'} · exact pair address.`
         : `${tokenName} has no exact contract-matched DEX pair configured.`),
@@ -62,7 +69,7 @@ export function renderDexScreenerChart(holder, pair, tokenName, launchPayload = 
     shell.append(
       copy,
       el('p', { class: 'dex-empty-note' },
-        'Ticker-only matching is disabled because it can surface spoofed tokens.'),
+        'No verified DexScreener pair available. Ticker-only matching is disabled.'),
     );
     holder.append(shell);
     return;
@@ -76,14 +83,12 @@ export function renderDexScreenerChart(holder, pair, tokenName, launchPayload = 
   }));
 
   const facts = snapshotFacts(resolvedPair, launch);
-  const frameWrap = el('div', { class: 'dex-frame-wrap is-deferred' });
-  const loadButton = el('button', { class: 'dex-load-button', type: 'button' },
-    el('span', {},
-      el('strong', {}, 'Load interactive chart'),
-      el('small', {}, 'DEX Screener loads only after this click'),
+  const frameWrap = el('div', { class: 'dex-frame-wrap is-deferred' },
+    el('div', { class: 'dex-frame-skeleton', 'aria-live': 'polite' },
+      el('span', { class: 'spinner' }),
+      el('span', {}, 'Preparing exact-pair chart…'),
     ),
   );
-  frameWrap.append(loadButton);
 
   const loadFrame = () => {
     if (frameWrap.querySelector('iframe')) return;
@@ -92,12 +97,22 @@ export function renderDexScreenerChart(holder, pair, tokenName, launchPayload = 
       class: 'dex-frame',
       src: embedUrl(resolvedPair),
       title: `${tokenName} live DEX chart`,
-      loading: 'eager',
+      loading: 'lazy',
       referrerpolicy: 'no-referrer',
       allowfullscreen: 'true',
     }));
   };
-  loadButton.addEventListener('click', loadFrame, { once: true });
+  if (holder._dexObserver) holder._dexObserver.disconnect();
+  if ('IntersectionObserver' in window) {
+    holder._dexObserver = new IntersectionObserver((entries, observer) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      observer.disconnect();
+      loadFrame();
+    }, { rootMargin: '500px 0px' });
+    holder._dexObserver.observe(frameWrap);
+  } else {
+    loadFrame();
+  }
 
   if (holder._dexThemeHandler) {
     window.removeEventListener('themechange', holder._dexThemeHandler);
@@ -108,7 +123,7 @@ export function renderDexScreenerChart(holder, pair, tokenName, launchPayload = 
   };
   window.addEventListener('themechange', holder._dexThemeHandler);
 
-  shell.append(
+  shell.append(...[
     copy,
     facts.length
       ? el('div', { class: 'dex-snapshot-grid' },
@@ -122,6 +137,6 @@ export function renderDexScreenerChart(holder, pair, tokenName, launchPayload = 
       launch
         ? `${launch.methodology} This is a sourced proxy, not an exact historical supply snapshot.`
         : launchPayload?.warning || 'First 15-minute valuation is shown only when public OHLCV and an implied supply are both available.'),
-  );
+  ].filter(Boolean));
   holder.append(shell);
 }

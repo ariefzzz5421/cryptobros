@@ -1,5 +1,6 @@
 import { fmtClock, fmtPrice, fmtUsd, el } from './utils.js';
 import { startAutoRefresh } from './autorefresh.js';
+import { findToken } from './token-registry.js';
 
 const $ = (id) => document.getElementById(id);
 const CHAIN_LOGOS = {
@@ -42,10 +43,11 @@ async function fetchRecords() {
 function renderCard(event) {
   const chainLogo = CHAIN_LOGOS[event.chain];
   const priceAth = event.priceAth;
+  const registryToken = findToken({ id: event.marketId || event.id });
 
   return el('a', {
     class: 'breakout-preview-card',
-    href: `/2026-memecoins/${event.id}/`,
+    href: registryToken?.articlePath || `/2026-memecoins/${event.id}/`,
     'aria-label': `Open research ${event.name}`,
   },
     el('div', { class: 'breakout-preview-main' },

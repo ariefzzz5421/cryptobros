@@ -3,14 +3,32 @@ import { CASES } from './cases-config.js';
 import { renderMarketHistoryChart } from './market-history-chart.js';
 import { fetchDexLaunch, renderDexScreenerChart } from './dexscreener.js';
 import { brandedSourceLink } from './source-brands.js';
+import {
+  findToken,
+  tokenDetailHref,
+  unresolvedToken,
+} from './token-registry.js';
+import { renderTokenLore } from './token-lore.js';
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
-const id = params.get('id');
-let symbol = String(params.get('symbol') || '').trim().toUpperCase();
-const curated = CASES.find((item) => item.id === id);
-if (!symbol && curated?.sym) symbol = curated.sym;
-let payload = null;
+const request = {
+  id: params.get('id'),
+  chain: params.get('chain'),
+  contract: params.get('contract'),
+  symbol: params.get('symbol'),
+  name: params.get('name'),
+};
+
+let token = findToken(request) || unresolvedToken({
+  id: request.id,
+  symbol: request.symbol,
+  name: request.name || (request.id ? request.id.replaceAll('-', ' ') : 'Unknown token'),
+  chain: request.chain,
+  contract: request.contract,
+});
+let tokenPayload = null;
+let historyPayload = null;
 let dexLaunchPayload = null;
 
 function setStatus(text, kind = 'busy') {
@@ -18,93 +36,13 @@ function setStatus(text, kind = 'busy') {
   $('statusDot').className = `dot ${kind}`;
 }
 
-const fmtDate = (timestamp) => new Intl.DateTimeFormat('en-US', {
-  day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC',
-}).format(new Date(timestamp));
-
-function svgNode(tag, attrs = {}) {
-  const node = document.createElementNS('http://www.w3.org/2000/svg', tag);
-  Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, String(value)));
-  return node;
-}
-
-function renderLineChart(holder, rows, valueKey, formatter, markers = []) {
-  holder.replaceChildren();
-  if (!rows?.length) {
-    holder.append(el('p', { class: 'empty-state' }, 'This history is unavailable from the public source.'));
-    return;
-  }
-
-  const width = Math.max(holder.clientWidth || 760, 320);
-  const height = width < 560 ? 300 : 380;
-  const pad = { top: 28, right: 18, bottom: 42, left: width < 560 ? 58 : 76 };
-  const values = rows.map((row) => row[valueKey]).filter((value) => Number.isFinite(value) && value > 0);
-  const minT = rows[0].t;
-  const maxT = rows.at(-1).t || minT + 1;
-  const minValue = Math.min(...values);
-  const maxValue = Math.max(...values);
-  const minLog = Math.log10(minValue);
-  const maxLog = Math.log10(maxValue);
-  const rangeLog = Math.max(maxLog - minLog, 0.0001);
-  const x = (timestamp) => pad.left + ((timestamp - minT) / Math.max(maxT - minT, 1)) * (width - pad.left - pad.right);
-  const y = (value) => pad.top + (1 - (Math.log10(Math.max(value, minValue)) - minLog) / rangeLog) * (height - pad.top - pad.bottom);
-
-  const svg = svgNode('svg', {
-    viewBox: `0 0 ${width} ${height}`,
-    role: 'img',
-    'aria-label': `Chart from ${fmtDate(minT)} to ${fmtDate(maxT)}`,
-  });
-  for (let index = 0; index <= 4; index++) {
-    const ratio = index / 4;
-    const gy = pad.top + ratio * (height - pad.top - pad.bottom);
-    const value = 10 ** (maxLog - ratio * rangeLog);
-    svg.append(svgNode('line', { x1: pad.left, y1: gy, x2: width - pad.right, y2: gy, class: 'chart-grid-line' }));
-    const label = svgNode('text', { x: pad.left - 10, y: gy + 4, 'text-anchor': 'end', class: 'chart-axis-label' });
-    label.textContent = formatter(value);
-    svg.append(label);
-  }
-  [0, 0.5, 1].forEach((ratio) => {
-    const timestamp = minT + ratio * (maxT - minT);
-    const label = svgNode('text', {
-      x: x(timestamp), y: height - 12, 'text-anchor': ratio === 0 ? 'start' : ratio === 1 ? 'end' : 'middle',
-      class: 'chart-axis-label',
-    });
-    label.textContent = fmtDate(timestamp);
-    svg.append(label);
-  });
-
-  const path = rows
-    .filter((row) => Number.isFinite(row[valueKey]) && row[valueKey] > 0)
-    .map((row, index) => `${index ? 'L' : 'M'}${x(row.t).toFixed(2)},${y(row[valueKey]).toFixed(2)}`)
-    .join(' ');
-  svg.append(svgNode('path', { d: path, class: 'history-line' }));
-
-  const validMarkers = markers.filter((marker) => marker && Number.isFinite(marker[valueKey]));
-  validMarkers.forEach((marker, index) => {
-    const cx = x(marker.t);
-    const cy = y(marker[valueKey]);
-    svg.append(svgNode('circle', { cx, cy, r: 5, class: 'history-marker' }));
-    const clustered = index > 0 && Math.abs(cx - x(validMarkers[0].t)) < width * 0.08;
-    const labelX = clustered
-      ? Math.min(pad.left + 28 + index * 58, width - pad.right - 30)
-      : Math.min(Math.max(cx, pad.left + 30), width - pad.right - 30);
-    if (clustered) {
-      svg.append(svgNode('line', {
-        x1: cx, y1: cy - 6, x2: labelX, y2: Math.max(cy - 18, 18),
-        class: 'history-marker-guide',
-      }));
-    }
-    const label = svgNode('text', {
-      x: labelX,
-      y: Math.max(cy - 12, 15),
-      'text-anchor': 'middle',
-      class: 'history-marker-label',
-    });
-    label.textContent = marker.label;
-    svg.append(label);
-  });
-  holder.append(svg);
-}
+const fmtDate = (value) => {
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return 'Unavailable';
+  return new Intl.DateTimeFormat('en-US', {
+    day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC',
+  }).format(date);
+};
 
 function fact(label, value, note = '', emphasis = false) {
   return el('article', { class: `dossier-stat${emphasis ? ' is-emphasis' : ''}` },
@@ -114,12 +52,54 @@ function fact(label, value, note = '', emphasis = false) {
   );
 }
 
+function knownCase() {
+  return CASES.find((item) => item.id === token.coingeckoId || item.id === token.id) || null;
+}
+
+function tokenSources() {
+  return [
+    token.officialX ? { label: 'X', url: token.officialX } : null,
+    token.officialSite ? { label: 'Site', url: token.officialSite, logo: token.logo } : null,
+    token.explorer ? { label: 'Explorer', url: token.explorer, note: 'exact contract' } : null,
+    token.launchpadVerifiedSource ? {
+      label: 'Launchpad provenance',
+      url: token.launchpadVerifiedSource,
+    } : null,
+    ...(tokenPayload?.sources || []),
+    ...(historyPayload?.sources || []),
+    dexLaunchPayload?.pair?.url ? { label: 'DEX Screener', url: dexLaunchPayload.pair.url } : null,
+  ]
+    .filter(Boolean)
+    .filter((source, index, rows) => rows.findIndex((item) => item.url === source.url) === index);
+}
+
+function renderIdentity() {
+  const name = token.name || tokenPayload?.coin?.name || token.id || 'Unknown token';
+  const symbol = token.symbol || tokenPayload?.coin?.sym || '—';
+  document.title = `${name} (${symbol}) — Token Research`;
+  $('tokenName').textContent = name;
+  $('tokenSym').textContent = symbol;
+  $('crumbToken').textContent = symbol;
+  $('tokenLogo').src = tokenPayload?.coin?.image || token.logo || '/assets/img/brand/crypto-bros-mark.webp';
+  $('tokenLogo').alt = `${name} logo`;
+  renderTokenLore($('tokenLore'), token);
+
+  $('tokenIdentity').replaceChildren(
+    fact('Chain', token.chain || 'Unavailable', token.contract === 'native' ? 'native asset' : ''),
+    fact('Contract', token.contract || 'Unavailable', token.contract ? 'canonical identity' : 'not verified'),
+    token.explorer
+      ? el('a', { class: 'identity-explorer-link', href: token.explorer, target: '_blank', rel: 'noreferrer' },
+        el('span', {}, 'Explorer'), el('strong', {}, 'Verify contract'))
+      : fact('Explorer', 'Unavailable', 'No verified explorer link'),
+  );
+}
+
 function historyWithDexLaunch(data) {
-  if (!dexLaunchPayload?.launch) return data;
+  if (!data || !dexLaunchPayload?.launch) return data;
   return {
     ...data,
     milestones: {
-      ...data.milestones,
+      ...(data.milestones || {}),
       launch: {
         t: dexLaunchPayload.launch.t,
         price: dexLaunchPayload.launch.price,
@@ -129,169 +109,184 @@ function historyWithDexLaunch(data) {
         source: dexLaunchPayload.launch.source,
       },
     },
-    source: { ...data.source, launchMilestones: dexLaunchPayload.launch.source },
+    source: { ...(data.source || {}), launchMilestones: dexLaunchPayload.launch.source },
   };
 }
 
-function render() {
-  const coin = payload.coin;
-  const milestones = payload.milestones || {};
+function renderMarket() {
+  const data = historyPayload || {};
+  const coin = tokenPayload?.coin || data.coin || null;
+  const milestones = data.milestones || {};
   const launch = dexLaunchPayload?.launch || milestones.launch;
   const firstPublic = milestones.first;
-  const lastPrice = payload.priceHistory?.at(-1)?.price;
   const currentPrice = Number.isFinite(coin?.price)
     ? coin.price
     : Number.isFinite(dexLaunchPayload?.pair?.priceUsd)
       ? dexLaunchPayload.pair.priceUsd
-      : lastPrice;
-  const displayName = coin?.name || curated?.name || symbol;
-  const athPrice = Number.isFinite(coin?.ath) ? coin.ath : milestones.ath?.price;
-  const athTimestamp = coin?.athDate ? Date.parse(coin.athDate) : milestones.ath?.t;
-  const launchTimestamp = Date.parse(curated?.launch || payload.launchAt || '');
-  const daysToAth = Number.isFinite(launchTimestamp) && Number.isFinite(athTimestamp)
-    ? Math.max(0, Math.round((Date.UTC(
-      new Date(athTimestamp).getUTCFullYear(),
-      new Date(athTimestamp).getUTCMonth(),
-      new Date(athTimestamp).getUTCDate(),
-    ) - Date.UTC(
-      new Date(launchTimestamp).getUTCFullYear(),
-      new Date(launchTimestamp).getUTCMonth(),
-      new Date(launchTimestamp).getUTCDate(),
-    )) / 86_400_000))
-    : null;
-  document.title = `${displayName} (${symbol}) — Memecoin Detail`;
-  $('tokenName').textContent = displayName;
-  $('tokenSym').textContent = symbol;
-  $('crumbToken').textContent = symbol;
-  $('tokenLogo').src = coin?.image || curated?.logo || '/assets/img/brand/crypto-bros-mark.webp';
-  $('tokenLogo').alt = `${displayName} logo`;
+      : data.priceHistory?.at(-1)?.price;
+  const currentMcap = Number.isFinite(coin?.mcap)
+    ? coin.mcap
+    : Number.isFinite(dexLaunchPayload?.pair?.marketCap)
+      ? dexLaunchPayload.pair.marketCap
+      : null;
   const summary = [
     Number.isFinite(currentPrice) ? `Price ${fmtPrice(currentPrice)}` : null,
-    Number.isFinite(coin?.mcap)
-      ? `market cap ${fmtUsd(coin.mcap)}`
-      : Number.isFinite(dexLaunchPayload?.pair?.marketCap)
-        ? `market cap ${fmtUsd(dexLaunchPayload.pair.marketCap)}`
-        : null,
-    Number.isFinite(coin?.ch24h) ? `24h change ${fmtPct(coin.ch24h, 1)}` : null,
+    Number.isFinite(currentMcap) ? `market cap ${fmtUsd(currentMcap)}` : null,
+    Number.isFinite(coin?.ch24h) ? `24h ${fmtPct(coin.ch24h, 1)}` : null,
   ].filter(Boolean);
   $('tokenSummary').textContent = summary.length
     ? `${summary.join(' · ')}.`
-    : 'Current snapshot unavailable; historical source data remains below.';
+    : 'Market research unavailable for this token.';
 
+  const caseDefinition = knownCase();
+  const athPrice = Number.isFinite(coin?.ath) ? coin.ath : milestones.ath?.price;
+  const athTimestamp = coin?.athDate ? Date.parse(coin.athDate) : milestones.ath?.t;
+  const launchTimestamp = Date.parse(caseDefinition?.launch || data.launchAt || '');
+  const daysToAth = Number.isFinite(launchTimestamp) && Number.isFinite(athTimestamp)
+    ? Math.max(0, Math.round((athTimestamp - launchTimestamp) / 86_400_000))
+    : null;
   const facts = [
-    curated ? fact('Launch date', fmtDate(Date.parse(curated.launch)), curated.launchNote, true) : null,
+    caseDefinition ? fact('Launch date', fmtDate(caseDefinition.launch), caseDefinition.launchNote, true) : null,
     fact('First 15m close', Number.isFinite(launch?.price) ? fmtPrice(launch.price) : 'Unavailable',
       launch?.source || 'No public 15m candle returned'),
     fact(
-      launch?.metricKind === 'FDV estimate' ? 'First 15m FDV' : 'First 15m mcap proxy',
+      launch?.metricKind === 'FDV estimate' ? 'First 15m FDV' : 'First 15m market cap',
       Number.isFinite(launch?.valuation) ? fmtUsd(launch.valuation) : 'Unavailable',
       launch?.methodology || 'No value is interpolated',
     ),
     fact('First public price', Number.isFinite(firstPublic?.price) ? fmtPrice(firstPublic.price) : 'Unavailable',
-      Number.isFinite(firstPublic?.t) ? `${fmtDate(firstPublic.t)} · earliest provider row, not launch` : 'No public row returned'),
-    fact('First public market cap', Number.isFinite(firstPublic?.mcap) ? fmtUsd(firstPublic.mcap) : 'Unavailable',
-      Number.isFinite(firstPublic?.t) ? `${fmtDate(firstPublic.t)} · earliest provider row, not launch` : 'No public row returned'),
+      Number.isFinite(firstPublic?.t) ? `${fmtDate(firstPublic.t)} · provider history` : 'No public row returned'),
     fact('Current price', Number.isFinite(currentPrice) ? fmtPrice(currentPrice) : 'Unavailable',
-      Number.isFinite(coin?.ch24h) ? `${fmtPct(coin.ch24h, 1)} / 24h` : payload.source?.priceHistory || ''),
-    fact('Market cap', Number.isFinite(coin?.mcap)
-      ? fmtUsd(coin.mcap)
-      : Number.isFinite(dexLaunchPayload?.pair?.marketCap)
-        ? fmtUsd(dexLaunchPayload.pair.marketCap)
-        : 'Unavailable',
-      coin?.rank ? `Rank #${coin.rank}` : dexLaunchPayload?.pair ? 'DEX Screener exact pair' : payload.source?.marketCapHistory || 'No public series returned'),
-    fact('Price ATH', fmtPrice(athPrice), Number.isFinite(athTimestamp) ? fmtDate(athTimestamp) : ''),
+      Number.isFinite(coin?.ch24h) ? `${fmtPct(coin.ch24h, 1)} / 24h` : ''),
+    fact('Market cap', Number.isFinite(currentMcap) ? fmtUsd(currentMcap) : 'Unavailable',
+      coin?.rank ? `Rank #${coin.rank}` : dexLaunchPayload?.pair ? 'DEX Screener exact pair' : ''),
+    fact('Price ATH', Number.isFinite(athPrice) ? fmtPrice(athPrice) : 'Unavailable',
+      Number.isFinite(athTimestamp) ? fmtDate(athTimestamp) : ''),
     fact('Launch → price ATH', Number.isFinite(daysToAth) ? `${daysToAth} days` : 'Unavailable',
       Number.isFinite(athTimestamp) ? 'UTC calendar days · CoinGecko ATH date' : 'No sourced ATH date'),
   ].filter(Boolean);
   $('caseFacts').replaceChildren(...facts);
 
-  const chartPayload = historyWithDexLaunch(payload);
-  renderMarketHistoryChart($('marketHistoryChart'), chartPayload, {
-    launchAt: curated?.launch || payload.launchAt,
-    symbol,
-  });
+  if (historyPayload) {
+    renderMarketHistoryChart($('marketHistoryChart'), historyWithDexLaunch(historyPayload), {
+      launchAt: caseDefinition?.launch || historyPayload.launchAt,
+      symbol: token.symbol,
+    });
+  } else {
+    $('marketHistoryChart').replaceChildren(el('p', { class: 'empty-state' },
+      'Historical market data is unavailable. Verified identity and source links remain accessible.'));
+  }
   renderDexScreenerChart(
     $('dexScreenerChart'),
-    dexLaunchPayload?.pair || curated?.dexScreener || null,
-    displayName,
+    dexLaunchPayload?.pair || token.dexScreener || null,
+    token.name,
     dexLaunchPayload,
   );
-  const officialHost = curated?.officialSite ? new URL(curated.officialSite).hostname : '';
-  const curatedSources = curated ? [
-    { label: 'X', url: curated.officialX, note: new URL(curated.officialX).pathname },
-    {
-      label: 'Site',
-      url: curated.officialSite,
-      note: new URL(curated.officialSite).hostname,
-      logo: curated.logo,
-    },
-    { label: 'CoinGecko', url: curated.coingecko, note: 'current market and ATH' },
-    ...curated.contracts.map((contract) => ({
-      label: `${contract.network} explorer`,
-      url: contract.explorer,
-      note: contract.address ? 'verified contract' : 'native chain',
-    })),
-    ...(curated.researchSources || []).map((source) => ({
-      ...source,
-      logo: source.logo || (officialHost && new URL(source.url).hostname === officialHost ? curated.logo : ''),
-    })),
-    ...(curated.dexScreener ? [{
-      label: 'DEX Screener',
-      url: curated.dexScreener.url,
-      note: `${curated.dexScreener.base}/${curated.dexScreener.quote} live pair`,
-    }] : []),
-  ] : [];
-  const allSources = [...curatedSources, ...(payload.sources || []).map((source) => ({
-    ...source,
-    note: source.label.includes('Yahoo') ? 'daily price history' : 'historical market data',
-  }))]
-    .filter((source, index, rows) => rows.findIndex((item) => item.url === source.url) === index);
-  $('sourceLinks').replaceChildren(...allSources.map((source) => brandedSourceLink(source)));
-  $('updatedAt').textContent = fmtClock(payload.fetchedAt);
-  setStatus(`Data ready · price: ${payload.source.priceHistory || 'unavailable'} · market cap: ${payload.source.marketCapHistory || 'unavailable'}`, 'ok');
-}
-
-async function load() {
-  if (!id) throw new Error('The coin id parameter is required');
-  const symbolQuery = symbol ? `&symbol=${encodeURIComponent(symbol)}` : '';
-  const response = await fetch(
-    `/api/market/?resource=history&id=${encodeURIComponent(id)}${symbolQuery}`,
+  $('sourceLinks').replaceChildren(...tokenSources().map((source) => brandedSourceLink(source)));
+  $('updatedAt').textContent = fmtClock(
+    tokenPayload?.fetchedAt || historyPayload?.fetchedAt || dexLaunchPayload?.fetchedAt || Date.now(),
   );
-  if (!response.ok) throw new Error(`Backend HTTP ${response.status}`);
-  payload = await response.json();
-  if (!payload?.ok) throw new Error(payload?.error || 'History is unavailable');
-  symbol ||= String(payload.symbol || payload.coin?.sym || id).toUpperCase();
-  render();
 }
 
-async function loadDex() {
-  dexLaunchPayload = await fetchDexLaunch(id);
-  if (payload) render();
+function mergeIdentity(payload) {
+  const identity = payload?.identity || {};
+  const curated = findToken(identity) || findToken({ id: identity.coingeckoId || request.id });
+  token = {
+    ...unresolvedToken({
+      id: identity.id || request.id,
+      name: identity.name || payload?.coin?.name || token.name,
+      symbol: identity.symbol || payload?.coin?.sym || token.symbol,
+      chain: identity.chain || token.chain,
+      contract: identity.contract || token.contract,
+      explorer: identity.explorer || token.explorer,
+      image: payload?.coin?.image || token.logo,
+    }),
+    ...(curated || {}),
+    name: curated?.name || identity.name || payload?.coin?.name || token.name,
+    symbol: curated?.symbol || identity.symbol || payload?.coin?.sym || token.symbol,
+    chain: curated?.chain || identity.chain || token.chain,
+    contract: curated?.contract || identity.contract || token.contract,
+    explorer: curated?.explorer || identity.explorer || token.explorer,
+    coingeckoId: curated?.coingeckoId || identity.coingeckoId || token.coingeckoId,
+  };
+  if (token.chain && token.contract && (request.chain !== token.chain || request.contract !== token.contract)) {
+    history.replaceState(null, '', tokenDetailHref(token));
+  }
 }
 
-function init() {
-  load().then(() => loadDex().catch((error) => {
-    console.warn('DEX launch:', error.message);
-  })).catch((error) => {
-    console.error(error);
-    setStatus(error.message, 'err');
-    $('marketHistoryChart').replaceChildren(el('p', { class: 'error' }, error.message));
+async function fetchToken() {
+  const query = new URLSearchParams({ resource: 'token' });
+  if (request.id) query.set('id', request.id);
+  if (request.chain) query.set('chain', request.chain);
+  if (request.contract) query.set('contract', request.contract);
+  const response = await fetch(`/api/market/?${query}`, { headers: { accept: 'application/json' } });
+  if (!response.ok) throw new Error(`Token backend HTTP ${response.status}`);
+  const payload = await response.json();
+  if (!payload?.ok) throw new Error(payload?.error || 'Token research unavailable');
+  tokenPayload = payload;
+  mergeIdentity(payload);
+  renderIdentity();
+  renderMarket();
+  return payload;
+}
+
+async function fetchHistory() {
+  const id = token.coingeckoId || tokenPayload?.identity?.coingeckoId;
+  if (!id) return null;
+  const query = new URLSearchParams({ resource: 'history', id });
+  if (token.symbol) query.set('symbol', token.symbol);
+  const response = await fetch(`/api/market/?${query}`, { headers: { accept: 'application/json' } });
+  if (!response.ok) throw new Error(`History backend HTTP ${response.status}`);
+  const payload = await response.json();
+  if (!payload?.ok) throw new Error(payload?.error || 'History unavailable');
+  historyPayload = payload;
+  renderMarket();
+  return payload;
+}
+
+async function fetchDex() {
+  dexLaunchPayload = await fetchDexLaunch(token);
+  renderMarket();
+}
+
+async function init() {
+  renderIdentity();
+  renderMarket();
+  setStatus('Identity ready · loading live market data…', 'busy');
+
+  const tokenResult = await fetchToken().catch((error) => {
+    console.warn('Token snapshot:', error.message);
+    return null;
   });
+  const [historyResult, dexResult] = await Promise.allSettled([
+    fetchHistory(),
+    fetchDex(),
+  ]);
+  if (historyResult.status === 'rejected') console.warn('History:', historyResult.reason.message);
+  if (dexResult.status === 'rejected') console.warn('DEX:', dexResult.reason.message);
+  renderMarket();
+
+  if (!tokenResult && !historyPayload && !dexLaunchPayload?.pair) {
+    setStatus('Verified identity ready · market research unavailable', 'err');
+  } else if (!historyPayload || !dexLaunchPayload?.pair) {
+    setStatus('Token research ready · some market sources unavailable', 'busy');
+  } else {
+    setStatus('Token research ready', 'ok');
+  }
+
   let resizeTimer;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
-      if (payload) renderMarketHistoryChart($('marketHistoryChart'), historyWithDexLaunch(payload), {
-        launchAt: curated?.launch || payload.launchAt,
-        symbol,
+      if (!historyPayload) return;
+      renderMarketHistoryChart($('marketHistoryChart'), historyWithDexLaunch(historyPayload), {
+        launchAt: knownCase()?.launch || historyPayload.launchAt,
+        symbol: token.symbol,
       });
     }, 160);
   });
   window.addEventListener('themechange', () => {
-    if (payload) renderMarketHistoryChart($('marketHistoryChart'), historyWithDexLaunch(payload), {
-      launchAt: curated?.launch || payload.launchAt,
-      symbol,
-    });
+    if (historyPayload) renderMarket();
   });
 }
 
