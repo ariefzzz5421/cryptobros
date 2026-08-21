@@ -9,6 +9,16 @@ import { getLocale, t } from './i18n.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
+/* Readiness reported in words as well as by the dot's colour, so the state is
+   not carried by colour alone. Keys match the classes setStatus() already
+   writes, and every page keeps its own setStatus() untouched. */
+const STATUS_STATE = {
+  ok: 'Ready',
+  busy: 'Partial',
+  err: 'Error',
+  '': 'Loading',
+};
+
 function routeIcon(path) {
   const svg = document.createElementNS(SVG_NS, 'svg');
   svg.setAttribute('class', 'nav-icon');
@@ -92,6 +102,49 @@ function buildColumns(nav, current) {
   nav.replaceChildren(head, columns);
 }
 
+/* The readiness line used to sit under the brand, where it cost about 30px of
+   a phone's first screen on every route. It belongs with provenance, so the
+   shell moves the page's existing .status-bar into the footer instead of each
+   page duplicating footer markup. Pages keep writing to #statusDot and
+   #statusText exactly as before — the node simply lives somewhere else.
+
+   The footer slot is created before the move and carries the row's height, so
+   relocating the bar does not shift the layout on load. */
+export function initSiteStatus() {
+  const bar = document.querySelector('.status-bar');
+  const foot = document.querySelector('.site-foot');
+  if (!bar || !foot) return;
+  if (bar.closest('.site-foot')) return;
+
+  const slot = document.createElement('div');
+  slot.className = 'site-foot-status';
+  foot.append(slot);
+
+  bar.classList.remove('wrap');
+  slot.append(bar);
+
+  const dot = bar.querySelector('.dot');
+  if (!dot) return;
+
+  /* One label element, kept in step with the dot's class by an observer, so a
+     page that swaps the class through its own setStatus() stays described. */
+  let label = bar.querySelector('.status-state');
+  if (!label) {
+    label = document.createElement('span');
+    label.className = 'status-state';
+    dot.after(label);
+  }
+  const sync = () => {
+    const kind = ['ok', 'busy', 'err'].find((name) => dot.classList.contains(name)) || '';
+    const text = STATUS_STATE[kind];
+    label.textContent = text;
+    bar.setAttribute('role', 'status');
+    dot.setAttribute('aria-hidden', 'true');
+  };
+  sync();
+  new MutationObserver(sync).observe(dot, { attributes: true, attributeFilter: ['class'] });
+}
+
 export function initAppShell() {
   const nav = document.querySelector('.primary-nav');
   if (!nav) return;
@@ -107,6 +160,7 @@ export function initAppShell() {
     brandMark.src = '/assets/img/brand/crypto-bros-mark.webp';
     brandMark.alt = 'Crypto Bros';
   }
+  initSiteStatus();
   trackHeaderHeight();
   /* The drawer is fixed to the viewport, so it is moved out of the header to
      stay clear of any ancestor that would become its containing block. */

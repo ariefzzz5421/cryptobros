@@ -2,6 +2,7 @@ import { CASES } from './cases-config.js';
 import { fmtUsd, fmtPrice, fmtPct, fmtClock, el } from './utils.js';
 import { startAutoRefresh } from './autorefresh.js';
 import { findToken, tokenDetailHref } from './token-registry.js';
+import { rankBoard, rankCard } from './ranking-board.js';
 
 const $ = (id) => document.getElementById(id);
 const state = { overview: null, sentiment: null, sort: 'mcap' };
@@ -32,27 +33,27 @@ function renderUniverse() {
 
   const table = el('table', { class: 'data-table market-leader-table' });
   table.append(el('thead', {}, el('tr', {},
-    el('th', {}, '#'),
-    el('th', {}, 'Coin'),
-    el('th', { class: 'r' }, 'Price'),
-    el('th', { class: 'r' }, '24h'),
-    el('th', { class: 'r' }, 'Market cap'),
-    el('th', { class: 'r' }, '24h volume'),
-    el('th', { class: 'r' }, ''),
+    el('th', { scope: 'col' }, '#'),
+    el('th', { scope: 'col' }, 'Coin'),
+    el('th', { class: 'r', scope: 'col' }, 'Price'),
+    el('th', { class: 'r', scope: 'col' }, '24h'),
+    el('th', { class: 'r', scope: 'col' }, 'Market cap'),
+    el('th', { class: 'r', scope: 'col' }, '24h volume'),
+    el('th', { class: 'r', scope: 'col' }, ''),
   )));
   const body = el('tbody');
+  const isWrapped = (coin) => /peg|wrapped/i.test(`${coin.id} ${coin.name}`);
   coins.forEach((coin, index) => {
-    const wrapped = /peg|wrapped/i.test(`${coin.id} ${coin.name}`);
     body.append(el('tr', { class: 'clickable', onclick: () => { location.href = tokenDetailHref(coin); } },
       el('td', { class: 'muted num' }, String(index + 1)),
       el('td', {},
         el('span', { class: 'coin-cell' },
-          el('img', { class: 'row-logo', src: coin.image, alt: '', width: '24', height: '24' }),
+          el('img', { class: 'row-logo', src: coin.image, alt: '', width: '24', height: '24', loading: 'lazy', decoding: 'async' }),
           el('span', {},
             el('strong', {}, coin.sym),
             el('small', {}, coin.name),
           ),
-          wrapped ? el('span', { class: 'pill ghost' }, 'wrapped') : null,
+          isWrapped(coin) ? el('span', { class: 'pill ghost' }, 'wrapped') : null,
         ),
       ),
       el('td', { class: 'r num' }, fmtPrice(coin.price)),
@@ -63,7 +64,31 @@ function renderUniverse() {
     ));
   });
   table.append(body);
-  $('over100Table').replaceChildren(table);
+
+  /* Market cap is the sort key and the reason the page exists, so on a phone
+     it is on the card itself rather than four columns to the right of it. */
+  const cards = coins.map((coin, index) => rankCard({
+    rank: String(index + 1),
+    logo: el('img', { class: 'row-logo', src: coin.image, alt: '', width: '30', height: '30', loading: 'lazy', decoding: 'async' }),
+    title: coin.sym,
+    subtitle: isWrapped(coin) ? `${coin.name} · wrapped` : coin.name,
+    href: tokenDetailHref(coin),
+    metrics: [
+      { label: 'Market cap', value: fmtUsd(coin.mcap) },
+      { label: '24h', value: fmtPct(coin.ch24h, 1), tone: coin.ch24h >= 0 ? 'up' : 'down' },
+    ],
+    detailsLabel: 'Price and volume',
+    details: [
+      { label: 'Price', value: fmtPrice(coin.price) },
+      { label: '24h volume', value: fmtUsd(coin.vol) },
+    ],
+  }));
+
+  $('over100Table').replaceChildren(rankBoard({
+    table,
+    cards,
+    label: 'Memecoins above $100M market cap',
+  }));
 }
 
 function renderCurated() {
@@ -97,18 +122,20 @@ function renderLaunchpads() {
     .sort((a, b) => (b.revenue?.total24h ?? -1) - (a.revenue?.total24h ?? -1));
   const table = el('table', { class: 'data-table' });
   table.append(el('thead', {}, el('tr', {},
-    el('th', {}, '#'),
-    el('th', {}, 'Platform'),
-    el('th', { class: 'r' }, '24h volume'),
-    el('th', { class: 'r' }, '24h revenue'),
-    el('th', { class: 'r' }, 'Momentum'),
+    el('th', { scope: 'col' }, '#'),
+    el('th', { scope: 'col' }, 'Platform'),
+    el('th', { class: 'r', scope: 'col' }, '24h volume'),
+    el('th', { class: 'r', scope: 'col' }, '24h revenue'),
+    el('th', { class: 'r', scope: 'col' }, 'Momentum'),
   )));
   const body = el('tbody');
+  const vol = (row) => (Number.isFinite(row.volume?.total24h) ? fmtUsd(row.volume.total24h) : 'Unavailable');
+  const rev = (row) => (Number.isFinite(row.revenue?.total24h) ? fmtUsd(row.revenue.total24h) : 'Unavailable');
   rows.forEach((row, index) => body.append(el('tr', {},
     el('td', { class: 'muted num' }, String(index + 1)),
     el('td', {},
       el('span', { class: 'coin-cell' },
-        el('img', { class: 'row-logo', src: row.logo, alt: '', width: '24', height: '24' }),
+        el('img', { class: 'row-logo', src: row.logo, alt: '', width: '24', height: '24', loading: 'lazy', decoding: 'async' }),
         el('strong', {}, row.name),
       ),
     ),
@@ -117,7 +144,23 @@ function renderLaunchpads() {
     el('td', { class: `r num ${row.momentum?.score >= 0 ? 'up' : 'down'}` }, row.momentum?.label || '—'),
   )));
   table.append(body);
-  $('launchpadTable').replaceChildren(table);
+
+  const cards = rows.map((row, index) => rankCard({
+    rank: String(index + 1),
+    logo: el('img', { class: 'row-logo', src: row.logo, alt: '', width: '30', height: '30', loading: 'lazy', decoding: 'async' }),
+    title: row.name,
+    subtitle: row.momentum?.label ? `Momentum ${row.momentum.label}` : null,
+    metrics: [
+      { label: '24h volume', value: vol(row) },
+      { label: '24h revenue', value: rev(row) },
+    ],
+  }));
+
+  $('launchpadTable').replaceChildren(rankBoard({
+    table,
+    cards,
+    label: 'Launch platforms by 24h revenue',
+  }));
 }
 
 async function refresh() {

@@ -1,14 +1,34 @@
 /* ============================================================
    nft-config.js — sourced NFT research set.
 
-   Inclusion rule: the collection has a publicly documented floor price
-   above FLOOR_THRESHOLD_ETH. Every number below is attributable to a linked
-   source; live floor prices are loaded at runtime and never estimated here.
-   Where no single peak-floor figure is publicly sourced, the field says so
-   instead of inventing one.
+   Historical inclusion rule (both conditions required):
+
+     documented peak floor    >= 0.1 ETH
+     documented lifetime volume >= 25 ETH
+
+   This is historical research, so the test is on the peak floor a collection
+   reached, never on where its floor sits today. A collection that once met the
+   threshold stays a historical qualifier even if it trades below it now.
+
+   Lifetime volume means cumulative collection trading volume. Only OpenSea
+   publishes it, and it arrives from the server-side provider at runtime. Until
+   a key is configured it is unavailable — and unavailable is what the page
+   says, rather than a 24h volume standing in for a lifetime one.
+
+   Every number below is attributable to a linked source. Where no single
+   peak-floor figure is publicly sourced, the field says so instead of
+   inventing one.
    ============================================================ */
 
-export const FLOOR_THRESHOLD_ETH = 0.5;
+export const HISTORICAL_RULE = Object.freeze({
+  peakFloorEth: 0.1,
+  lifetimeVolumeEth: 25,
+  summary: 'Peak floor ≥ 0.1 ETH AND lifetime volume ≥ 25 ETH',
+});
+
+/* Kept so the /nft/ route can still say where a floor sits today. It is a
+   display threshold only — it is not part of the inclusion rule. */
+export const FLOOR_THRESHOLD_ETH = HISTORICAL_RULE.peakFloorEth;
 
 export const RESEARCH_CUTOFF = '2026-08-07';
 
@@ -567,3 +587,65 @@ export const NFT_UPDATES = [
     label: 'The Defiant',
   },
 ];
+
+/* --- Historical qualification -------------------------------------------
+
+   Three states, because two conditions with one unsourced input cannot honestly
+   collapse into a boolean:
+
+     'qualified'   both conditions confirmed from available data
+     'pending'     peak floor confirmed, lifetime volume not yet available
+     'excluded'    a condition is documented as failing
+
+   currentFloorEth, documentedPeakFloorEth and lifetimeVolumeEth are returned
+   separately and never substituted for one another. A current floor is not a
+   peak floor; a 24h volume is not a lifetime volume.
+   ------------------------------------------------------------------------ */
+
+export function nftMetrics(item, live = null) {
+  const currentFloorEth = Number.isFinite(live?.floorNative) ? live.floorNative : null;
+  const documentedPeakFloorEth = Number.isFinite(item.peakFloor?.eth) ? item.peakFloor.eth : null;
+  const lifetimeVolumeEth = Number.isFinite(live?.lifetimeVolumeEth) ? live.lifetimeVolumeEth : null;
+  const volume24hEth = Number.isFinite(live?.volume24hEth)
+    ? live.volume24hEth
+    : Number.isFinite(live?.volume24hNative) ? live.volume24hNative : null;
+
+  const peakMeets = documentedPeakFloorEth == null
+    ? null
+    : documentedPeakFloorEth >= HISTORICAL_RULE.peakFloorEth;
+  const volumeMeets = lifetimeVolumeEth == null
+    ? null
+    : lifetimeVolumeEth >= HISTORICAL_RULE.lifetimeVolumeEth;
+
+  let qualifiesHistoricalRule = 'pending';
+  if (peakMeets === false || volumeMeets === false) qualifiesHistoricalRule = 'excluded';
+  else if (peakMeets === true && volumeMeets === true) qualifiesHistoricalRule = 'qualified';
+
+  return {
+    currentFloorEth,
+    documentedPeakFloorEth,
+    lifetimeVolumeEth,
+    volume24hEth,
+    volumeSource: live?.volumeSource || null,
+    volumeCurrency: live?.volumeCurrency || null,
+    peakMeets,
+    volumeMeets,
+    qualifiesHistoricalRule,
+  };
+}
+
+/* Why a collection sits in the state it does, in words rather than a colour. */
+export function qualificationLabel(metrics) {
+  if (metrics.qualifiesHistoricalRule === 'qualified') {
+    return `Qualified · peak ${metrics.documentedPeakFloorEth} ETH, lifetime volume verified`;
+  }
+  if (metrics.qualifiesHistoricalRule === 'excluded') {
+    return metrics.peakMeets === false
+      ? `Below the ${HISTORICAL_RULE.peakFloorEth} ETH peak-floor condition`
+      : `Below the ${HISTORICAL_RULE.lifetimeVolumeEth} ETH lifetime-volume condition`;
+  }
+  if (metrics.peakMeets === true) {
+    return 'Peak floor confirmed · lifetime volume pending an OpenSea source';
+  }
+  return 'Peak floor not sourced to a single figure · qualification pending';
+}

@@ -9,6 +9,7 @@ import {
   localizeNft2026,
 } from './nft-2026-config.js';
 import { fetchNftFloors, fmtEth, fmtResearchDate } from './nft-data.js';
+import { nftMetrics } from './nft-config.js';
 import { fmtUsd, fmtClock, el } from './utils.js';
 import { brandedSourceLink } from './source-brands.js';
 import { getLocale, localeTag, t } from './i18n.js';
@@ -19,11 +20,13 @@ let latestSnapshot = null;
 
 const copy = () => getLocale() === 'id' ? {
   live: 'Floor langsung', documented: 'Terdokumentasi', mint: 'Mint', unavailable: 'Tidak tersedia',
+  lifetime: 'Volume kumulatif', day: 'Volume 24 jam',
   read: 'Baca riset', market: 'OpenSea', launched: 'launch', confirmed: 'Kualifikasi terkonfirmasi',
   context: 'Studi konteks penting', screened: 'Sudah diperiksa', below: 'di bawah batas',
   partial: 'Sebagian floor langsung tersedia · riset tetap bersumber', ready: 'Floor langsung siap',
 } : {
   live: 'Live floor', documented: 'Documented', mint: 'Mint', unavailable: 'Unavailable',
+  lifetime: 'Lifetime volume', day: '24h volume',
   read: 'Read research', market: 'OpenSea', launched: 'launched', confirmed: 'Confirmed qualifiers',
   context: 'Important context cases', screened: 'Screened', below: 'below threshold',
   partial: 'Live floors partially available · research remains sourced', ready: 'Live floors ready',
@@ -37,6 +40,7 @@ function setStatus(text, kind = 'busy') {
 function card(sourceItem, live) {
   const item = localizeNft2026(sourceItem, getLocale());
   const ui = copy();
+  const metrics = nftMetrics(item, live);
   const floor = live?.floorNative;
   const currency = live?.currency || item.peakFloor?.currency || 'ETH';
   const liveLabel = Number.isFinite(floor)
@@ -58,10 +62,17 @@ function card(sourceItem, live) {
       el('div', {}, el('strong', {}, item.name),
         el('small', {}, `${item.chain} · ${ui.launched} ${fmtResearchDate(item.launch, localeTag())}`))),
     el('p', {}, item.narrative),
+    /* The 2026 cohort keeps its own year-specific inclusion rule; it only
+       borrows the shared normalised metric model so volume is read from the
+       same provider and in the same units as the historical route. */
     el('div', { class: 'nft-card-stats' },
-      el('div', {}, el('span', {}, ui.live), el('strong', { class: 'num' }, liveLabel)),
-      el('div', {}, el('span', {}, ui.documented), el('strong', { class: 'num' }, item.peakFloor?.label || ui.unavailable)),
-      el('div', {}, el('span', {}, ui.mint), el('strong', { class: 'num' }, item.mint))),
+      el('div', { class: 'nft-stat' }, el('span', {}, ui.live), el('strong', { class: 'num' }, liveLabel)),
+      el('div', { class: 'nft-stat' }, el('span', {}, ui.documented), el('strong', { class: 'num' }, item.peakFloor?.label || ui.unavailable)),
+      el('div', { class: 'nft-stat' }, el('span', {}, ui.lifetime), el('strong', { class: 'num' },
+        Number.isFinite(metrics.lifetimeVolumeEth) ? fmtEth(metrics.lifetimeVolumeEth, 0) : ui.unavailable)),
+      el('div', { class: 'nft-stat' }, el('span', {}, ui.day), el('strong', { class: 'num' },
+        Number.isFinite(metrics.volume24hEth) ? fmtEth(metrics.volume24hEth, 1) : ui.unavailable)),
+      el('div', { class: 'nft-stat' }, el('span', {}, ui.mint), el('strong', { class: 'num' }, item.mint))),
     el('div', { class: 'nft-card-actions' },
       el('a', { class: 'nft-read-link', href: `/nft-2026/${item.slug}/` }, ui.read),
       brandedSourceLink({ label: ui.market, url: item.marketplace, note: 'opensea.io', className: 'source-button' })),

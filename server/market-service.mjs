@@ -19,6 +19,11 @@ const HYPERLIQUID_INFO = 'https://api.hyperliquid.xyz/info';
 const DEX = 'https://api.dexscreener.com';
 const GECKO_TERMINAL = 'https://api.geckoterminal.com/api/v2';
 const OPENSEA = 'https://opensea.io/collection';
+/* Keyed OpenSea V2 access lives in its own module so the API key never travels
+   with anything a browser can import. When no key is configured every call
+   returns { available: false } and the NFT routes fall back to the sourced
+   static research plus CoinGecko floors. */
+import * as openSea from './providers/opensea.mjs';
 const cache = new Map();
 const inflight = new Map();
 
@@ -43,18 +48,18 @@ const TTL = {
    try in order; a collection that no upstream id resolves is reported as
    unavailable rather than filled with an estimate. */
 const NFT_COLLECTIONS = [
-  { slug: 'cryptopunks', ids: ['cryptopunks'] },
-  { slug: 'bored-ape-yacht-club', ids: ['bored-ape-yacht-club'] },
-  { slug: 'pudgy-penguins', ids: ['pudgy-penguins'] },
-  { slug: 'azuki', ids: ['azuki'] },
-  { slug: 'moonbirds', ids: ['proof-moonbirds', 'moonbirds'] },
-  { slug: 'fidenza', ids: ['fidenza-by-tyler-hobbs', 'fidenza'] },
-  { slug: 'doodles', ids: ['doodles-official', 'doodles'] },
-  { slug: 'clonex', ids: ['clone-x-x-takashi-murakami', 'clone-x', 'clonex'] },
-  { slug: 'milady-maker', ids: ['milady-maker', 'milady'] },
-  { slug: 'stonkbrokers', ids: ['stonkbrokers-434284142', 'stonkbrokers'] },
-  { slug: 'mancers', ids: ['mancers-hyperevm', 'mancers'] },
-  { slug: 'pyopyopyopyo', ids: ['py0py0py0py0', 'pyopyopyopyo'] },
+  { slug: 'cryptopunks', ids: ['cryptopunks'], openSeaSlug: 'cryptopunks' },
+  { slug: 'bored-ape-yacht-club', ids: ['bored-ape-yacht-club'], openSeaSlug: 'boredapeyachtclub' },
+  { slug: 'pudgy-penguins', ids: ['pudgy-penguins'], openSeaSlug: 'pudgypenguins' },
+  { slug: 'azuki', ids: ['azuki'], openSeaSlug: 'azuki' },
+  { slug: 'moonbirds', ids: ['proof-moonbirds', 'moonbirds'], openSeaSlug: 'proof-moonbirds' },
+  { slug: 'fidenza', ids: ['fidenza-by-tyler-hobbs', 'fidenza'], openSeaSlug: 'fidenza-by-tyler-hobbs' },
+  { slug: 'doodles', ids: ['doodles-official', 'doodles'], openSeaSlug: 'doodles-official' },
+  { slug: 'clonex', ids: ['clone-x-x-takashi-murakami', 'clone-x', 'clonex'], openSeaSlug: 'clonex' },
+  { slug: 'milady-maker', ids: ['milady-maker', 'milady'], openSeaSlug: 'milady-maker' },
+  { slug: 'stonkbrokers', ids: ['stonkbrokers-434284142', 'stonkbrokers'], openSeaSlug: 'stonkbrokers' },
+  { slug: 'mancers', ids: ['mancers-hyperevm', 'mancers'], openSeaSlug: 'mancers' },
+  { slug: 'pyopyopyopyo', ids: ['py0py0py0py0', 'pyopyopyopyo'], openSeaSlug: 'pyopyopyopyo' },
   { slug: 'robinhood-minis', ids: [], openSeaSlug: 'robinhood-minis' },
   { slug: '8skullz', ids: ['8skullz'], openSeaSlug: '8skullz' },
 ];
@@ -1517,14 +1522,54 @@ async function loadNftFloors(requestedSlugs = []) {
       : memo.value;
   }
 
+  /* Lifetime volume is the second half of the historical inclusion rule and
+     only OpenSea publishes it. Without a key this returns unavailable for
+     every collection and the page keeps its sourced research — it never
+     fails, and it never substitutes a 24h volume for a lifetime one. */
+  const openSeaConfigured = openSea.isConfigured();
+  let openSeaStats = {};
+  if (openSeaConfigured) {
+    openSeaStats = await openSea.getManyCollectionStats(
+      selected.map((collection) => collection.openSeaSlug).filter(Boolean),
+    );
+    for (const collection of selected) {
+      const stats = collection.openSeaSlug ? openSeaStats[collection.openSeaSlug] : null;
+      if (!stats?.available) continue;
+      const existing = collections[collection.slug] || { id: collection.slug };
+      collections[collection.slug] = {
+        ...existing,
+        /* CoinGecko stays the floor of record where it resolved, so the two
+           providers are never averaged into one number. */
+        floorNative: existing.floorNative ?? stats.floorEth,
+        lifetimeVolumeEth: stats.lifetimeVolumeEth,
+        volume24hEth: stats.volume24hEth,
+        owners: existing.owners ?? stats.owners,
+        sales: stats.sales,
+        openSeaFloorEth: stats.floorEth,
+        openSeaFetchedAt: stats.fetchedAt,
+        volumeSource: 'OpenSea',
+        volumeCurrency: 'ETH',
+      };
+    }
+  }
+
   const missing = selected.length - Object.keys(collections).length;
   return {
     ok: true,
     partial: missing > 0,
     fetchedAt: Date.now(),
-    source: 'CoinGecko NFT API + OpenSea public collection pages',
-    thresholdEth: 0.5,
-    thresholds: { historicalEth: 0.5, nft2026Eth: 0.1 },
+    source: openSeaConfigured
+      ? 'CoinGecko NFT API + OpenSea V2 collection stats'
+      : 'CoinGecko NFT API + OpenSea public collection pages',
+    /* Historical inclusion is now two conditions, not one floor threshold. */
+    thresholds: {
+      historicalPeakFloorEth: 0.1,
+      historicalLifetimeVolumeEth: 25,
+      nft2026Eth: 0.1,
+    },
+    openSea: openSeaConfigured
+      ? { available: true, source: 'OpenSea V2', ttl: openSea.TTL }
+      : { available: false, reason: openSea.MISSING_KEY.reason },
     memoMaxAgeMs: NFT_MEMO_MAX_AGE,
     refreshedThisPass: due.map((row) => row.slug),
     warning: missing ? `Live floor still filling in for ${missing} collection(s)` : null,

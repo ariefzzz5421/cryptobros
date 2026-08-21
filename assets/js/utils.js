@@ -207,6 +207,10 @@ export const DOW_ORDER = [1, 2, 3, 4, 5, 6, 0];
 
 /** "27 Jul 2026, 18:42 WIB" */
 export function fmtClock(ms) {
+  /* A missing timestamp reads as unavailable rather than as "NaN undefined
+     NaN, NaN:NaN WIB" — the launchpad fallback note printed that whenever a
+     protocol had no dated snapshot. */
+  if (!Number.isFinite(Number(ms))) return 'Unavailable';
   const p = wibParts(ms);
   const mon = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const d = new Date(ms + WIB_OFFSET * 3600 * 1000);

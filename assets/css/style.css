@@ -1263,9 +1263,14 @@ body {
 /* ---------------- Logo platform ---------------- */
 
 .platform-ident { display: flex; align-items: center; gap: 11px; min-width: 0; }
+/* Platform marks are official brand assets and arrive in every shape a brand
+   guideline allows — square glyph, wide lockup, tall badge. `contain` inside a
+   fixed square keeps the whole mark visible; `cover` used to crop the edges off
+   the wider ones (Pons, Four.meme). */
 .platform-logo {
-  width: 38px; height: 38px; border-radius: 10px; flex: none;
-  object-fit: cover; background: var(--surface-image); box-shadow: 0 0 0 1px var(--border);
+  width: 54px; height: 54px; aspect-ratio: 1; border-radius: 12px; flex: none;
+  padding: 5px; box-sizing: border-box;
+  object-fit: contain; background: var(--surface-image); box-shadow: 0 0 0 1px var(--border);
 }
 
 @media (max-width: 720px) {
@@ -2911,7 +2916,8 @@ body { padding-inline-start: 0; }
 .brand-mark {
   width: 44px;
   height: 44px;
-  object-fit: cover;
+  /* the Crypto Bros mark is wider than it is tall; cover cut its edges off */
+  object-fit: contain;
   border-radius: 11px;
   box-shadow: 0 0 0 1px var(--border), 0 10px 24px -16px var(--accent);
 }
@@ -3502,7 +3508,7 @@ body[data-nav-open] { overflow: hidden; }
 .nft-card-logo {
   width: 52px;
   height: 52px;
-  object-fit: cover;
+  object-fit: contain;
   border: 1px solid var(--border-2);
   border-radius: 14px;
   background: var(--plane);
@@ -4028,3 +4034,474 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .command-deck { animation: none; }
 }
+
+/* ============================================================
+   Responsive layer — mobile is a layout, not a scaled desktop
+   ------------------------------------------------------------
+   Root cause this section fixes: a grid or flex item defaults to
+   `min-width: auto`, so its width is pushed up to its min-content size. A
+   research card holding a 1180px table therefore laid itself out at ~1534px
+   inside a 390px phone, and `overflow-x: clip` on html/body then hid the
+   1150px that hung off the right edge instead of letting anyone reach it.
+   Every container that holds a wide dataset now declares `min-width: 0` and
+   confines the wide part to its own scroll region or to a card stack.
+   ============================================================ */
+
+/* --- 1. Structural containment ------------------------------------------ */
+
+/* The clip on html/body stays as a guard so a single stray element can never
+   create body-level horizontal scrolling. It must never be the thing that
+   makes a layout look correct — tests/responsive-audit.test.mjs neutralises it
+   and asserts the true layout width. */
+
+.launchpad-ranking > *,
+.rank-board,
+.rank-board > *,
+.panel > .table-scroll,
+.doc-section > .table-scroll,
+.launchpad-analytics-card,
+.launchpad-card-header,
+.launchpad-card-footer,
+.launchpad-source-row,
+.launchpad-table-head,
+.kpi,
+.hero-kpis > *,
+.nft-card,
+.case-card,
+.research-card { min-width: 0; }
+
+.table-scroll {
+  min-width: 0;
+  max-width: 100%;
+  overscroll-behavior-x: contain;
+}
+.table-scroll:focus-visible { outline: 2px solid var(--seq-mid); outline-offset: 2px; }
+
+/* Anything that carries an unbroken string — a contract address, a token name
+   with no spaces, a URL — breaks rather than pushing its container wide. */
+.kpi-val,
+.rank-card-title,
+.rank-card-details dd,
+.launchpad-card-title h2,
+.route-hero h2,
+.doc-title { overflow-wrap: anywhere; }
+
+img, svg, video, canvas, table { max-width: 100%; }
+.table-scroll table { max-width: none; }
+
+/* --- 2. Launchpad card --------------------------------------------------- */
+
+/* Long chain/category copy is launchpad identity — it wraps, it is never
+   truncated. */
+.launchpad-card-title .eyebrow { white-space: normal; overflow-wrap: anywhere; }
+.launchpad-card-title { min-width: 0; }
+
+/* Metric values wrap onto a second line instead of being ellipsised away. */
+.launchpad-metric strong {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+}
+
+/* A contract address is evidence; it gets shown in full, not cut at 150px. */
+.contract-cell {
+  display: block;
+  width: auto;
+  max-width: 22ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rank-card .contract-cell {
+  max-width: none;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 40rem) {
+  /* rank + logo + title on one row, timestamp on its own row below */
+  .launchpad-card-header {
+    grid-template-columns: auto auto minmax(0, 1fr);
+    align-items: start;
+    gap: var(--space-3);
+  }
+  .launchpad-rank { align-self: center; }
+  .launchpad-asof { grid-column: 1 / -1; }
+  .launchpad-card-title h2 { font-size: clamp(22px, 7vw, 30px); }
+  .platform-logo { width: 48px; height: 48px; }
+}
+
+/* --- 3. Ranking board: dense table on desktop, cards on a phone ---------- */
+
+.rank-board { display: block; }
+.rank-cards { display: none; list-style: none; margin: 0; padding: 0; }
+
+.rank-card {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--border-2);
+}
+.rank-card:last-child { border-bottom: 0; }
+
+.rank-card-head { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
+.rank-card-rank { flex: none; width: 2.2ch; color: var(--muted); font-size: 12px; }
+.rank-card-head .row-logo,
+.rank-card-head img {
+  flex: none;
+  width: 30px; height: 30px;
+  margin: 0;
+  vertical-align: baseline;
+}
+.rank-card-ident { min-width: 0; display: grid; gap: 2px; }
+.rank-card-title {
+  display: block;
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 650;
+  text-decoration: none;
+}
+a.rank-card-title::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+.rank-card { position: relative; }
+.rank-card-sub { color: var(--muted); font-size: 12px; line-height: 1.3; }
+
+.rank-card-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.5rem), 1fr));
+  gap: var(--space-3);
+  margin: 0;
+}
+.rank-card-metric { min-width: 0; }
+.rank-card-metrics dt {
+  margin: 0 0 3px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.rank-card-metrics dd {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+.rank-card-metrics dd small {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 10.5px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.rank-card-more { position: relative; z-index: 1; }
+.rank-card-more summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  color: var(--seq-hi);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+.rank-card-more summary::-webkit-details-marker { display: none; }
+.rank-card-more summary::before { content: '▸'; color: var(--muted); transition: transform var(--dur-micro) var(--ease-out); }
+.rank-card-more[open] summary::before { transform: rotate(90deg); }
+.rank-card-more summary:focus-visible { outline: 2px solid var(--seq-mid); outline-offset: 2px; }
+
+.rank-card-details {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-2) var(--space-3);
+  margin: 0 0 var(--space-2);
+  font-size: 12px;
+}
+.rank-card-details dt { color: var(--muted); }
+.rank-card-details dd { margin: 0; overflow-wrap: anywhere; }
+.rank-card-details a { min-height: 44px; display: inline-flex; align-items: center; }
+
+@media (max-width: 40rem) {
+  .rank-board > .table-scroll { display: none; }
+  .rank-cards { display: block; }
+}
+
+/* --- 4. Site status moved out of the header ------------------------------ */
+
+/* The status line used to sit under the brand and cost ~30px of a phone's
+   first screen on every route. It now reports from the footer, where it reads
+   as provenance rather than chrome. The dot semantics are unchanged, and the
+   footer reserves the row's height up front so relocating it shifts nothing. */
+.site-foot .status-bar {
+  align-items: flex-start;
+  min-height: 1.5rem;
+  padding: 0;
+  color: var(--ink-2);
+}
+.site-foot .status-bar .dot { margin-top: .45em; }
+.site-foot-status { display: flex; align-items: flex-start; gap: var(--space-2); min-width: 0; }
+.site-foot-status .status-bar { max-width: 100%; }
+
+/* A status carried only by colour is invisible to a reader who cannot see it,
+   so the dot is paired with its own text label. */
+.status-bar .status-state {
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+/* --- 5. Touch targets and focus ----------------------------------------- */
+
+.rank-card-more summary,
+.table-link,
+.source-icon-link,
+.provenance-badge { min-height: 44px; }
+.source-icon-link { width: 44px; height: 44px; }
+
+@media (pointer: coarse) {
+  .table-link,
+  .lore-source-chip,
+  .nft-flag { min-height: 44px; }
+  .table-link { display: inline-flex; align-items: center; }
+}
+
+/* --- 6. KPI strips at the narrow end ------------------------------------ */
+
+@media (max-width: 40rem) {
+  .kpi-strip { grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr)); }
+  .hero-kpis { grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr)); }
+}
+
+@media (max-width: 22.5rem) {
+  .kpi-strip,
+  .hero-kpis { grid-template-columns: minmax(0, 1fr); }
+  .kpi-val { font-size: 20px; }
+}
+
+/* Hidden in the header from the first paint, so the shell's move into the
+   footer costs no reflow and the mobile header is brand + theme + menu only. */
+.site-head .status-bar { display: none; }
+/* Host for a ranking board: the board supplies its own scroll region, so the
+   host must not be one as well. */
+.rank-board-host { min-width: 0; }
+
+/* ============================================================
+   Airdrop research — index and case article
+   ============================================================ */
+
+.airdrop-grid {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+}
+
+.airdrop-card {
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: inherit;
+  text-decoration: none;
+}
+.airdrop-card.is-featured { border-color: var(--accent-45); background: linear-gradient(150deg, var(--accent-14), var(--surface) 62%); }
+.airdrop-card-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); min-width: 0; }
+.airdrop-card-head strong { font-size: 16px; overflow-wrap: anywhere; }
+.airdrop-card-sym { color: var(--muted); font-size: 12px; letter-spacing: .06em; flex: none; }
+.airdrop-card-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr)); gap: var(--space-3); margin: 0; }
+.airdrop-card-stats dt { margin-bottom: 3px; color: var(--muted); font-size: 10px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; }
+.airdrop-card-stats dd { margin: 0; font-size: 17px; font-weight: 600; overflow-wrap: anywhere; }
+
+.candidate-pool { display: grid; gap: var(--space-3); margin: var(--space-4) 0 0; padding: 0; list-style: none; }
+.candidate {
+  display: grid;
+  gap: 3px;
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--border);
+}
+.candidate.is-published { border-left-color: var(--good); }
+.candidate small { color: var(--muted); font-size: 12px; line-height: 1.5; }
+.candidate a { color: var(--seq-hi); }
+
+/* --- Evidence board ------------------------------------------------------ */
+
+.evidence-grid {
+  display: grid;
+  gap: 1px;
+  margin-top: var(--space-4);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--border);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+}
+.evidence-card { min-width: 0; padding: var(--space-4); background: var(--plane); }
+.evidence-card.is-accent { background: linear-gradient(150deg, var(--accent-14), var(--plane) 70%); }
+.evidence-card h3 { margin: 0 0 var(--space-2); color: var(--muted); font-size: 10px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; }
+.evidence-value { margin: 0; font-size: 22px; font-weight: 650; line-height: 1.15; overflow-wrap: anywhere; }
+.evidence-sub { margin: var(--space-2) 0 0; color: var(--ink-2); font-size: 11.5px; line-height: 1.5; }
+.evidence-source { margin: var(--space-2) 0 0; color: var(--muted); font-size: 11px; }
+
+.source-kind {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 2px 7px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.source-kind:hover, .source-kind:focus-visible { border-color: var(--accent); color: var(--ink); }
+/* Provenance is stated in words on the chip itself, so the colour is a second
+   channel rather than the only one. */
+.source-kind.is-official { border-color: var(--good); color: var(--good); }
+.source-kind.is-on-chain { border-color: var(--seq-mid); color: var(--seq-hi); }
+.source-kind.is-derived { border-color: var(--warn); color: var(--warn); }
+
+/* --- Distribution flow --------------------------------------------------- */
+
+/* Four narrowing stages. A stage the research could not source keeps its place
+   and says so, rather than borrowing the number from the stage below it. */
+.distribution-flow {
+  display: grid;
+  gap: var(--space-3);
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: flow;
+}
+.flow-stage {
+  position: relative;
+  min-width: 0;
+  /* each stage is drawn narrower than the one above, to the extent the
+     container allows — the funnel shape carries the meaning */
+  width: calc(100% - (var(--flow-step, 0) * min(6%, 2.5rem)));
+  margin-inline: auto;
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--plane);
+  text-align: center;
+}
+.flow-stage + .flow-stage::before {
+  content: '↓';
+  position: absolute;
+  top: calc(var(--space-3) * -1);
+  left: 50%;
+  translate: -50% -30%;
+  color: var(--seq-mid);
+  font-size: 14px;
+  line-height: 1;
+}
+.flow-stage.is-unknown { border-style: dashed; background: transparent; }
+.flow-label { margin: 0 0 var(--space-2); color: var(--muted); font-size: 10px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; }
+.flow-value { margin: 0; font-size: clamp(22px, 6vw, 30px); font-weight: 650; line-height: 1.1; overflow-wrap: anywhere; }
+.flow-value.is-copy { font-size: 14px; font-weight: 500; color: var(--ink-2); line-height: 1.5; }
+.flow-stage.is-unknown .flow-value { color: var(--muted); font-size: 16px; }
+.flow-note { margin: var(--space-2) 0 0; color: var(--ink-2); font-size: 11.5px; line-height: 1.5; }
+.flow-source { margin: var(--space-2) 0 0; }
+
+/* --- Two valuations ------------------------------------------------------ */
+
+.valuation-board {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+}
+.valuation {
+  min-width: 0;
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--plane);
+}
+.valuation.is-primary { border-color: var(--accent-45); background: linear-gradient(150deg, var(--accent-14), var(--plane) 66%); }
+.valuation h3 { margin: 3px 0 var(--space-3); font-size: 16px; }
+.valuation-value { margin: 0; font-size: clamp(26px, 7vw, 38px); font-weight: 650; line-height: 1.05; letter-spacing: -.02em; overflow-wrap: anywhere; }
+.valuation-formula { margin: var(--space-2) 0 0; color: var(--ink-2); font-size: 12.5px; overflow-wrap: anywhere; }
+.valuation-note { margin: var(--space-3) 0 0; color: var(--muted); font-size: 11.5px; line-height: 1.55; }
+
+.doc-subhead { margin: var(--space-4) 0 var(--space-2); font-size: 13px; }
+.doc-list { margin: 0; padding-left: 18px; color: var(--ink-2); font-size: 13px; line-height: 1.65; }
+.doc-list li { margin-bottom: 6px; }
+.lesson-list li { margin-bottom: var(--space-3); }
+.price-after { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr)); gap: var(--space-3); margin: var(--space-4) 0 0; }
+.price-after dt { color: var(--muted); font-size: 10px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; }
+.price-after dd { margin: 3px 0 0; font-size: 18px; font-weight: 600; }
+
+.airdrop-masthead { text-align: left; }
+.airdrop-table { min-width: 62rem; }
+
+/* ============================================================
+   NFT history cards — four rule-relevant numbers, always visible
+   ============================================================ */
+
+.nft-card-title {
+  display: block;
+  color: var(--ink);
+  font-size: 16px;
+  font-weight: 650;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.nft-card-title:hover, .nft-card-title:focus-visible { color: var(--seq-hi); }
+
+.nft-card-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 7.5rem), 1fr));
+  gap: var(--space-3);
+}
+.nft-stat { min-width: 0; }
+.nft-stat span {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.nft-stat strong { display: block; font-size: 16px; font-weight: 600; line-height: 1.2; overflow-wrap: anywhere; }
+.nft-stat small { display: block; margin-top: 2px; color: var(--muted); font-size: 10.5px; line-height: 1.35; }
+
+.nft-card-more { margin-top: var(--space-2); }
+.nft-card-more summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  color: var(--seq-hi);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+.nft-card-more summary::-webkit-details-marker { display: none; }
+.nft-card-more summary::before { content: '▸'; color: var(--muted); transition: transform var(--dur-micro) var(--ease-out); }
+.nft-card-more[open] summary::before { transform: rotate(90deg); }
+.nft-card-more summary:focus-visible { outline: 2px solid var(--seq-mid); outline-offset: 2px; }
+
+/* Qualification state is spelled out in the badge text; the border colour is a
+   second channel, never the only one. */
+.nft-flag.is-qualified { border-color: var(--good); }
+.nft-flag.is-pending { border-style: dashed; color: var(--muted); }
+.nft-flag.is-excluded { border-color: var(--warn); }

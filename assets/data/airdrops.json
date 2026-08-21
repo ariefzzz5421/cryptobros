@@ -1,0 +1,1016 @@
+{
+  "$comment": "Historical airdrop research. Every numeric claim carries a source. A field that is not publicly sourced is null and stays null — it is never filled with an estimate. valueAtDistributionUsd and peakValueOfDistributedTokensUsd measure different things and are never interchanged.",
+  "researchCutoff": "2026-08-21",
+  "methodology": {
+    "rankingMetric": "valueAtDistributionUsd",
+    "rankingRule": "Tokens actually distributed multiplied by a sourced distribution-day or TGE price, or a distribution-day value reported directly by a source. A case whose distribution-day valuation cannot be reconstructed from a source is marked rankingComparable: false and excluded from the ranking, though it keeps its article.",
+    "secondaryMetric": "peakValueOfDistributedTokensUsd",
+    "secondaryRule": "The same distributed allocation valued at the token's all-time-high price. This is the peak value of the distributed allocation. It is never described as the value distributed at launch.",
+    "whyNotTheUsualList": "The most-cited ranking of 'biggest airdrops' — CoinGecko's 50 Biggest Crypto Airdrops — values each distribution at the token's all-time high. On that basis Uniswap is first at $6.43B. Measured at what recipients actually received on distribution day, Uniswap's drop was worth about $450M and ranks seventh in this set. Both numbers are correct; they answer different questions.",
+    "basisLegend": {
+      "reported": "A publication stated the aggregate value directly.",
+      "computed": "Tokens distributed multiplied by a sourced price.",
+      "derived": "Back-calculated from another sourced figure; the derivation is stated on the case.",
+      "claimed": "The token count is what recipients actually claimed.",
+      "allocated": "The token count is what was set aside for the distribution; a separate claimed total is not sourced."
+    },
+    "sourceKinds": {
+      "official": "Project announcement, docs, or foundation post.",
+      "on-chain": "Block explorer, Dune, or an on-chain analytics dashboard — an on-chain estimate, not a project disclosure.",
+      "research": "Named research desk or data provider publication.",
+      "press": "Reputable crypto or financial press.",
+      "derived": "Arithmetic on figures from the sources listed on the case."
+    }
+  },
+
+  "cases": [
+    {
+      "id": "arkham",
+      "slug": "arkham",
+      "featured": true,
+      "project": "Arkham Intelligence",
+      "tokenName": "Arkham",
+      "tokenSymbol": "ARKM",
+      "chain": "Ethereum",
+      "airdropDate": "2023-07-18",
+      "snapshotDate": null,
+      "claimStart": "2023-07-18",
+      "claimEnd": null,
+      "totalSupply": 1000000000,
+      "tokensAllocated": null,
+      "tokensAllocatedNote": "Arkham published a tokenomics table with no separate airdrop line — the claim came out of the ecosystem and community allocation. The amount set aside for the airdrop was never disclosed on its own.",
+      "tokensActuallyDistributed": 23700000,
+      "tokensDistributedBasis": "claimed",
+      "tokensDistributedNote": "23.7M ARKM claimed as of the launch-day report. A later report put claims nearer 27.9M by the end of the claim period; the launch-day figure is used here because it is the total the 47,000+ claimant count belongs to.",
+      "percentSupplyDistributed": 2.37,
+      "eligibleWallets": {
+        "value": null,
+        "definition": "Members of the Arkham Private Beta waitlist and participants in the Arkham Bounty Program. Per-user allocation scaled with activity on the Arkham platform.",
+        "source": { "label": "Arkham airdrop eligibility, as reported", "url": "https://en.cryptonomist.ch/2023/07/22/arkham-airdrop-analysis/", "kind": "press" },
+        "note": "Exact eligible-wallet count not publicly disclosed."
+      },
+      "initialClaimants": {
+        "value": 47000,
+        "qualifier": "at-least",
+        "definition": "Distinct addresses that had claimed ARKM at the time of the launch-day report.",
+        "asOf": "2023-07-18",
+        "source": { "label": "Blockworks — Arkham's airdrop choppy as traders eye 'intelligence' bounty odds", "url": "https://blockworks.com/news/arkham-airdrop-choppy", "kind": "press" }
+      },
+      "finalRecipientAddresses": {
+        "value": 63700,
+        "qualifier": "approximate",
+        "definition": "Addresses observed on-chain to have received ARKM from the airdrop distributor by the end of the initial claim period. A recipient count, not an eligibility count.",
+        "asOf": "2023-08",
+        "source": { "label": "CryptoQuant — $ARKM Airdrop dashboard", "url": "https://cryptoquant.com/community/dashboard/64c32a9c860fe15823f83ee3", "kind": "on-chain" }
+      },
+      "averageAllocation": null,
+      "medianAllocation": null,
+      "largestAllocation": null,
+      "allocationShape": [
+        { "band": "Under 200 ARKM", "detail": "the majority of recipients", "source": { "label": "CryptoQuant — $ARKM Airdrop dashboard", "url": "https://cryptoquant.com/community/dashboard/64c32a9c860fe15823f83ee3", "kind": "on-chain" } },
+        { "band": "Over 100,000 ARKM", "detail": "only five addresses", "source": { "label": "CryptoQuant — $ARKM Airdrop dashboard", "url": "https://cryptoquant.com/community/dashboard/64c32a9c860fe15823f83ee3", "kind": "on-chain" } }
+      ],
+      "tokenPriceAtDistribution": 0.633,
+      "tokenPriceAtDistributionBasis": "derived",
+      "tokenPriceAtDistributionSource": { "label": "Derived: the reported $15M+ value over the 23.7M ARKM claimed", "url": "https://blockworks.com/news/arkham-airdrop-choppy", "kind": "derived" },
+      "valueAtDistributionUsd": 15000000,
+      "valueAtDistributionQualifier": "at-least",
+      "valueAtDistributionBasis": "reported",
+      "valueAtDistributionSource": { "label": "Blockworks — over $15M in ARKM claimed at the time of reporting", "url": "https://blockworks.com/news/arkham-airdrop-choppy", "kind": "press" },
+      "peakTokenPrice": null,
+      "peakValueOfDistributedTokensUsd": null,
+      "peakValueSource": null,
+      "rankingComparable": true,
+      "eligibilityCriteria": [
+        "On the Arkham Private Beta waitlist.",
+        "Participated in the Arkham Bounty Program, the platform's intel-bounty marketplace.",
+        "Allocation size scaled with activity on the Arkham platform."
+      ],
+      "antiSybilRules": [],
+      "antiSybilNote": "Arkham did not publish a sybil-filtering methodology for this distribution.",
+      "distributionMechanism": "Claim-based. Eligible users connected a wallet and claimed ARKM from a distributor contract; tokens were not pushed to wallets.",
+      "productBeforeToken": "Arkham had been running an on-chain intelligence platform in private beta, plus a bounty marketplace paying users to deanonymise addresses, before ARKM existed.",
+      "whyItSucceeded": [
+        { "factor": "Low-friction eligibility", "detail": "Joining a waitlist and doing bounty work were both cheap, so the eligible population was wide rather than capital-gated." },
+        { "factor": "Product usage before token", "detail": "The waitlist and bounty program existed to run the product, not to farm a future token, so the snapshot measured real platform interest." },
+        { "factor": "Exchange liquidity", "detail": "ARKM launched through Binance Launchpad, so recipients had a deep venue on day one rather than a thin DEX pool." },
+        { "factor": "Distribution breadth", "detail": "Most recipients received under 200 ARKM and only five addresses received more than 100,000, so the drop spread across tens of thousands of wallets instead of concentrating." }
+      ],
+      "weaknesses": [
+        { "factor": "Immediate sell pressure", "detail": "On-chain analysis found 95% of recipient wallets sold, and 80% liquidated their entire holding.", "source": { "label": "CryptoQuant — $ARKM Airdrop dashboard", "url": "https://cryptoquant.com/community/dashboard/64c32a9c860fe15823f83ee3", "kind": "on-chain" } },
+        { "factor": "Undisclosed eligible set", "detail": "Because the eligible-wallet count was never published, the claim rate cannot be computed — and the on-chain recipient count gets misread as eligibility." }
+      ],
+      "postAirdropOutcome": "ARKM traded actively from launch. Recipient behaviour skewed heavily toward selling: on-chain data showed 95% of the roughly 63,700 recipient wallets sold some ARKM and 80% sold their whole allocation.",
+      "priceAfter": [],
+      "priceAfterNote": "Dated 30-day and 90-day price marks are not published here because no primary source for them was verified.",
+      "lessons": [
+        "A recipient count and an eligibility count are different measurements. 63,700 addresses received ARKM; that number says nothing about how many wallets qualified.",
+        "A claim-based airdrop has two different totals depending on when you read it — 47,000+ claimants on day one, roughly 63,700 recipients by the end of the window.",
+        "Where the eligible set is never disclosed, the claim rate is unknowable, and any 'X% claimed' figure is inferred rather than measured.",
+        "A signup-and-bounty funnel with no capital requirement still produced a distribution across tens of thousands of wallets."
+      ],
+      "sources": [
+        { "label": "Arkham Codex — Tokenomics", "url": "https://codex.arkm.com/tokenomics", "kind": "official" },
+        { "label": "Blockworks — Arkham airdrop reporting", "url": "https://blockworks.com/news/arkham-airdrop-choppy", "kind": "press" },
+        { "label": "CryptoQuant — $ARKM Airdrop dashboard", "url": "https://cryptoquant.com/community/dashboard/64c32a9c860fe15823f83ee3", "kind": "on-chain" },
+        { "label": "Dune — [Airdrop] Arkham ($ARKM) overview", "url": "https://dune.com/geno/arkm-airdrop", "kind": "on-chain" },
+        { "label": "Etherscan — Arkham: Airdrop distributor", "url": "https://etherscan.io/address/0x08c7676680f187a31241e83e6d44c03a98adab05", "kind": "on-chain" }
+      ]
+    },
+
+    {
+      "id": "apecoin",
+      "slug": "apecoin",
+      "featured": false,
+      "project": "ApeCoin DAO / Yuga Labs",
+      "tokenName": "ApeCoin",
+      "tokenSymbol": "APE",
+      "chain": "Ethereum",
+      "airdropDate": "2022-03-17",
+      "snapshotDate": "2022-03-16",
+      "claimStart": "2022-03-17",
+      "claimEnd": "2023-03-17",
+      "totalSupply": 1000000000,
+      "tokensAllocated": 150000000,
+      "tokensActuallyDistributed": 150000000,
+      "tokensDistributedBasis": "allocated",
+      "tokensDistributedNote": "150M APE is the holder allocation reported at distribution. A separate claimed-token total for the one-year claim window is not sourced here.",
+      "percentSupplyDistributed": 15.0,
+      "eligibleWallets": {
+        "value": null,
+        "definition": "Holders of Bored Ape Yacht Club and Mutant Ape Yacht Club NFTs at the snapshot, with a bonus where a Bored Ape Kennel Club dog was held alongside an ape. Eligibility was counted per NFT, not per wallet.",
+        "source": { "label": "CoinGecko — What is ApeCoin (APE) and the BAYC ecosystem", "url": "https://www.coingecko.com/learn/what-is-apecoin-ape-ecosystem", "kind": "research" },
+        "note": "The unit of distribution was the NFT, not the wallet, so an eligible-wallet count was never published."
+      },
+      "initialClaimants": { "value": null, "definition": null, "asOf": null, "source": null },
+      "finalRecipientAddresses": { "value": null, "definition": null, "asOf": null, "source": null },
+      "averageAllocation": null,
+      "medianAllocation": null,
+      "largestAllocation": null,
+      "allocationShape": [
+        { "band": "Per Bored Ape", "detail": "10,094 APE", "source": { "label": "CoinGecko — ApeCoin ecosystem", "url": "https://www.coingecko.com/learn/what-is-apecoin-ape-ecosystem", "kind": "research" } },
+        { "band": "Per Mutant Ape", "detail": "2,042 APE", "source": { "label": "CoinGecko — ApeCoin ecosystem", "url": "https://www.coingecko.com/learn/what-is-apecoin-ape-ecosystem", "kind": "research" } }
+      ],
+      "tokenPriceAtDistribution": 12.0,
+      "tokenPriceAtDistributionBasis": "derived",
+      "tokenPriceAtDistributionSource": { "label": "Derived: the reported $1.8B value over 150M APE", "url": "https://www.coingecko.com/learn/what-is-apecoin-ape-ecosystem", "kind": "derived" },
+      "valueAtDistributionUsd": 1800000000,
+      "valueAtDistributionQualifier": "approximate",
+      "valueAtDistributionBasis": "reported",
+      "valueAtDistributionSource": { "label": "CoinGecko — 150M APE to holders, 'worth a cumulative $1.8 billion' at the time of reporting", "url": "https://www.coingecko.com/learn/what-is-apecoin-ape-ecosystem", "kind": "research" },
+      "peakTokenPrice": null,
+      "peakValueOfDistributedTokensUsd": 3540000000,
+      "peakValueSource": { "label": "CoinGecko research — 50 Biggest Crypto Airdrops, valued at token all-time high", "url": "https://www.coingecko.com/research/publications/biggest-crypto-airdrops", "kind": "research" },
+      "rankingComparable": true,
+      "eligibilityCriteria": [
+        "Held a Bored Ape Yacht Club NFT at the snapshot.",
+        "Held a Mutant Ape Yacht Club NFT at the snapshot.",
+        "A Bored Ape Kennel Club dog held alongside an ape increased the allocation."
+      ],
+      "antiSybilRules": [],
+      "antiSybilNote": "NFT ownership was itself the sybil resistance: an eligible position cost the collection's floor price, which ran to tens of thousands of dollars.",
+      "distributionMechanism": "Claim-based against NFT ownership, open for one year. Allocation followed the NFT rather than a historical holder snapshot.",
+      "productBeforeToken": "Bored Ape Yacht Club had run for eleven months as a collectibles and membership brand with a large secondary market before APE existed.",
+      "whyItSucceeded": [
+        { "factor": "Community alignment", "detail": "The eligible set was an existing, highly engaged holder community rather than an audience assembled for the drop." },
+        { "factor": "Narrative", "detail": "APE arrived at the peak of NFT-brand attention, framed as the token of the largest NFT franchise." },
+        { "factor": "Exchange liquidity", "detail": "Major venues listed APE on day one, so the distributed value was immediately realisable." }
+      ],
+      "weaknesses": [
+        { "factor": "Rented-NFT claims", "detail": "Because eligibility read live ownership rather than a historical snapshot, flash-loan and rental attacks let non-holders claim. One documented case borrowed five Bored Apes to claim about $1.1M of APE.", "source": { "label": "The Block — Someone borrowed 5 Bored Apes to claim $1.1 million of APE tokens", "url": "https://www.theblock.co/post/138410/someone-borrowed-5-bored-apes-to-claim-1-1-million-of-ape-tokens", "kind": "press" } },
+        { "factor": "Concentrated benefit", "detail": "Allocation followed NFT count, so the largest beneficiaries were the wallets that already held the most apes." }
+      ],
+      "postAirdropOutcome": "APE listed widely and reached its all-time high roughly six weeks after distribution, then declined over the following years.",
+      "priceAfter": [],
+      "priceAfterNote": "Dated 30-day and 90-day price marks are not published here because no primary source for them was verified.",
+      "lessons": [
+        "Asset-gated eligibility resists cheap sybil wallets but not rented assets — the check has to be a historical snapshot, not a live ownership read.",
+        "An NFT-gated drop distributes by asset count, so it concentrates ownership rather than broadening it.",
+        "By value at distribution this is the largest airdrop in this set; by all-time-high value it ranks second, behind Uniswap."
+      ],
+      "sources": [
+        { "label": "ApeCoin official site", "url": "https://apecoin.com/", "kind": "official" },
+        { "label": "CoinGecko — What is ApeCoin (APE) and the BAYC ecosystem", "url": "https://www.coingecko.com/learn/what-is-apecoin-ape-ecosystem", "kind": "research" },
+        { "label": "The Block — borrowed apes claim", "url": "https://www.theblock.co/post/138410/someone-borrowed-5-bored-apes-to-claim-1-1-million-of-ape-tokens", "kind": "press" },
+        { "label": "Check Point Research — ApeCoin airdrop process found vulnerable", "url": "https://research.checkpoint.com/2022/airdrop-process-of-apecoin-cryptocurrency-found-vulnerable-led-to-theft-of-millions-of-dollars-in-nfts/", "kind": "research" }
+      ]
+    },
+
+    {
+      "id": "pudgy-penguins",
+      "slug": "pudgy-penguins",
+      "featured": false,
+      "project": "Pudgy Penguins",
+      "tokenName": "Pudgy Penguins",
+      "tokenSymbol": "PENGU",
+      "chain": "Solana",
+      "airdropDate": "2024-12-17",
+      "snapshotDate": null,
+      "claimStart": "2024-12-17",
+      "claimEnd": "2025-03-15",
+      "totalSupply": 88888888888,
+      "tokensAllocated": 23022222222,
+      "tokensActuallyDistributed": null,
+      "tokensDistributedBasis": "allocated",
+      "tokensDistributedNote": "25.9% of the 88.888B supply was set aside for the community. Claims ran for 88 days; a final claimed-token total is not sourced here.",
+      "percentSupplyDistributed": 25.9,
+      "eligibleWallets": {
+        "value": null,
+        "definition": "Holders of Pudgy Penguins, Lil Pudgys and Pudgy Rods NFTs, plus community participants. Distribution was per NFT.",
+        "source": { "label": "CoinMarketCap — Pudgy Penguins launch $1.5 billion PENGU airdrop on Solana", "url": "https://coinmarketcap.com/academy/article/pudgy-penguins-launch-dollar15-billion-pengu-airdrop-on-solana", "kind": "press" },
+        "note": "Exact eligible-wallet count not publicly disclosed."
+      },
+      "initialClaimants": { "value": null, "definition": null, "asOf": null, "source": null },
+      "finalRecipientAddresses": { "value": null, "definition": null, "asOf": null, "source": null },
+      "averageAllocation": null,
+      "medianAllocation": null,
+      "largestAllocation": null,
+      "allocationShape": [
+        { "band": "Per Pudgy Penguin NFT", "detail": "1.7M PENGU", "source": { "label": "CoinMarketCap — PENGU airdrop", "url": "https://coinmarketcap.com/academy/article/pudgy-penguins-launch-dollar15-billion-pengu-airdrop-on-solana", "kind": "press" } }
+      ],
+      "tokenPriceAtDistribution": 0.0652,
+      "tokenPriceAtDistributionBasis": "derived",
+      "tokenPriceAtDistributionSource": { "label": "Derived: the reported $1.5B value over the 23.02B PENGU community allocation", "url": "https://coinmarketcap.com/academy/article/pudgy-penguins-launch-dollar15-billion-pengu-airdrop-on-solana", "kind": "derived" },
+      "valueAtDistributionUsd": 1500000000,
+      "valueAtDistributionQualifier": "approximate",
+      "valueAtDistributionBasis": "reported",
+      "valueAtDistributionSource": { "label": "CoinMarketCap — airdrop valued at $1.5 billion", "url": "https://coinmarketcap.com/academy/article/pudgy-penguins-launch-dollar15-billion-pengu-airdrop-on-solana", "kind": "press" },
+      "peakTokenPrice": null,
+      "peakValueOfDistributedTokensUsd": null,
+      "peakValueSource": null,
+      "rankingComparable": true,
+      "eligibilityCriteria": [
+        "Held a Pudgy Penguins, Lil Pudgys or Pudgy Rods NFT.",
+        "Community participation outside NFT ownership also qualified for a share."
+      ],
+      "antiSybilRules": [],
+      "antiSybilNote": "No sybil-filtering methodology published for this distribution.",
+      "distributionMechanism": "Claim-based on Solana with an 88-day claim window.",
+      "productBeforeToken": "Pudgy Penguins had operated for three years as an NFT collection and consumer brand, including physical toys in mainstream retail, before PENGU existed.",
+      "whyItSucceeded": [
+        { "factor": "Brand outside crypto", "detail": "Retail toy distribution gave the project an audience that did not arrive for a token." },
+        { "factor": "Distribution breadth", "detail": "Eligibility reached beyond NFT holders into broader community participation." }
+      ],
+      "weaknesses": [
+        { "factor": "No published eligibility count", "detail": "Neither the eligible-wallet count nor the final claimed total was published, so claim rate and true distribution breadth cannot be measured." }
+      ],
+      "postAirdropOutcome": "PENGU entered the top 70 tokens by market capitalisation shortly after the airdrop.",
+      "priceAfter": [],
+      "priceAfterNote": "Dated 30-day and 90-day price marks are not published here because no primary source for them was verified.",
+      "lessons": [
+        "A consumer brand built outside crypto widens the eligible population beyond wallets that farm airdrops.",
+        "An announced headline value uses the full allocation; without a claimed total, the amount that actually reached recipients is unknown."
+      ],
+      "sources": [
+        { "label": "CoinMarketCap — Pudgy Penguins launch $1.5B PENGU airdrop on Solana", "url": "https://coinmarketcap.com/academy/article/pudgy-penguins-launch-dollar15-billion-pengu-airdrop-on-solana", "kind": "press" },
+        { "label": "CoinGecko research — Pudgy Penguins: airdrops accumulated by each NFT", "url": "https://www.coingecko.com/research/publications/pudgy-penguins-airdrops", "kind": "research" }
+      ]
+    },
+
+    {
+      "id": "arbitrum",
+      "slug": "arbitrum",
+      "featured": false,
+      "project": "Arbitrum Foundation / Offchain Labs",
+      "tokenName": "Arbitrum",
+      "tokenSymbol": "ARB",
+      "chain": "Arbitrum One",
+      "airdropDate": "2023-03-23",
+      "snapshotDate": "2023-02-06",
+      "claimStart": "2023-03-23",
+      "claimEnd": "2023-09-23",
+      "totalSupply": 10000000000,
+      "tokensAllocated": 1162166000,
+      "tokensActuallyDistributed": null,
+      "tokensDistributedBasis": "allocated",
+      "tokensDistributedNote": "1.162B ARB was allocated to individual wallets. 87% of eligible addresses claimed; a claimed-token total is not separately sourced, so the distribution value below is built on the allocation.",
+      "percentSupplyDistributed": 11.62,
+      "eligibleWallets": {
+        "value": 625143,
+        "qualifier": "exact",
+        "definition": "Wallets that met the Arbitrum Foundation's points threshold for bridging and transacting on Arbitrum One and Nova before the 6 February 2023 snapshot.",
+        "source": { "label": "CoinDesk — Arbitrum's ARB token trades at $3.99 as 625,143 wallets receive airdrop", "url": "https://www.coindesk.com/markets/2023/03/23/arbitrums-arb-token-trades-at-399-as-625143-wallets-receive-airdrop", "kind": "press" }
+      },
+      "initialClaimants": {
+        "value": 543058,
+        "qualifier": "approximate",
+        "definition": "Eligible addresses that had claimed ARB — 87% of the eligible set.",
+        "asOf": "2023-03",
+        "source": { "label": "CoinMarketCap Academy — Everything you need to know about the Arbitrum airdrop", "url": "https://coinmarketcap.com/academy/article/everything-you-need-to-know-about-the-arbitrum-airdrop", "kind": "press" }
+      },
+      "finalRecipientAddresses": { "value": null, "definition": null, "asOf": null, "source": null },
+      "averageAllocation": 1859,
+      "medianAllocation": 1250,
+      "largestAllocation": 10250,
+      "allocationShape": [
+        { "band": "Minimum entitlement", "detail": "625 ARB", "source": { "label": "CoinMarketCap Academy — Arbitrum airdrop", "url": "https://coinmarketcap.com/academy/article/everything-you-need-to-know-about-the-arbitrum-airdrop", "kind": "press" } },
+        { "band": "Maximum entitlement", "detail": "10,250 ARB", "source": { "label": "CoinMarketCap Academy — Arbitrum airdrop", "url": "https://coinmarketcap.com/academy/article/everything-you-need-to-know-about-the-arbitrum-airdrop", "kind": "press" } }
+      ],
+      "tokenPriceAtDistribution": 1.26,
+      "tokenPriceAtDistributionBasis": "derived",
+      "tokenPriceAtDistributionSource": { "label": "Derived: Forbes reports an average allocation of 1,859 ARB worth about $2,342", "url": "https://www.forbes.com/sites/leeorshimron/2023/03/30/arbitrums-token-airdrop-sends-network-adoption-soaring/", "kind": "derived" },
+      "tokenPriceNote": "ARB's first hours were extremely volatile. The first DEX prints were at $3.99 (CoinDesk); pre-launch OTC traded $1.00–$1.50. The $1.26 figure comes from Forbes' average-allocation value a week later and is the most defensible single reference for the distribution.",
+      "valueAtDistributionUsd": 1464000000,
+      "valueAtDistributionQualifier": "approximate",
+      "valueAtDistributionBasis": "computed",
+      "valueAtDistributionSource": { "label": "Computed: 625,143 recipients at Forbes' reported average allocation value of $2,342", "url": "https://www.forbes.com/sites/leeorshimron/2023/03/30/arbitrums-token-airdrop-sends-network-adoption-soaring/", "kind": "derived" },
+      "peakTokenPrice": null,
+      "peakValueOfDistributedTokensUsd": 1970000000,
+      "peakValueSource": { "label": "CoinGecko research — 50 Biggest Crypto Airdrops, valued at token all-time high", "url": "https://www.coingecko.com/research/publications/biggest-crypto-airdrops", "kind": "research" },
+      "rankingComparable": true,
+      "eligibilityCriteria": [
+        "Bridged funds into Arbitrum One or Arbitrum Nova before the snapshot.",
+        "Transacted across multiple months and multiple distinct applications.",
+        "Provided liquidity or deposited into Arbitrum contracts.",
+        "Total transaction value and gas spent both fed the points score."
+      ],
+      "antiSybilRules": [
+        "A published sybil-detection pass removed clusters of addresses funded from and consolidating into common wallets.",
+        "Points were awarded across multiple behaviour dimensions rather than a single countable action, raising the cost of faking a qualifying history."
+      ],
+      "distributionMechanism": "Claim-based against a published eligibility list, open for six months. Unclaimed ARB returned to the DAO treasury.",
+      "productBeforeToken": "Arbitrum One had been live for roughly eighteen months as the largest Ethereum rollup by total value locked before ARB existed.",
+      "whyItSucceeded": [
+        { "factor": "Product usage before token", "detail": "Arbitrum was already the leading rollup by TVL, so the snapshot measured a real user base rather than an audience assembled to farm." },
+        { "factor": "Multi-dimensional eligibility", "detail": "Points across bridging, duration, application diversity and value made a qualifying history expensive to manufacture." },
+        { "factor": "Distribution breadth", "detail": "625,143 eligible wallets was, at the time, one of the widest eligible sets ever published." },
+        { "factor": "Published eligibility", "detail": "The eligible list and the criteria were both published before the claim opened, so the drop could be audited rather than trusted." }
+      ],
+      "weaknesses": [
+        { "factor": "Farmable in hindsight", "detail": "The criteria rewarded behaviour that a determined farmer could have produced across many wallets over the qualifying period, and sybil filtering removed only the clusters it could detect." },
+        { "factor": "No claimed-token total", "detail": "The claim rate is published by address, not by token, so the tokens that actually reached recipients cannot be separated from the allocation." }
+      ],
+      "postAirdropOutcome": "Arbitrum's daily active addresses and transaction counts rose sharply in the weeks after the drop; ARB traded down from its first prints over the following months.",
+      "priceAfter": [],
+      "priceAfterNote": "Dated 30-day and 90-day price marks are not published here because no primary source for them was verified.",
+      "lessons": [
+        "Publishing the eligibility list and the criteria in advance turns a distribution into something reviewers can check rather than something they have to accept.",
+        "An address-level claim rate is not a token-level claim rate — 87% of wallets claiming does not mean 87% of tokens moved.",
+        "A launch-day price is a range, not a point: ARB printed $3.99 on its first DEX trades and about $1.26 a week later."
+      ],
+      "sources": [
+        { "label": "CoinDesk — ARB trades at $3.99 as 625,143 wallets receive airdrop", "url": "https://www.coindesk.com/markets/2023/03/23/arbitrums-arb-token-trades-at-399-as-625143-wallets-receive-airdrop", "kind": "press" },
+        { "label": "CoinDesk — Arbitrum to airdrop new token and transition to DAO", "url": "https://www.coindesk.com/tech/2023/03/16/arbitrum-to-airdrop-new-token-and-transition-to-dao", "kind": "press" },
+        { "label": "Forbes — Arbitrum's token airdrop sends network adoption soaring", "url": "https://www.forbes.com/sites/leeorshimron/2023/03/30/arbitrums-token-airdrop-sends-network-adoption-soaring/", "kind": "press" },
+        { "label": "CoinMarketCap Academy — Everything you need to know about the Arbitrum airdrop", "url": "https://coinmarketcap.com/academy/article/everything-you-need-to-know-about-the-arbitrum-airdrop", "kind": "press" }
+      ]
+    },
+
+    {
+      "id": "hyperliquid",
+      "slug": "hyperliquid",
+      "featured": false,
+      "project": "Hyperliquid",
+      "tokenName": "Hyperliquid",
+      "tokenSymbol": "HYPE",
+      "chain": "Hyperliquid L1",
+      "airdropDate": "2024-11-29",
+      "snapshotDate": "2024-11-19",
+      "claimStart": "2024-11-29",
+      "claimEnd": null,
+      "totalSupply": 1000000000,
+      "tokensAllocated": 310000000,
+      "tokensActuallyDistributed": 310000000,
+      "tokensDistributedBasis": "allocated",
+      "tokensDistributedNote": "Tokens were sent to eligible wallets at genesis rather than claimed, so the allocation and the distribution are the same number.",
+      "percentSupplyDistributed": 31.0,
+      "eligibleWallets": {
+        "value": null,
+        "definition": "Wallets that traded on Hyperliquid's testnet or mainnet and accrued points across the pre-launch points seasons.",
+        "source": { "label": "CoinDesk — Hyperliquid to airdrop 310M tokens to early adopters", "url": "https://www.coindesk.com/business/2024/11/28/crypto-exchange-hyper-liquid-to-airdrop-310-m-tokens-to-early-adopters", "kind": "press" },
+        "note": "Exact eligible-wallet count not separately disclosed; the reported figure is the recipient count."
+      },
+      "initialClaimants": { "value": null, "definition": null, "asOf": null, "source": null },
+      "finalRecipientAddresses": {
+        "value": 94000,
+        "qualifier": "approximate",
+        "definition": "Wallets that received HYPE in the genesis distribution.",
+        "asOf": "2024-11-29",
+        "source": { "label": "CoinDesk — Hyperliquid airdrop coverage", "url": "https://www.coindesk.com/business/2024/11/28/crypto-exchange-hyper-liquid-to-airdrop-310-m-tokens-to-early-adopters", "kind": "press" }
+      },
+      "averageAllocation": null,
+      "medianAllocation": null,
+      "largestAllocation": null,
+      "allocationShape": [],
+      "tokenPriceAtDistribution": 3.9,
+      "tokenPriceAtDistributionBasis": "reported",
+      "tokenPriceAtDistributionSource": { "label": "Nairametrics — HYPE TGE launch price of $3.90", "url": "https://nairametrics.com/2024/12/03/what-is-hyperliquid-the-network-behind-a-1-2-billion-airdrop/", "kind": "press" },
+      "tokenPriceNote": "HYPE moved sharply on its first day. Same-day reporting of the airdrop's value ranged from $1.2B to $1.6B as the price ran from the TGE reference toward $6.",
+      "valueAtDistributionUsd": 1209000000,
+      "valueAtDistributionQualifier": "approximate",
+      "valueAtDistributionBasis": "computed",
+      "valueAtDistributionSource": { "label": "Computed: 310M HYPE at the reported $3.90 TGE price", "url": "https://nairametrics.com/2024/12/03/what-is-hyperliquid-the-network-behind-a-1-2-billion-airdrop/", "kind": "derived" },
+      "peakTokenPrice": null,
+      "peakValueOfDistributedTokensUsd": 19280000000,
+      "peakValueSource": { "label": "CoinGecko research — 50 Biggest Crypto Airdrops, the same 310M valued at HYPE's all-time high", "url": "https://www.coingecko.com/research/publications/biggest-crypto-airdrops", "kind": "research" },
+      "rankingComparable": true,
+      "eligibilityCriteria": [
+        "Traded on the Hyperliquid testnet before mainnet launch.",
+        "Traded on mainnet and accrued points during the published points seasons.",
+        "Points were awarded for volume and for providing liquidity."
+      ],
+      "antiSybilRules": [],
+      "antiSybilNote": "Hyperliquid did not publish a sybil-filtering methodology; the points system rewarded traded volume, which carries its own cost.",
+      "distributionMechanism": "Genesis distribution: HYPE was credited directly to eligible wallets at launch rather than claimed.",
+      "productBeforeToken": "Hyperliquid had run a perpetuals exchange on its own L1 for roughly a year, reaching significant daily volume, before HYPE existed.",
+      "whyItSucceeded": [
+        { "factor": "No investor allocation", "detail": "There was no venture allocation and no exchange listing campaign, so the distributed float was not competing with unlocked insider supply." },
+        { "factor": "Product usage before token", "detail": "Points accrued from real trading volume on a working exchange, which is expensive to fake." },
+        { "factor": "Token utility", "detail": "HYPE was the gas and staking asset of the chain the exchange ran on, giving it a role beyond governance." },
+        { "factor": "Share of supply", "detail": "31% of supply to users was, by proportion, one of the largest community allocations of any major launch." }
+      ],
+      "weaknesses": [
+        { "factor": "Volume-weighted concentration", "detail": "Points followed traded volume, so the largest allocations went to the largest traders." },
+        { "factor": "No published eligibility count", "detail": "Only the recipient count was reported, so the eligible set and any exclusion rate are unknown." }
+      ],
+      "postAirdropOutcome": "HYPE rose sharply after distribution, trading about 63% above the TGE reference within twelve hours and continuing higher over the following year.",
+      "priceAfter": [],
+      "priceAfterNote": "Dated 30-day and 90-day price marks are not published here because no primary source for them was verified.",
+      "lessons": [
+        "The distributed-value and peak-value measurements diverge most where the token appreciated most: the same 310M HYPE is about $1.2B on distribution day and roughly $19.3B at the all-time high — a 16× gap between two numbers that describe the same tokens.",
+        "Removing the venture allocation removes the supply overhang that usually competes with an airdrop's float.",
+        "A push distribution has no claim window and no unclaimed remainder, so allocation and distribution are the same figure."
+      ],
+      "sources": [
+        { "label": "CoinDesk — Hyperliquid to airdrop 310M tokens to early adopters", "url": "https://www.coindesk.com/business/2024/11/28/crypto-exchange-hyper-liquid-to-airdrop-310-m-tokens-to-early-adopters", "kind": "press" },
+        { "label": "Decrypt — Hyperliquid gives out $1.6 billion in one of the largest airdrops ever", "url": "https://decrypt.co/294067/hyperliquid-airdrop-1-6-billion", "kind": "press" },
+        { "label": "Nairametrics — What is Hyperliquid, the network behind a $1.2 billion airdrop", "url": "https://nairametrics.com/2024/12/03/what-is-hyperliquid-the-network-behind-a-1-2-billion-airdrop/", "kind": "press" },
+        { "label": "CoinGecko — What is Hyperliquid and what the Hyperliquid airdrop means for DeFi", "url": "https://www.coingecko.com/learn/what-is-hyperliquid-and-what-the-hyperliquid-airdrop-means-for-defi", "kind": "research" }
+      ]
+    },
+
+    {
+      "id": "dydx",
+      "slug": "dydx",
+      "featured": false,
+      "project": "dYdX Foundation",
+      "tokenName": "dYdX",
+      "tokenSymbol": "DYDX",
+      "chain": "Ethereum",
+      "airdropDate": "2021-09-08",
+      "snapshotDate": "2021-07-26",
+      "claimStart": "2021-09-08",
+      "claimEnd": "2022-09-08",
+      "totalSupply": 1000000000,
+      "tokensAllocated": 75000000,
+      "tokensActuallyDistributed": null,
+      "tokensDistributedBasis": "allocated",
+      "tokensDistributedNote": "75M DYDX was set aside for the retroactive distribution. A claimed-token total for the one-year window is not sourced here.",
+      "percentSupplyDistributed": 7.5,
+      "eligibleWallets": {
+        "value": 64306,
+        "qualifier": "exact",
+        "definition": "Addresses that had traded on dYdX's Layer 1 or Layer 2 protocols before the snapshot, placed into tiers by historical trading volume.",
+        "source": { "label": "Crypto Briefing — dYdX airdrops new governance token to 64,000 users", "url": "https://cryptobriefing.com/dydx-airdrops-new-governance-token-to-64000-users/", "kind": "press" }
+      },
+      "initialClaimants": { "value": null, "definition": null, "asOf": null, "source": null },
+      "finalRecipientAddresses": { "value": null, "definition": null, "asOf": null, "source": null },
+      "averageAllocation": null,
+      "medianAllocation": null,
+      "largestAllocation": 9529,
+      "allocationShape": [
+        { "band": "Lowest tier", "detail": "310 DYDX for at least $1 traded", "source": { "label": "CoinGecko research — 50 Biggest Crypto Airdrops", "url": "https://www.coingecko.com/research/publications/biggest-crypto-airdrops", "kind": "research" } },
+        { "band": "Highest tier", "detail": "9,529 DYDX for over $1M traded", "source": { "label": "CoinGecko research — 50 Biggest Crypto Airdrops", "url": "https://www.coingecko.com/research/publications/biggest-crypto-airdrops", "kind": "research" } }
+      ],
+      "tokenPriceAtDistribution": 10.28,
+      "tokenPriceAtDistributionBasis": "reported",
+      "tokenPriceAtDistributionSource": { "label": "CoinGecko research — DYDX traded at $10.28 on its first day, with an intraday high of $14.24", "url": "https://www.coingecko.com/research/publications/biggest-crypto-airdrops", "kind": "research" },
+      "valueAtDistributionUsd": 771000000,
+      "valueAtDistributionQualifier": "approximate",
+      "valueAtDistributionBasis": "computed",
+      "valueAtDistributionSource": { "label": "Computed: 75M DYDX at the reported first-day price of $10.28", "url": "https://www.coingecko.com/research/publications/biggest-crypto-airdrops", "kind": "derived" },
+      "peakTokenPrice": 26.8,
+      "peakValueOfDistributedTokensUsd": 2000000000,
+      "peakValueSource": { "label": "CoinGecko research — 50 Biggest Crypto Airdrops, 75M DYDX at the all-time-high price of $26.80", "url": "https://www.coingecko.com/research/publications/biggest-crypto-airdrops", "kind": "research" },
+      "rankingComparable": true,
+      "eligibilityCriteria": [
+        "Traded on dYdX's Layer 1 perpetuals, margin or spot products before the snapshot.",
+        "Traded on the StarkWare-based Layer 2 perpetuals product before the snapshot.",
+        "Allocation tier was set by cumulative historical trading volume."
+      ],
+      "antiSybilRules": [
+        "Tiering by cumulative traded volume meant a larger allocation required real volume, and splitting volume across wallets reduced each wallet's tier."
+      ],
+      "distributionMechanism": "Claim-based, open for one year, with an additional retention bonus for wallets that kept trading after the drop.",
+      "productBeforeToken": "dYdX had run a derivatives exchange for roughly three years before DYDX existed, and was among the highest-volume decentralised perpetuals venues at the snapshot.",
+      "whyItSucceeded": [
+        { "factor": "Product usage before token", "detail": "Eligibility was traded volume on a working exchange, which cannot be produced for free." },
+        { "factor": "Volume-tiered allocation", "detail": "Tiers made splitting across wallets counter-productive, since a wallet's tier fell as its volume fell." },
+        { "factor": "Early user reward", "detail": "The retroactive window reached back three years, rewarding users who arrived long before a token was rumoured." }
+      ],
+      "weaknesses": [
+        { "factor": "Narrow eligible set", "detail": "64,306 eligible addresses is small next to later drops, because the qualifying action required capital to trade with." },
+        { "factor": "Frequently mis-ranked", "detail": "This drop is widely listed at $2B, which is its all-time-high value; on distribution day the same 75M DYDX was worth roughly $771M." }
+      ],
+      "postAirdropOutcome": "DYDX traded between about $10 and $14 on its first day and reached its all-time high of $26.80 later in the same cycle.",
+      "priceAfter": [],
+      "priceAfterNote": "Dated 30-day and 90-day price marks are not published here because no primary source for them was verified.",
+      "lessons": [
+        "This is the clearest case of the two-measurement problem: $2.00B at all-time high versus about $771M on distribution day, for exactly the same 75M tokens.",
+        "Volume tiers are a cheap and effective sybil defence when the qualifying action already costs money.",
+        "A retroactive window that reaches back years rewards users who could not have been farming, because no token was announced yet."
+      ],
+      "sources": [
+        { "label": "CoinDesk — Users celebrate massive DYDX token airdrop as transfer restrictions lift", "url": "https://www.coindesk.com/business/2021/09/08/users-celebrate-massive-dydx-token-airdrop-as-transfer-restrictions-lift", "kind": "press" },
+        { "label": "Crypto Briefing — dYdX airdrops new governance token to 64,000 users", "url": "https://cryptobriefing.com/dydx-airdrops-new-governance-token-to-64000-users/", "kind": "press" },
+        { "label": "Cointelegraph — dYdX airdrop worth up to $100K", "url": "https://cointelegraph.com/news/dydx-exchange-releases-governance-token-making-its-airdrop-worth-up-to-100k", "kind": "press" },
+        { "label": "CoinGecko research — 50 Biggest Crypto Airdrops", "url": "https://www.coingecko.com/research/publications/biggest-crypto-airdrops", "kind": "research" }
+      ]
+    },
+
+    {
+      "id": "ens",
+      "slug": "ens",
+      "featured": false,
+      "project": "Ethereum Name Service",
+      "tokenName": "Ethereum Name Service",
+      "tokenSymbol": "ENS",
+      "chain": "Ethereum",
+      "airdropDate": "2021-11-08",
+      "snapshotDate": "2021-10-31",
+      "claimStart": "2021-11-08",
+      "claimEnd": "2022-05-04",
+      "totalSupply": 100000000,
+      "tokensAllocated": 25000000,
+      "tokensActuallyDistributed": 19600000,
+      "tokensDistributedBasis": "claimed",
+      "tokensDistributedNote": "19.6M ENS of the 25M allocation was claimed during the window. The unclaimed remainder returned to the DAO treasury.",
+      "percentSupplyDistributed": 19.6,
+      "eligibleWallets": {
+        "value": 137689,
+        "qualifier": "exact",
+        "definition": "Addresses that had registered or held a .eth name at the 31 October 2021 snapshot, with a multiplier for how long the name was held and a bonus for setting a primary ENS name.",
+        "source": { "label": "ENS DAO basics — $ENS token", "url": "https://basics.ensdao.org/ens-token", "kind": "official" }
+      },
+      "initialClaimants": {
+        "value": 103000,
+        "qualifier": "approximate",
+        "definition": "Eligible addresses that claimed during the six-month claim window.",
+        "asOf": "2022-05-04",
+        "source": { "label": "ENS DAO basics — $ENS token", "url": "https://basics.ensdao.org/ens-token", "kind": "official" }
+      },
+      "finalRecipientAddresses": { "value": null, "definition": null, "asOf": null, "source": null },
+      "averageAllocation": null,
+      "medianAllocation": null,
+      "largestAllocation": null,
+      "allocationShape": [],
+      "tokenPriceAtDistribution": 20.0,
+      "tokenPriceAtDistributionBasis": "derived",
+      "tokenPriceAtDistributionSource": { "label": "Derived: CoinDesk's '$500M+ airdrop' headline over the 25M ENS allocation", "url": "https://www.coindesk.com/business/2021/11/09/ethereum-name-service-tokens-soar-after-500m-airdrop", "kind": "derived" },
+      "valueAtDistributionUsd": 500000000,
+      "valueAtDistributionQualifier": "at-least",
+      "valueAtDistributionBasis": "reported",
+      "valueAtDistributionSource": { "label": "CoinDesk — Ethereum Name Service tokens soar after $500M airdrop", "url": "https://www.coindesk.com/business/2021/11/09/ethereum-name-service-tokens-soar-after-500m-airdrop", "kind": "press" },
+      "peakTokenPrice": null,
+      "peakValueOfDistributedTokensUsd": 1880000000,
+      "peakValueSource": { "label": "CoinGecko research — 50 Biggest Crypto Airdrops, valued at token all-time high", "url": "https://www.coingecko.com/research/publications/biggest-crypto-airdrops", "kind": "research" },
+      "rankingComparable": true,
+      "eligibilityCriteria": [
+        "Registered or held a .eth name at the 31 October 2021 snapshot.",
+        "Allocation scaled with how long the name had been held and how long it remained registered.",
+        "Setting a primary ENS name added a multiplier."
+      ],
+      "antiSybilRules": [
+        "Registering a .eth name costs an annual fee plus gas, so each additional eligible wallet had a real recurring cost.",
+        "The duration multiplier meant a wallet registered shortly before the snapshot earned far less than a long-held name."
+      ],
+      "distributionMechanism": "Claim-based, open for roughly six months. Claimants had to delegate their voting power as part of the claim, and unclaimed ENS returned to the DAO treasury.",
+      "productBeforeToken": "ENS had run as Ethereum's naming system for four years, with names in active use as wallet addresses and profile identities, before the token existed.",
+      "whyItSucceeded": [
+        { "factor": "Product usage before token", "detail": "A .eth name was already useful — it was how people received funds and identified themselves on-chain." },
+        { "factor": "Cost-gated eligibility", "detail": "Annual registration fees made mass wallet farming expensive and the duration multiplier made recent registrations near-worthless." },
+        { "factor": "Community alignment", "detail": "The claim required delegating governance, so the drop bootstrapped a working DAO rather than a passive holder base." },
+        { "factor": "Early user reward", "detail": "The duration multiplier explicitly paid the people who had been there longest." }
+      ],
+      "weaknesses": [
+        { "factor": "Unclaimed remainder", "detail": "5.4M of 25M ENS went unclaimed — roughly a fifth of the allocation never reached a recipient." },
+        { "factor": "Claim friction", "detail": "The mandatory delegation step and Ethereum gas costs at the time deterred smaller allocations from claiming at all." }
+      ],
+      "postAirdropOutcome": "ENS rose sharply after the claim opened. 103,000 of 137,689 eligible addresses claimed — a 75% claim rate, one of the few in this set that can actually be computed because both numbers were published.",
+      "priceAfter": [],
+      "priceAfterNote": "Dated 30-day and 90-day price marks are not published here because no primary source for them was verified.",
+      "lessons": [
+        "This is the rare case where the claim rate is measurable, because the project published both the eligible count and the claimed count.",
+        "A recurring registration fee is a strong sybil filter: it makes every extra eligible wallet cost money every year.",
+        "Requiring delegation at claim time converts an airdrop into governance participation instead of pure distribution."
+      ],
+      "sources": [
+        { "label": "ENS DAO basics — $ENS token", "url": "https://basics.ensdao.org/ens-token", "kind": "official" },
+        { "label": "CoinDesk — ENS tokens soar after $500M airdrop", "url": "https://www.coindesk.com/business/2021/11/09/ethereum-name-service-tokens-soar-after-500m-airdrop", "kind": "press" },
+        { "label": "Forbes — $ENS airdrop comes with a tax bill", "url": "https://www.forbes.com/sites/shehanchandrasekera/2021/11/17/ens-airdrop-comes-with-a-tax-billwhat-you-need-to-know/", "kind": "press" },
+        { "label": "CoinGecko research — 50 Biggest Crypto Airdrops", "url": "https://www.coingecko.com/research/publications/biggest-crypto-airdrops", "kind": "research" }
+      ]
+    },
+
+    {
+      "id": "uniswap",
+      "slug": "uniswap",
+      "featured": false,
+      "project": "Uniswap",
+      "tokenName": "Uniswap",
+      "tokenSymbol": "UNI",
+      "chain": "Ethereum",
+      "airdropDate": "2020-09-16",
+      "snapshotDate": "2020-09-01",
+      "claimStart": "2020-09-17",
+      "claimEnd": "2021-09-17",
+      "totalSupply": 1000000000,
+      "tokensAllocated": 150000000,
+      "tokensActuallyDistributed": null,
+      "tokensDistributedBasis": "allocated",
+      "tokensDistributedNote": "150M UNI was immediately claimable. 90.8% of eligible wallets claimed within the first month; a final claimed-token total is not sourced here.",
+      "percentSupplyDistributed": 15.0,
+      "eligibleWallets": {
+        "value": 251534,
+        "qualifier": "approximate",
+        "definition": "Historical user addresses that had interacted with the Uniswap protocol before the 1 September 2020 snapshot, each entitled to 400 UNI. Liquidity providers and SOCKS holders received separate allocations on top.",
+        "source": { "label": "Uniswap Governance — Requirements and how to claim your 400 UNI", "url": "https://gov.uniswap.org/t/learn-requirements-how-to-claim-your-400-uni/1025", "kind": "official" },
+        "note": "251,534 addresses at 400 UNI each accounts for the 10.06% of supply allocated to historical users."
+      },
+      "initialClaimants": {
+        "value": null,
+        "qualifier": null,
+        "definition": "Not published as a count. 90.8% of eligible wallets claimed within the first month.",
+        "asOf": "2020-10",
+        "source": { "label": "Dune — The Uniswap airdrop: lessons for the industry", "url": "https://dune.com/blog/uni-airdrop-analysis", "kind": "on-chain" }
+      },
+      "finalRecipientAddresses": { "value": null, "definition": null, "asOf": null, "source": null },
+      "averageAllocation": null,
+      "medianAllocation": 400,
+      "largestAllocation": null,
+      "allocationShape": [
+        { "band": "Historical users", "detail": "400 UNI each — 10.06% of supply", "source": { "label": "Uniswap Governance — how to claim your 400 UNI", "url": "https://gov.uniswap.org/t/learn-requirements-how-to-claim-your-400-uni/1025", "kind": "official" } },
+        { "band": "Liquidity providers", "detail": "4.92% of supply, weighted by liquidity and time", "source": { "label": "Uniswap Governance — how to claim your 400 UNI", "url": "https://gov.uniswap.org/t/learn-requirements-how-to-claim-your-400-uni/1025", "kind": "official" } },
+        { "band": "SOCKS holders and redeemers", "detail": "1,000 UNI each — 0.022% of supply", "source": { "label": "Uniswap Governance — how to claim your 400 UNI", "url": "https://gov.uniswap.org/t/learn-requirements-how-to-claim-your-400-uni/1025", "kind": "official" } }
+      ],
+      "tokenPriceAtDistribution": 3.0,
+      "tokenPriceAtDistributionBasis": "reported",
+      "tokenPriceAtDistributionSource": { "label": "CoinDesk — Uniswap recaptures DeFi buzz with UNI token's airdropped debut", "url": "https://www.coindesk.com/markets/2020/09/17/uniswap-recaptures-defi-buzz-with-uni-tokens-airdropped-debut", "kind": "press" },
+      "tokenPriceNote": "UNI opened near $3.00 and roughly doubled within the first 24 hours.",
+      "valueAtDistributionUsd": 450000000,
+      "valueAtDistributionQualifier": "approximate",
+      "valueAtDistributionBasis": "computed",
+      "valueAtDistributionSource": { "label": "Computed: 150M UNI at the reported $3.00 launch price", "url": "https://www.coindesk.com/markets/2020/09/17/uniswap-recaptures-defi-buzz-with-uni-tokens-airdropped-debut", "kind": "derived" },
+      "peakTokenPrice": 42.88,
+      "peakValueOfDistributedTokensUsd": 6430000000,
+      "peakValueSource": { "label": "CoinGecko research — 50 Biggest Crypto Airdrops, 150M UNI at the all-time-high price of $42.88", "url": "https://www.coingecko.com/research/publications/biggest-crypto-airdrops", "kind": "research" },
+      "rankingComparable": true,
+      "eligibilityCriteria": [
+        "Any address that had interacted with the Uniswap protocol before 1 September 2020, including addresses whose only interactions were failed transactions.",
+        "Liquidity providers received an additional allocation weighted by liquidity supplied and time.",
+        "Holders or redeemers of the Unisocks (SOCKS) token received 1,000 UNI."
+      ],
+      "antiSybilRules": [],
+      "antiSybilNote": "No sybil filtering. The distribution was retroactive and unannounced, so there was no window in which anyone could have farmed it — surprise was the defence.",
+      "distributionMechanism": "Claim-based, open for one year. Unclaimed UNI returned to the treasury.",
+      "productBeforeToken": "Uniswap had run as an automated market maker for two years and was the dominant decentralised exchange by volume before UNI existed.",
+      "whyItSucceeded": [
+        { "factor": "Retroactive and unannounced", "detail": "Because nobody knew a token was coming, nobody could farm the snapshot — the strongest sybil defence available, and one that can only be used once." },
+        { "factor": "Low friction eligibility", "detail": "A single past interaction qualified. About 12,000 addresses whose only interactions had failed were still included." },
+        { "factor": "Product usage before token", "detail": "Uniswap was already the largest DEX; the snapshot measured a real user base." },
+        { "factor": "Distribution breadth", "detail": "Over 250,000 addresses received the same 400 UNI, making the base allocation flat rather than whale-weighted." }
+      ],
+      "weaknesses": [
+        { "factor": "Unrepeatable", "detail": "The surprise that made this drop sybil-proof cannot be repeated. Every airdrop since has been anticipated, and anticipation is what creates farming." },
+        { "factor": "Governance concentration", "detail": "A flat 400 UNI per address spread tokens widely but left governance weight concentrated in the LP and treasury allocations." }
+      ],
+      "postAirdropOutcome": "UNI roughly doubled in its first 24 hours and reached its all-time high of $42.88 in May 2021, eight months later.",
+      "priceAfter": [],
+      "priceAfterNote": "Dated 30-day and 90-day price marks are not published here because no primary source for them was verified.",
+      "lessons": [
+        "The most-cited 'biggest airdrop ever' figure for Uniswap — $6.43B — is the all-time-high value. On distribution day the same 150M UNI was worth roughly $450M, about a 14× difference.",
+        "A surprise retroactive drop is the only distribution design that is sybil-proof by construction, and it works exactly once per ecosystem.",
+        "A flat per-address allocation broadens ownership; a proportional one concentrates it. Uniswap did both, in separate tranches."
+      ],
+      "sources": [
+        { "label": "Uniswap Governance — Requirements and how to claim your 400 UNI", "url": "https://gov.uniswap.org/t/learn-requirements-how-to-claim-your-400-uni/1025", "kind": "official" },
+        { "label": "Uniswap Labs support — How do I claim the UNI token airdrop?", "url": "https://support.uniswap.org/hc/en-us/articles/10794055772813-How-do-I-claim-the-Uniswap-UNI-Token-Airdrop", "kind": "official" },
+        { "label": "CoinDesk — Uniswap recaptures DeFi buzz with UNI token's airdropped debut", "url": "https://www.coindesk.com/markets/2020/09/17/uniswap-recaptures-defi-buzz-with-uni-tokens-airdropped-debut", "kind": "press" },
+        { "label": "Dune — The Uniswap airdrop: lessons for the industry", "url": "https://dune.com/blog/uni-airdrop-analysis", "kind": "on-chain" },
+        { "label": "CoinGecko research — 50 Biggest Crypto Airdrops", "url": "https://www.coingecko.com/research/publications/biggest-crypto-airdrops", "kind": "research" }
+      ]
+    },
+
+    {
+      "id": "jupiter",
+      "slug": "jupiter",
+      "featured": false,
+      "project": "Jupiter Exchange",
+      "tokenName": "Jupiter",
+      "tokenSymbol": "JUP",
+      "chain": "Solana",
+      "airdropDate": "2024-01-31",
+      "snapshotDate": "2023-11-02",
+      "claimStart": "2024-01-31",
+      "claimEnd": null,
+      "totalSupply": 10000000000,
+      "tokensAllocated": 1000000000,
+      "tokensActuallyDistributed": null,
+      "tokensDistributedBasis": "allocated",
+      "tokensDistributedNote": "1B JUP was allocated to the first Jupuary distribution. A claimed-token total is not sourced here.",
+      "percentSupplyDistributed": 10.0,
+      "eligibleWallets": {
+        "value": 955000,
+        "qualifier": "approximate",
+        "definition": "Wallets that had swapped through the Jupiter aggregator before the 2 November 2023 snapshot, above a minimum volume threshold.",
+        "source": { "label": "Unchained — Jupiter's airdropped token JUP debuts at an $878 million market cap", "url": "https://unchainedcrypto.com/jupiters-airdropped-token-jup-debuts-at-a-878-million-market-cap/", "kind": "press" }
+      },
+      "initialClaimants": { "value": null, "definition": null, "asOf": null, "source": null },
+      "finalRecipientAddresses": { "value": null, "definition": null, "asOf": null, "source": null },
+      "averageAllocation": null,
+      "medianAllocation": null,
+      "largestAllocation": null,
+      "allocationShape": [],
+      "tokenPriceAtDistribution": 0.4,
+      "tokenPriceAtDistributionBasis": "official",
+      "tokenPriceAtDistributionSource": { "label": "Jupiter Exchange — launch pool starting price of $0.40", "url": "https://x.com/JupiterExchange/status/1752704193125904550", "kind": "official" },
+      "tokenPriceNote": "The $0.40 pool starting price is the project's own published launch reference. JUP traded far above it within hours, reaching $2.00 on the first day, so the distribution-day value below is a floor rather than a midpoint.",
+      "valueAtDistributionUsd": 400000000,
+      "valueAtDistributionQualifier": "at-least",
+      "valueAtDistributionBasis": "computed",
+      "valueAtDistributionSource": { "label": "Computed: 1B JUP at the official $0.40 pool starting price", "url": "https://x.com/JupiterExchange/status/1752704193125904550", "kind": "derived" },
+      "peakTokenPrice": null,
+      "peakValueOfDistributedTokensUsd": null,
+      "peakValueSource": null,
+      "rankingComparable": true,
+      "eligibilityCriteria": [
+        "Swapped through the Jupiter aggregator before the 2 November 2023 snapshot.",
+        "Met a minimum cumulative swap volume threshold.",
+        "Additional tiers for early users and for holders of Jupiter ecosystem NFTs."
+      ],
+      "antiSybilRules": [
+        "A minimum volume threshold excluded dust-sized wallets created purely to qualify."
+      ],
+      "distributionMechanism": "Claim-based on Solana, with a launch pool seeded at a published starting price rather than a listing at an unknown price.",
+      "productBeforeToken": "Jupiter had run as Solana's dominant swap aggregator for over two years before JUP existed.",
+      "whyItSucceeded": [
+        { "factor": "Product usage before token", "detail": "The aggregator was already the default routing layer on Solana, so eligibility tracked genuine usage." },
+        { "factor": "Distribution breadth", "detail": "955,000 eligible wallets was among the widest eligible sets published at the time." },
+        { "factor": "Published launch price", "detail": "Seeding the pool at a stated $0.40 gave recipients a public reference instead of an opaque listing price." }
+      ],
+      "weaknesses": [
+        { "factor": "Volume threshold farming", "detail": "A swap-volume threshold is cheap to meet on a low-fee chain, which made mass-wallet qualification more affordable than on Ethereum." },
+        { "factor": "Wide launch-day price range", "detail": "JUP went from a $0.40 pool price to $2.00 on day one, so a single distribution-day valuation is unusually imprecise." }
+      ],
+      "postAirdropOutcome": "JUP debuted at an $878M market capitalisation and reached $2.00 within the first day of trading.",
+      "priceAfter": [],
+      "priceAfterNote": "Dated 30-day and 90-day price marks are not published here because no primary source for them was verified.",
+      "lessons": [
+        "Where a project publishes its own launch pool price, that is the most defensible distribution-day reference — but it is a floor when the token trades 5× above it the same day.",
+        "Low transaction costs make volume thresholds a weak sybil filter; the same rule on Ethereum would exclude far more wallets."
+      ],
+      "sources": [
+        { "label": "Jupiter Exchange — launch details, initial supply and pool starting price", "url": "https://x.com/JupiterExchange/status/1752704193125904550", "kind": "official" },
+        { "label": "Unchained — JUP debuts at an $878 million market cap", "url": "https://unchainedcrypto.com/jupiters-airdropped-token-jup-debuts-at-a-878-million-market-cap/", "kind": "press" },
+        { "label": "CoinGecko — Everything you need to know about Jupiter's Jupuary airdrop", "url": "https://www.coingecko.com/learn/everything-you-need-to-know-jupiter-s-upcoming-airdrop", "kind": "research" }
+      ]
+    },
+
+    {
+      "id": "celestia",
+      "slug": "celestia",
+      "featured": false,
+      "project": "Celestia Foundation",
+      "tokenName": "Celestia",
+      "tokenSymbol": "TIA",
+      "chain": "Celestia",
+      "airdropDate": "2023-10-31",
+      "snapshotDate": "2023-01-01",
+      "claimStart": "2023-09-25",
+      "claimEnd": null,
+      "totalSupply": 1000000000,
+      "tokensAllocated": 60000000,
+      "tokensActuallyDistributed": null,
+      "tokensDistributedBasis": "allocated",
+      "tokensDistributedNote": "60M TIA was set aside for the Genesis Drop. A claimed-token total is not sourced here.",
+      "percentSupplyDistributed": 6.0,
+      "eligibleWallets": {
+        "value": 584232,
+        "qualifier": "approximate",
+        "definition": "7,579 open-source developers plus 576,653 on-chain addresses active on Ethereum rollups, the Cosmos Hub and Osmosis. Developers and on-chain addresses were separate eligibility tracks.",
+        "source": { "label": "Celestia blog — Initiating Genesis Drop", "url": "https://blog.celestia.org/genesis-drop/", "kind": "official" }
+      },
+      "initialClaimants": { "value": null, "definition": null, "asOf": null, "source": null },
+      "finalRecipientAddresses": { "value": null, "definition": null, "asOf": null, "source": null },
+      "averageAllocation": null,
+      "medianAllocation": null,
+      "largestAllocation": null,
+      "allocationShape": [
+        { "band": "Open-source developers", "detail": "7,579 eligible", "source": { "label": "Celestia blog — Initiating Genesis Drop", "url": "https://blog.celestia.org/genesis-drop/", "kind": "official" } },
+        { "band": "On-chain addresses", "detail": "576,653 eligible across Ethereum rollups, Cosmos Hub and Osmosis", "source": { "label": "Celestia blog — Initiating Genesis Drop", "url": "https://blog.celestia.org/genesis-drop/", "kind": "official" } }
+      ],
+      "tokenPriceAtDistribution": 1.9,
+      "tokenPriceAtDistributionBasis": "reported",
+      "tokenPriceAtDistributionSource": { "label": "Reported opening price of $1.90 on the 31 October 2023 listing", "url": "https://www.theblock.co/post/253024/celestia-is-airdropping-60-million-tokens-in-bid-to-build-its-network", "kind": "press" },
+      "valueAtDistributionUsd": 114000000,
+      "valueAtDistributionQualifier": "approximate",
+      "valueAtDistributionBasis": "computed",
+      "valueAtDistributionSource": { "label": "Computed: 60M TIA at the reported $1.90 opening price", "url": "https://www.theblock.co/post/253024/celestia-is-airdropping-60-million-tokens-in-bid-to-build-its-network", "kind": "derived" },
+      "peakTokenPrice": null,
+      "peakValueOfDistributedTokensUsd": null,
+      "peakValueSource": null,
+      "rankingComparable": true,
+      "eligibilityCriteria": [
+        "Contributed to eligible open-source repositories in the Ethereum and Cosmos ecosystems.",
+        "Held an active address on an Ethereum rollup above a usage threshold.",
+        "Staked on the Cosmos Hub or Osmosis above a threshold."
+      ],
+      "antiSybilRules": [
+        "Staking and rollup-usage thresholds required capital already committed elsewhere, which is expensive to replicate across wallets.",
+        "The developer track was gated on identifiable open-source contribution history rather than on-chain activity."
+      ],
+      "distributionMechanism": "Claim-based genesis drop, with claims opening before the network's own mainnet launch.",
+      "productBeforeToken": "Celestia had run public testnets and published its modular data-availability research for years, but the mainnet the token secured launched on the same day as the drop.",
+      "whyItSucceeded": [
+        { "factor": "Distribution breadth", "detail": "Nearly 585,000 eligible participants across three separate ecosystems." },
+        { "factor": "Rewarding builders directly", "detail": "A dedicated developer track paid open-source contributors, which almost no other major drop has done." },
+        { "factor": "Cross-ecosystem reach", "detail": "Eligibility spanned Ethereum rollups and Cosmos, seeding a user base in both communities at once." }
+      ],
+      "weaknesses": [
+        { "factor": "No product usage to measure", "detail": "The mainnet launched with the token, so eligibility had to be borrowed from other chains' activity rather than measured on Celestia itself." },
+        { "factor": "Smallest distribution value in this set apart from Arkham", "detail": "At 6% of supply and a sub-$2 opening price, the drop's absolute value was an order of magnitude below the leaders." }
+      ],
+      "postAirdropOutcome": "TIA opened near $1.90 and rose through the following months, peaking above $20 in early 2024.",
+      "priceAfter": [],
+      "priceAfterNote": "Dated 30-day and 90-day price marks are not published here because no primary source for them was verified.",
+      "lessons": [
+        "A chain with no history has to borrow its eligibility signal from other ecosystems, which measures adjacency rather than usage.",
+        "Paying open-source contributors is a distinct eligibility track and one of the few that cannot be farmed with wallets."
+      ],
+      "sources": [
+        { "label": "Celestia blog — Initiating Genesis Drop", "url": "https://blog.celestia.org/genesis-drop/", "kind": "official" },
+        { "label": "The Block — Celestia is airdropping 60 million tokens in bid to build its network", "url": "https://www.theblock.co/post/253024/celestia-is-airdropping-60-million-tokens-in-bid-to-build-its-network", "kind": "press" }
+      ]
+    },
+
+    {
+      "id": "starknet",
+      "slug": "starknet",
+      "featured": false,
+      "project": "Starknet Foundation",
+      "tokenName": "Starknet",
+      "tokenSymbol": "STRK",
+      "chain": "Starknet",
+      "airdropDate": "2024-02-20",
+      "snapshotDate": "2023-11-15",
+      "claimStart": "2024-02-20",
+      "claimEnd": "2024-06-20",
+      "totalSupply": 10000000000,
+      "tokensAllocated": 700000000,
+      "tokensActuallyDistributed": null,
+      "tokensDistributedBasis": "allocated",
+      "tokensDistributedNote": "Over 700M STRK was made available in the first Provisions round, out of 900M earmarked for the community programme.",
+      "percentSupplyDistributed": 7.0,
+      "eligibleWallets": {
+        "value": 1300000,
+        "qualifier": "approximate",
+        "definition": "Nearly 1.3 million addresses across Starknet users, Ethereum stakers, Ethereum developers, StarkEx users and open-source contributors.",
+        "source": { "label": "Starknet — Provisions Program", "url": "https://www.starknet.io/blog/starknet-provisions-program/", "kind": "official" }
+      },
+      "initialClaimants": { "value": null, "definition": null, "asOf": null, "source": null },
+      "finalRecipientAddresses": { "value": null, "definition": null, "asOf": null, "source": null },
+      "averageAllocation": null,
+      "medianAllocation": null,
+      "largestAllocation": null,
+      "allocationShape": [],
+      "tokenPriceAtDistribution": null,
+      "tokenPriceAtDistributionBasis": null,
+      "tokenPriceAtDistributionSource": null,
+      "tokenPriceNote": "Sources disagree materially on STRK's distribution-day price: some report an opening near $1.90–$2.00, others report the token's all-time high of $3.99 printing on the launch day itself. Because a distribution-day price cannot be separated from the all-time high with confidence, no figure is published here.",
+      "valueAtDistributionUsd": null,
+      "valueAtDistributionQualifier": null,
+      "valueAtDistributionBasis": null,
+      "valueAtDistributionSource": null,
+      "peakTokenPrice": null,
+      "peakValueOfDistributedTokensUsd": null,
+      "peakValueSource": null,
+      "rankingComparable": false,
+      "rankingExclusionReason": "A distribution-day valuation cannot be reconstructed from a source without risking the use of the all-time-high price, which this research treats as a different measurement.",
+      "eligibilityCriteria": [
+        "Used Starknet above a transaction and value threshold before the snapshot.",
+        "Staked ETH on the Ethereum beacon chain.",
+        "Contributed to eligible Ethereum or Starknet open-source repositories.",
+        "Used StarkEx-based applications such as dYdX v3, Sorare or Immutable X."
+      ],
+      "antiSybilRules": [
+        "Ethereum staking eligibility required 32 ETH per validator, which is capital-gated by construction.",
+        "Developer eligibility was assessed on identifiable repository contribution history."
+      ],
+      "distributionMechanism": "Claim-based, open for four months, across five separate eligibility tracks.",
+      "productBeforeToken": "Starknet had run as a live Ethereum validity rollup for over two years, and StarkEx had powered dYdX v3 and Immutable X for longer, before STRK existed.",
+      "whyItSucceeded": [
+        { "factor": "Distribution breadth", "detail": "Nearly 1.3 million eligible addresses — the widest eligible set in this research set." },
+        { "factor": "Rewarding builders directly", "detail": "Ethereum open-source contributors were an explicit eligibility track alongside on-chain users." },
+        { "factor": "Cross-ecosystem reach", "detail": "Ethereum stakers and StarkEx application users were eligible even if they had never touched Starknet." }
+      ],
+      "weaknesses": [
+        { "factor": "Contested allocations", "detail": "The distribution drew sustained community criticism over which groups were and were not included, and a subsequent fix largely targeted validators." },
+        { "factor": "Unreconstructable launch valuation", "detail": "The launch-day price range is wide enough and the reporting inconsistent enough that this case cannot be ranked on distribution value at all." }
+      ],
+      "postAirdropOutcome": "STRK traded down substantially from its launch-day highs over the following months, and the allocation rules remained contested within the community.",
+      "priceAfter": [],
+      "priceAfterNote": "Dated 30-day and 90-day price marks are not published here because no primary source for them was verified.",
+      "lessons": [
+        "When a token's all-time high prints on its distribution day, the two measurements this research keeps apart collapse into one — and the honest response is to publish neither rather than to pick the flattering one.",
+        "Breadth is not the same as acceptance: the widest eligible set in this set also produced the loudest disputes about who was left out."
+      ],
+      "sources": [
+        { "label": "Starknet — Provisions Program", "url": "https://www.starknet.io/blog/starknet-provisions-program/", "kind": "official" },
+        { "label": "Unchained — Starknet's first token distribution will be available to nearly 1.3 million addresses", "url": "https://unchainedcrypto.com/starknets-first-token-distribution-will-be-available-to-nearly-1-3-million-addresses/", "kind": "press" },
+        { "label": "The Defiant — Users still disgruntled after Starknet airdrop fix", "url": "https://thedefiant.io/news/defi/users-still-disgruntled-after-starknet-airdrop-fix-targets-mostly-validators", "kind": "press" }
+      ]
+    },
+
+    {
+      "id": "wormhole",
+      "slug": "wormhole",
+      "featured": false,
+      "project": "Wormhole Foundation",
+      "tokenName": "Wormhole",
+      "tokenSymbol": "W",
+      "chain": "Solana",
+      "airdropDate": "2024-04-03",
+      "snapshotDate": "2024-02-06",
+      "claimStart": "2024-04-03",
+      "claimEnd": "2025-04-03",
+      "totalSupply": 10000000000,
+      "tokensAllocated": 617300000,
+      "tokensActuallyDistributed": null,
+      "tokensDistributedBasis": "allocated",
+      "tokensDistributedNote": "617.3M W was allocated to the community and launch, of which 500M was earmarked for eligible users.",
+      "percentSupplyDistributed": 6.17,
+      "eligibleWallets": {
+        "value": 400000,
+        "qualifier": "approximate",
+        "definition": "Wallets identified as genuine users of Wormhole bridge routes after anti-sybil filtering.",
+        "source": { "label": "CoinDesk — Wormhole to release 617M W tokens in first airdrop", "url": "https://www.coindesk.com/business/2024/03/06/wormhole-to-release-617m-w-tokens-in-first-airdrop", "kind": "press" }
+      },
+      "initialClaimants": { "value": null, "definition": null, "asOf": null, "source": null },
+      "finalRecipientAddresses": { "value": null, "definition": null, "asOf": null, "source": null },
+      "averageAllocation": null,
+      "medianAllocation": null,
+      "largestAllocation": null,
+      "allocationShape": [],
+      "tokenPriceAtDistribution": null,
+      "tokenPriceAtDistributionBasis": null,
+      "tokenPriceAtDistributionSource": null,
+      "tokenPriceNote": "The figure most often attached to this drop — $3 billion — is the token's launch valuation reported by CoinDesk, not the value of the distributed allocation. No sourced distribution-day price per token was found, so no value is published.",
+      "valueAtDistributionUsd": null,
+      "valueAtDistributionQualifier": null,
+      "valueAtDistributionBasis": null,
+      "valueAtDistributionSource": null,
+      "peakTokenPrice": null,
+      "peakValueOfDistributedTokensUsd": null,
+      "peakValueSource": null,
+      "rankingComparable": false,
+      "rankingExclusionReason": "The widely quoted $3B figure is the token's launch valuation, not the distributed allocation's value. No sourced per-token distribution-day price was found, so this case is excluded from the ranking rather than ranked on a number that measures something else.",
+      "eligibilityCriteria": [
+        "Bridged assets across Wormhole routes before the snapshot.",
+        "Used Wormhole-connected applications across multiple chains.",
+        "Community and ecosystem participation tracks alongside bridge usage."
+      ],
+      "antiSybilRules": [
+        "A published anti-sybil pass narrowed a much larger set of bridge-using addresses down to roughly 400,000 wallets."
+      ],
+      "distributionMechanism": "Claim-based with a twelve-month window.",
+      "productBeforeToken": "Wormhole had operated as a cross-chain messaging and bridging protocol for three years, including recovery from a major 2022 exploit, before W existed.",
+      "whyItSucceeded": [
+        { "factor": "Anti-sybil filtering", "detail": "The foundation published that filtering had cut the candidate set down to the roughly 400,000 wallets it judged genuine." },
+        { "factor": "Product usage before token", "detail": "Bridging is a costly action, so the qualifying behaviour was not free to manufacture." }
+      ],
+      "weaknesses": [
+        { "factor": "Valuation conflated in coverage", "detail": "Reporting attached the token's $3B launch valuation to the airdrop, which has caused this drop to be listed at a value that was never distributed." }
+      ],
+      "postAirdropOutcome": "W listed at launch across major venues. No verified distribution-day allocation value is published here.",
+      "priceAfter": [],
+      "priceAfterNote": "Dated 30-day and 90-day price marks are not published here because no primary source for them was verified.",
+      "lessons": [
+        "A token's launch valuation and an airdrop's distributed value are different numbers, and coverage routinely swaps one for the other.",
+        "Publishing the anti-sybil filter's effect — how many candidates became how many recipients — is more informative than publishing the recipient count alone."
+      ],
+      "sources": [
+        { "label": "CoinDesk — Wormhole to release 617M W tokens in first airdrop", "url": "https://www.coindesk.com/business/2024/03/06/wormhole-to-release-617m-w-tokens-in-first-airdrop", "kind": "press" },
+        { "label": "CoinDesk — Wormhole debuts at $3B valuation in 617M token airdrop", "url": "https://www.coindesk.com/business/2024/04/03/wormhole-debuts-at-3b-valuation-in-617m-token-airdrop", "kind": "press" }
+      ]
+    }
+  ],
+
+  "candidatePool": [
+    { "project": "Uniswap", "symbol": "UNI", "status": "researched", "slug": "uniswap" },
+    { "project": "ApeCoin", "symbol": "APE", "status": "researched", "slug": "apecoin" },
+    { "project": "dYdX", "symbol": "DYDX", "status": "researched", "slug": "dydx" },
+    { "project": "Arbitrum", "symbol": "ARB", "status": "researched", "slug": "arbitrum" },
+    { "project": "Ethereum Name Service", "symbol": "ENS", "status": "researched", "slug": "ens" },
+    { "project": "Hyperliquid", "symbol": "HYPE", "status": "researched", "slug": "hyperliquid" },
+    { "project": "Starknet", "symbol": "STRK", "status": "researched", "slug": "starknet" },
+    { "project": "Pudgy Penguins", "symbol": "PENGU", "status": "researched", "slug": "pudgy-penguins" },
+    { "project": "Wormhole", "symbol": "W", "status": "researched", "slug": "wormhole" },
+    { "project": "Jupiter", "symbol": "JUP", "status": "researched", "slug": "jupiter" },
+    { "project": "Celestia", "symbol": "TIA", "status": "researched", "slug": "celestia" },
+    { "project": "Arkham Intelligence", "symbol": "ARKM", "status": "researched", "slug": "arkham" },
+    { "project": "Internet Computer", "symbol": "ICP", "status": "not-published", "reason": "The ICP genesis distribution was a seed-round and Genesis Unicorn allocation rather than a retroactive user airdrop, and no sourced distribution-day figure for a user airdrop was verified. Not published rather than published on an unverified basis." },
+    { "project": "BONK", "symbol": "BONK", "status": "not-published", "reason": "50% of supply was distributed to the Solana community in December 2022, but no primary source for the distribution-day token price or the recipient count was verified. Publishing a value would require inventing one." },
+    { "project": "Story Protocol", "symbol": "IP", "status": "not-published", "reason": "No primary source verified for tokens distributed, recipient count, or distribution-day price." },
+    { "project": "Berachain", "symbol": "BERA", "status": "not-published", "reason": "No primary source verified for tokens distributed, recipient count, or distribution-day price." }
+  ]
+}

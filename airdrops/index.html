@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Airdrop Cases — Historical Distribution Research</title>
+<meta name="description" content="Historical airdrop research: who received the tokens, how much value was distributed on the day, why each distribution worked, and what happened afterwards. Distribution value and peak value are measured and labelled separately.">
+<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="icon" type="image/png" href="/assets/img/brand/crypto-bros-favicon.png">
+</head>
+<body>
+<a class="skip" href="#airdropRanking">Skip to the airdrop ranking</a>
+<header class="site-head">
+  <div class="wrap head-inner">
+    <a class="brand brand-link" href="/"><img class="brand-mark" src="/assets/img/brand/crypto-bros-mark.webp" alt="" width="44" height="44" decoding="async"><div><h1>Crypto Bros</h1><p class="brand-sub">Sourced airdrop distribution research</p></div></a>
+    <nav class="primary-nav"></nav>
+    <div class="head-actions"><button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme"><span class="theme-icon theme-icon-sun" aria-hidden="true">☀</span><span class="theme-icon theme-icon-moon" aria-hidden="true">☾</span></button></div>
+  </div>
+  <div class="status-bar wrap"><span class="dot busy" id="statusDot"></span><span id="statusText">Loading airdrop research…</span></div>
+</header>
+
+<main class="wrap">
+  <section class="route-hero cases-hero">
+    <div>
+      <p class="eyebrow">Airdrop research · value at distribution</p>
+      <h2>Airdrop cases</h2>
+      <p>Who received the tokens, how much value was distributed, why the distribution worked, and what happened afterwards.</p>
+      <p class="hero-meta">Research cutoff <strong id="researchCutoff">—</strong></p>
+    </div>
+    <div class="hero-kpis">
+      <article><span>Airdrops researched</span><strong id="kpiCases">—</strong><small id="kpiCasesSub">candidate pool screened</small></article>
+      <article><span>Total value distributed</span><strong id="kpiValue">—</strong><small>at sourced distribution-day prices</small></article>
+      <article><span>Total recipient wallets</span><strong id="kpiWallets">—</strong><small id="kpiWalletsSub">where a count was published</small></article>
+      <article><span>Largest distribution</span><strong id="kpiLargest">—</strong><small id="kpiLargestSub">by value at distribution</small></article>
+    </div>
+  </section>
+
+  <p class="verified-line"><span class="dot"></span><span>Ranking metric: <strong>tokens actually distributed × a sourced distribution-day price</strong>. Peak value — the same tokens at the token’s all-time high — is a separate measurement and is never presented as value distributed at launch.</span></p>
+
+  <section class="panel" id="airdropRanking">
+    <div class="panel-head">
+      <div>
+        <p class="eyebrow">Ranking</p>
+        <h2 id="rankingTitle">Ranked by value at distribution</h2>
+        <p class="panel-sub" id="rankingNote">Tokens distributed × a sourced distribution-day price.</p>
+      </div>
+      <div class="seg" role="group" aria-label="Ranking metric" id="rankingControls"></div>
+    </div>
+    <div class="rank-board-host" id="airdropTable"><div class="panel-loading"><span class="spinner"></span> Loading research…</div></div>
+    <p class="note" id="rankingExcluded"></p>
+  </section>
+
+  <section class="panel doc-section">
+    <p class="eyebrow">Cases</p>
+    <h2>Open a distribution</h2>
+    <div class="airdrop-grid" id="airdropGrid"></div>
+  </section>
+
+  <details class="panel method-disclosure">
+    <summary>Ranking methodology</summary>
+    <ol id="methodList"></ol>
+    <p class="doc-note" id="methodWhy"></p>
+  </details>
+
+  <section class="panel doc-section">
+    <p class="eyebrow">Candidate pool</p>
+    <h2>What was screened, and what was left out</h2>
+    <p class="panel-sub">Every project considered for this set. A candidate is only published as a case when its distribution figures could be attributed to a source.</p>
+    <ul class="candidate-pool" id="candidatePool"></ul>
+  </section>
+
+  <p class="risk-line">⚠ A distribution-day value is what recipients received, not what they realised. Most recipients in the cases below sold quickly, and a peak-value figure was never available to anyone who did. Historical distributions are not a guide to future ones.</p>
+</main>
+
+<footer class="site-foot wrap"><p>Sources are linked per claim on every case · <span id="updatedAt">—</span></p></footer>
+<script type="module" src="/assets/js/theme.js"></script>
+<script type="module" src="/assets/js/airdrops-page.js"></script>
+</body>
+</html>
