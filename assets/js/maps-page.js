@@ -5,9 +5,9 @@ import {
   getExchangeSourceState,
 } from './datasource.js';
 import { aggregateJurisdictions } from './analytics.js';
-import { WorldMap } from './worldmap.js';
+import { GlobeMap } from './globe-map.js';
 import { renderSeqLegend } from './hours.js';
-import { fmtUsd, fmtUsdShort, fmtNum, fmtClock, el, seqColor, perceptual } from './utils.js';
+import { fmtUsd, fmtUsdShort, fmtNum, fmtClock, el, seqColor } from './utils.js';
 import { startAutoRefresh } from './autorefresh.js';
 import { flagImage } from './country-flags.js';
 
@@ -25,8 +25,8 @@ function renderSourceState() {
   const state = getExchangeSourceState();
   const source = state.source || 'exchange source';
   const text = state.preserved
-    ? `Volume map ready · retained broader cached coverage (${state.coverage.countries} jurisdictions)`
-    : `Volume map ready · ${source}`;
+    ? `3D globe ready · retained broader cached coverage (${state.coverage.countries} jurisdictions)`
+    : `3D globe ready · ${source}`;
   setStatus(text, 'ok');
   $('updatedAt').textContent = fmtClock(state.fetchedAt || Date.now());
 }
@@ -38,7 +38,7 @@ function renderMapData(exchanges, btc) {
   renderSeqLegend($('mapLegend'), {
     min: 0,
     max: aggregate.rows[0]?.volUsd || 0,
-    label: '24h volume',
+    label: '24h reported volume',
     fmt: fmtUsdShort,
   });
   renderRankings();
@@ -51,6 +51,7 @@ function renderDetail(row) {
   if (!row) {
     card.hidden = true;
     card.replaceChildren();
+    renderRankings();
     return;
   }
   const rank = aggregate.rows.indexOf(row) + 1;
@@ -60,7 +61,13 @@ function renderDetail(row) {
       el('h3', {}, row.name),
       el('span', { class: 'pill' }, `Rank #${rank}`),
       el('span', { class: 'pill ghost' }, row.region),
-      el('button', { class: 'btn sm ghost', type: 'button', onclick: () => map.reset() }, 'Close'),
+      el('button', {
+        class: 'btn sm ghost', type: 'button', onclick: () => {
+          map.selectedName = null;
+          map.render();
+          renderDetail(null);
+        },
+      }, 'Close'),
     ),
     el('div', { class: 'detail-stats' },
       stat('24h volume', fmtUsd(row.volUsd)),
@@ -71,6 +78,7 @@ function renderDetail(row) {
     exchangeTable(row),
   );
   card.hidden = false;
+  renderRankings();
 }
 
 function stat(label, value) {
@@ -129,6 +137,7 @@ function exchangeTable(row) {
 }
 
 function renderRankings() {
+  if (!aggregate) return;
   const top = aggregate.rows.find((row) => row.lat != null && row.lon != null) || aggregate.rows[0];
   $('topLocation').textContent = top?.name || '—';
   $('topVolume').textContent = top ? fmtUsd(top.volUsd) : '—';
@@ -138,7 +147,10 @@ function renderRankings() {
   const list = $('rankList');
   list.replaceChildren();
   aggregate.rows.slice(0, 15).forEach((row, index) => {
-    const item = el('li', { class: 'rank-item', tabindex: '0', role: 'button' },
+    const item = el('li', {
+      class: `rank-item${map?.selectedName === row.name ? ' is-selected' : ''}`,
+      tabindex: '0', role: 'button', 'aria-label': `Focus ${row.name} on globe`,
+    },
       el('span', { class: 'rank-n' }, String(index + 1)),
       flagImage(row.name) || el('span', { class: 'rank-dot', style: { background: index === 0 ? 'var(--warn)' : seqColor(0.55) } }),
       el('span', { class: 'rank-name' }, row.name),
@@ -180,7 +192,10 @@ function renderTable() {
     const focus = () => map.focus(row.name);
     tr.addEventListener('click', focus);
     tr.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') focus();
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        focus();
+      }
     });
     body.append(tr);
   });
@@ -189,12 +204,9 @@ function renderTable() {
 }
 
 async function load({ force = false } = {}) {
-  setStatus('Loading map and exchange volume…', 'busy');
+  setStatus('Loading 3D globe and exchange volume…', 'busy');
   $('mapLoading').hidden = false;
 
-  /* Geometri dan data pasar dimuat terpisah: kegagalan CoinGecko (mis. 429)
-     tidak boleh mematikan peta — datasource sudah punya fallback cache basi,
-     dan di sini kegagalan data hanya menjadi status, bukan layar error. */
   const topology = await fetchWorldTopo();
   map.setTopology(topology);
   $('mapLoading').hidden = true;
@@ -216,24 +228,28 @@ async function load({ force = false } = {}) {
 }
 
 function init() {
-  map = new WorldMap($('mapCanvas'), { tooltip: $('mapTip'), onSelect: renderDetail });
-  $('btnZoomIn').addEventListener('click', () => map.zoom(1.4));
-  $('btnZoomOut').addEventListener('click', () => map.zoom(1 / 1.4));
+  map = new GlobeMap($('mapCanvas'), {
+    tooltip: $('mapTip'),
+    viewLabel: $('globeViewLabel'),
+    onSelect: renderDetail,
+  });
+  $('btnZoomIn').addEventListener('click', () => map.zoom(1.18));
+  $('btnZoomOut').addEventListener('click', () => map.zoom(1 / 1.18));
   $('btnMapReset').addEventListener('click', () => map.reset());
   $('chkLabels').addEventListener('change', (event) => {
     map.showLabels = event.target.checked;
     map.render();
   });
+  $('chkSpin').addEventListener('change', (event) => map.setAutoRotate(event.target.checked));
+
   load().catch((error) => {
     console.error(error);
-    $('mapLoading').innerHTML = `<span class="error">Map could not load: ${error.message}</span>`;
-    setStatus('Some map data could not load', 'err');
+    $('mapLoading').innerHTML = `<span class="error">Globe could not load: ${error.message}</span>`;
+    setStatus('Some globe data could not load', 'err');
   });
 
-  /* The browser checks the same-origin backend every ten seconds. The backend
-     controls upstream cadence, and datasource retains a broader recent
-     jurisdiction set when a serverless refresh returns partial fallback
-     coverage. Map geometry is not fetched again. */
+  /* The browser checks the same-origin backend every ten seconds. The globe
+     geometry remains local; only market data is refreshed. */
   startAutoRefresh([
     {
       every: 10 * 1000,
