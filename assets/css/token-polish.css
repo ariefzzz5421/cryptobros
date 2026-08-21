@@ -1,0 +1,224 @@
+/* Token detail polish: icon-only lore sources, creator attribution, and full contract display. */
+
+.lore-source-chip.is-icon-only {
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  justify-content: center;
+  gap: 0;
+  border-radius: 10px;
+}
+
+.lore-source-chip.is-icon-only .source-copy {
+  display: none !important;
+}
+
+.lore-source-chip.is-icon-only .source-logo-wrap {
+  width: 30px;
+  height: 30px;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+}
+
+.lore-source-chip.is-icon-only .source-logo-wrap.is-wide {
+  width: 30px;
+}
+
+.lore-source-chip.is-icon-only .source-logo,
+.lore-source-chip.is-icon-only .source-logo-wrap.is-wide .source-logo {
+  width: 26px;
+  height: 26px;
+  max-width: 26px;
+  max-height: 26px;
+  object-fit: contain;
+}
+
+.token-lore-creator {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.token-lore-creator-copy {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.token-lore-creator-copy > span {
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.token-lore-creator-copy > strong {
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.token-lore-creator-copy > small {
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.token-lore-creator-socials {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.creator-social-chip,
+.creator-anon-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--plane);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.creator-social-chip:hover,
+.creator-social-chip:focus-visible {
+  border-color: var(--accent);
+}
+
+.creator-social-chip .source-logo-wrap {
+  width: 22px;
+  height: 22px;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.creator-social-chip .source-logo {
+  width: 19px;
+  height: 19px;
+  object-fit: contain;
+}
+
+.creator-social-chip .source-copy strong {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.creator-social-chip .source-copy small {
+  display: none;
+}
+
+.creator-anon-chip img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.creator-anon-chip strong {
+  font-size: 12px;
+}
+
+.contract-identity-stat {
+  min-width: 0;
+}
+
+.contract-copy-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+}
+
+.contract-address-full {
+  min-width: 0;
+  flex: 1 1 auto;
+  color: var(--ink);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: clamp(12px, 1vw, 16px);
+  font-weight: 650;
+  line-height: 1.45;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+
+.contract-copy-button {
+  flex: 0 0 36px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--plane);
+  cursor: pointer;
+  transition: border-color 150ms ease, transform 150ms ease, background-color 150ms ease;
+}
+
+.contract-copy-button:hover,
+.contract-copy-button:focus-visible {
+  border-color: var(--accent);
+  background: var(--surface-hover);
+  transform: translateY(-1px);
+}
+
+.contract-copy-button img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.contract-copy-button.is-copied {
+  border-color: var(--good);
+}
+
+.contract-copy-button .copy-check {
+  color: var(--good);
+  font-size: 19px;
+  line-height: 1;
+}
+
+.token-identity-strip .contract-identity-stat strong,
+.token-identity-strip .contract-identity-stat code {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+@media (max-width: 860px) {
+  .token-identity-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .token-identity-strip > * {
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .token-identity-strip > *:last-child {
+    border-bottom: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .token-lore-creator {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .token-lore-creator-socials {
+    justify-content: flex-start;
+  }
+}
