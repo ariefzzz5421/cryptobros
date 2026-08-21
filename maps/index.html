@@ -3,63 +3,76 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Maps — Global Crypto Volume Jurisdictions</title>
-<meta name="description" content="Map reported 24-hour exchange volume by legal jurisdiction, with ranked markers, country flags, and exchange detail.">
+<title>Maps — 3D Global Crypto Volume Jurisdictions</title>
+<meta name="description" content="Explore reported crypto exchange volume by legal jurisdiction on an interactive 3D globe with ranked markers, country details, and exchange provenance.">
 <link rel="stylesheet" href="/assets/css/style.css">
+<link rel="stylesheet" href="/assets/css/globe-map.css">
 <link rel="icon" type="image/png" href="/assets/img/brand/crypto-bros-favicon.png">
 </head>
 <body>
-<a class="skip" href="#map">Skip to the map</a>
+<a class="skip" href="#map">Skip to the globe</a>
 <header class="site-head">
   <div class="wrap head-inner">
     <a class="brand brand-link" href="/">
       <img class="brand-mark" src="/assets/img/brand/crypto-bros-mark.webp" alt="" width="44" height="44">
-      <div><h1>Crypto Bros</h1><p class="brand-sub">Exchange-jurisdiction concentration</p></div>
+      <div><h1>Crypto Bros</h1><p class="brand-sub">Global exchange-jurisdiction intelligence</p></div>
     </a>
     <nav class="primary-nav"></nav>
     <div class="head-actions">
       <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme"><span class="theme-icon theme-icon-sun" aria-hidden="true">☀</span><span class="theme-icon theme-icon-moon" aria-hidden="true">☾</span></button>
     </div>
   </div>
-  <div class="status-bar wrap"><span class="dot busy" id="statusDot"></span><span id="statusText">Preparing map data…</span></div>
+  <div class="status-bar wrap"><span class="dot busy" id="statusDot"></span><span id="statusText">Preparing globe data…</span></div>
 </header>
 <main class="wrap">
   <section class="route-hero maps-hero">
     <div>
-      <p class="eyebrow">Exchange legal jurisdictions</p>
+      <p class="eyebrow">Interactive 3D jurisdiction map</p>
       <h2>Where is reported crypto volume concentrated?</h2>
-      <p>The yellow <strong>#1</strong> marker identifies the largest mapped jurisdiction across the tracked exchange set.</p>
+      <p>Rotate the globe to inspect the legal jurisdictions behind the tracked exchange set. Marker height and intensity represent reported 24-hour volume; the yellow signal identifies the largest mapped jurisdiction.</p>
     </div>
     <div class="hero-kpis">
       <article><span>Largest jurisdiction</span><strong id="topLocation">—</strong><small id="topShare">—</small></article>
       <article><span>Mapped 24h volume</span><strong id="topVolume">—</strong><small id="mapCoverage">—</small></article>
     </div>
   </section>
-  <section class="panel map-route-panel" id="map">
+  <section class="panel map-route-panel is-globe" id="map">
     <div class="panel-head">
-      <div><h2>Exchange volume by jurisdiction</h2><p class="panel-sub">Select a marker to inspect contributing exchanges. Marker area represents volume; yellow identifies rank one.</p></div>
+      <div>
+        <div class="globe-ranking-head"><h2>Exchange volume globe</h2><span class="map-mode-pill">3D interactive</span></div>
+        <p class="panel-sub">Drag to rotate · scroll or pinch to zoom · select a signal to inspect contributing exchanges.</p>
+      </div>
       <div class="panel-tools">
         <button class="btn sm" id="btnZoomIn" type="button" aria-label="Zoom in">+</button>
         <button class="btn sm" id="btnZoomOut" type="button" aria-label="Zoom out">−</button>
         <button class="btn sm" id="btnMapReset" type="button">Reset</button>
         <label class="chk"><input type="checkbox" id="chkLabels" checked> Labels</label>
+        <label class="chk"><input type="checkbox" id="chkSpin" checked> Auto rotate</label>
       </div>
     </div>
     <div class="map-layout">
-      <div class="map-holder">
-        <canvas id="mapCanvas" aria-label="World map of crypto exchange volume by jurisdiction" role="img"></canvas>
-        <div class="tooltip" id="mapTip" hidden></div><div class="map-legend" id="mapLegend"></div>
+      <div class="map-holder globe-holder">
+        <div class="globe-hud"><span>Jurisdiction field</span><span id="globeViewLabel">12°N · 12°E · 1.0×</span></div>
+        <canvas id="mapCanvas" aria-label="Interactive 3D globe of crypto exchange volume by legal jurisdiction" role="img"></canvas>
+        <div class="tooltip" id="mapTip" hidden></div>
+        <div class="map-legend" id="mapLegend"></div>
         <div class="top-marker-legend"><span>#1</span> largest volume</div>
-        <div class="map-loading" id="mapLoading"><span class="spinner"></span> Loading map geometry…</div>
+        <div class="globe-instruction">DRAG ROTATE · WHEEL ZOOM · CLICK SIGNAL FOR EXCHANGE DETAIL</div>
+        <div class="map-loading" id="mapLoading"><span class="spinner"></span> Loading globe geometry…</div>
       </div>
-      <aside class="map-side"><div class="side-block"><h3>Jurisdiction ranking</h3><ol class="rank-list" id="rankList"></ol></div></aside>
+      <aside class="map-side">
+        <div class="side-block">
+          <div class="globe-ranking-head"><h3>Jurisdiction ranking</h3><span>click to focus</span></div>
+          <ol class="rank-list" id="rankList"></ol>
+        </div>
+      </aside>
     </div>
     <div class="detail-card" id="detailCard" hidden></div>
     <details class="disclosure"><summary>Full jurisdiction table</summary><div class="table-scroll" id="jurTable"></div></details>
     <p class="caveat"><strong>Data boundary:</strong> these locations are exchange legal jurisdictions, not trader residences. CoinGecko's exchange country field is primary; CoinPaprika volume plus a disclosed exchange-country mapping is fallback. Missing country metadata is excluded.</p>
   </section>
   <section class="panel source-panel">
-    <div><p class="eyebrow">Provenance</p><h2>Map sources</h2></div>
+    <div><p class="eyebrow">Provenance</p><h2>Globe sources</h2></div>
     <div class="source-links">
       <a class="source-link source-only" href="https://www.coingecko.com/en/exchanges" target="_blank" rel="noreferrer"><strong>CoinGecko Exchanges</strong></a>
       <a class="source-link source-only" href="https://api.coinpaprika.com/#tag/Exchanges" target="_blank" rel="noreferrer"><strong>CoinPaprika API</strong></a>
