@@ -19,6 +19,22 @@ const request = {
   name: params.get('name'),
 };
 
+const CHAIN_NAMES = {
+  ethereum: 'Ethereum',
+  solana: 'Solana',
+  bsc: 'BNB Chain',
+  base: 'Base',
+  robinhood: 'Robinhood Chain',
+  dogecoin: 'Dogecoin',
+  arbitrum: 'Arbitrum',
+  polygon: 'Polygon',
+  avalanche: 'Avalanche',
+  optimism: 'Optimism',
+  hyperliquid: 'Hyperliquid',
+  megaeth: 'MegaETH',
+  monad: 'Monad',
+};
+
 let token = findToken(request) || unresolvedToken({
   id: request.id,
   symbol: request.symbol,
@@ -42,11 +58,85 @@ const fmtDate = (value) => {
   }).format(date);
 };
 
+function displayChain(value) {
+  const key = String(value || '').trim().toLowerCase();
+  if (!key) return 'Unavailable';
+  return CHAIN_NAMES[key] || `${key.charAt(0).toUpperCase()}${key.slice(1)}`;
+}
+
 function fact(label, value, note = '', emphasis = false) {
   return el('article', { class: `dossier-stat${emphasis ? ' is-emphasis' : ''}` },
     el('span', {}, label),
     el('strong', { class: 'num' }, value),
     note ? el('small', {}, note) : null,
+  );
+}
+
+async function writeClipboard(value) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(value);
+    return;
+  }
+  const textarea = document.createElement('textarea');
+  textarea.value = value;
+  textarea.setAttribute('readonly', '');
+  textarea.style.position = 'fixed';
+  textarea.style.opacity = '0';
+  textarea.style.pointerEvents = 'none';
+  document.body.append(textarea);
+  textarea.select();
+  const copied = document.execCommand('copy');
+  textarea.remove();
+  if (!copied) throw new Error('Clipboard API unavailable');
+}
+
+function copyIcon() {
+  return el('img', {
+    src: '/assets/img/sources/copy.svg',
+    alt: '',
+    width: '20',
+    height: '20',
+    'aria-hidden': 'true',
+  });
+}
+
+function contractFact(contract) {
+  const value = String(contract || '').trim();
+  if (!value) return fact('Contract', 'Unavailable', 'not verified');
+  if (value.toLowerCase() === 'native') return fact('Contract', 'Native asset', 'no token contract');
+
+  const button = el('button', {
+    class: 'contract-copy-button',
+    type: 'button',
+    title: 'Copy contract address',
+    'aria-label': 'Copy contract address',
+  }, copyIcon());
+
+  button.addEventListener('click', async () => {
+    try {
+      await writeClipboard(value);
+      button.classList.add('is-copied');
+      button.title = 'Copied';
+      button.setAttribute('aria-label', 'Contract address copied');
+      button.replaceChildren(el('span', { class: 'copy-check', 'aria-hidden': 'true' }, '✓'));
+      window.setTimeout(() => {
+        button.classList.remove('is-copied');
+        button.title = 'Copy contract address';
+        button.setAttribute('aria-label', 'Copy contract address');
+        button.replaceChildren(copyIcon());
+      }, 1400);
+    } catch (error) {
+      console.warn('Copy contract:', error.message);
+    }
+  });
+
+  return el('article', { class: 'dossier-stat contract-identity-stat' },
+    el('span', {}, 'Contract'),
+    el('div', { class: 'contract-copy-row' },
+      el('code', { class: 'contract-address-full' }, value),
+      button,
+    ),
+    el('small', {}, 'canonical identity'),
   );
 }
 
@@ -82,8 +172,8 @@ function renderIdentity() {
   renderTokenLore($('tokenLore'), token);
 
   $('tokenIdentity').replaceChildren(
-    fact('Chain', token.chain || 'Unavailable', token.contract === 'native' ? 'native asset' : ''),
-    fact('Contract', token.contract || 'Unavailable', token.contract ? 'canonical identity' : 'not verified'),
+    fact('Chain', displayChain(token.chain), token.contract === 'native' ? 'native asset' : ''),
+    contractFact(token.contract),
     token.explorer
       ? el('a', { class: 'identity-explorer-link', href: token.explorer, target: '_blank', rel: 'noreferrer' },
         el('span', {}, 'Explorer'), el('strong', {}, 'Verify contract'))
