@@ -1,14 +1,9 @@
 /* All-time airdrop leaderboard.
 
-   Metric discipline matters here: this is NOT a distribution-day ranking.
-   It ranks the tokens actually allocated to an airdrop at the token's ATH
-   price (or the broadest documented distributed-allocation bucket where the
-   source defines the airdrop that way). The existing case ranking remains the
-   stricter distribution-day view.
-
-   Legacy rows use CoinGecko's published historical ranking. 2024-2025 rows
-   are reconstructed from official allocation disclosures plus CoinGecko ATH
-   prices, with the formula visible per row. Research cutoff: 2026-08-21.
+   This board ranks the maximum historical value of the distributed allocation,
+   not distribution-day proceeds. Legacy 2020-2023 rows come from CoinGecko's
+   published historical study; large 2024-2025 additions are reconstructed from
+   disclosed allocations and token ATH prices. Research cutoff: 2026-08-21.
 */
 
 export const AIRDROP_RESEARCH_CUTOFF = '2026-08-21';
@@ -151,16 +146,41 @@ const rows = [
   legacy(16, 'Jito', 'JTO', 311_634_115, 2023, 'jito.network'),
   legacy(17, 'Gitcoin', 'GTC', 283_807_338, 2021, 'gitcoin.co'),
   legacy(18, 'ParaSwap', 'PSP', 232_604_859, 2021, 'paraswap.io'),
+
+  /* CoinGecko historical ranks 19-38 complete the refreshed 50-event board. */
+  legacy(19, 'Tornado Cash', 'TORN', 204_072_778, 2020, 'tornado.cash'),
+  legacy(20, 'CoW Protocol', 'COW', 193_484_442, 2022, 'cow.fi'),
+  legacy(21, 'WorldCoin', 'WLD', 181_911_990, 2023, 'world.org'),
+  legacy(22, 'Aidoge', 'AIDOGE', 174_850_390, 2023, 'arbdoge.ai'),
+  legacy(23, 'The Graph', 'GRT', 172_286_023, 2020, 'thegraph.com'),
+  legacy(24, 'Memecoin', 'MEME', 146_564_771, 2023, 'memecoin.org'),
+  legacy(25, 'HashFlow', 'HFT', 144_334_654, 2022, 'hashflow.com'),
+  legacy(26, 'ZigZag', 'ZZ', 139_767_571, 2023, 'zigzag.exchange'),
+  legacy(27, 'Instadapp', 'INST', 138_611_088, 2021, 'instadapp.io'),
+  legacy(28, 'Ribbon Finance', 'RBN', 132_370_223, 2021, 'ribbon.finance'),
+  legacy(29, 'Pyth Finance', 'PYTH', 124_533_425, 2023, 'pyth.network'),
+  legacy(30, '1inch Network', '1INCH', 111_812_120, 2021, '1inch.io', null, 2),
+  legacy(31, 'Botto', 'BOTTO', 111_695_841, 2021, 'botto.com'),
+  legacy(32, 'Dogechain', 'DC', 95_542_882, 2022, 'dogechain.dog'),
+  legacy(33, 'Galxe', 'GAL', 62_420_883, 2022, 'galxe.com'),
+  legacy(34, 'Optimism', 'OP', 60_240_246, 2023, 'optimism.io', null, 3),
+  legacy(35, 'Bank', 'BANK', 46_784_703, 2021, 'bankless.community', null, 1),
+  legacy(36, 'Space ID', 'ID', 44_391_466, 2023, 'space.id'),
+  legacy(37, 'Sweat', 'SWEAT', 38_863_539, 2022, 'sweateconomy.com'),
+  legacy(38, 'Optimism', 'OP', 36_440_485, 2023, 'optimism.io', null, 2),
 ];
 
-export const ALL_TIME_AIRDROP_TOP_30 = rows
+export const ALL_TIME_AIRDROP_TOP_50 = rows
   .sort((a, b) => b.valueUsd - a.valueUsd)
-  .slice(0, 30)
+  .slice(0, 50)
   .map((item, index) => ({ ...item, rank: index + 1 }));
 
-/* Use the user's supplied project artwork where available, then reuse existing
-   repo-native token art. Projects without a stored image fall back to their
-   official-domain favicon and finally to a compact symbol badge. */
+/* Backward-compatible alias while the page renderer keeps its existing IDs. */
+export const ALL_TIME_AIRDROP_TOP_30 = ALL_TIME_AIRDROP_TOP_50;
+
+/* Use supplied project artwork where available, then repo-native token art.
+   Projects without local artwork use the official-domain favicon and finally a
+   compact symbol badge, so a failed remote image never breaks the layout. */
 const LOCAL_LOGOS = new Map(Object.entries({
   UNI: '/assets/img/airdrops/uniswap.webp',
   APE: '/assets/img/airdrops/apecoin.webp',
