@@ -11,7 +11,7 @@ fs.mkdirSync(client, { recursive: true });
 fs.mkdirSync(server, { recursive: true });
 
 fs.copyFileSync(path.join(root, 'index.html'), path.join(client, 'index.html'));
-for (const directory of ['assets', 'maps', 'sentiment', 'launchpads', 'cases', '2026-memecoins', 'nft', 'nft-2026']) {
+for (const directory of ['assets', 'maps', 'sentiment', 'launchpads', 'cases', '2026-memecoins', 'nft', 'nft-2026', 'airdrops']) {
   fs.cpSync(path.join(root, directory), path.join(client, directory), { recursive: true });
 }
 fs.copyFileSync(
@@ -21,6 +21,9 @@ fs.copyFileSync(
 for (const file of ['token-utils.mjs', 'launchpad-config.mjs']) {
   fs.copyFileSync(path.join(root, 'server', file), path.join(server, file));
 }
+/* market-service imports the keyed OpenSea provider, so the worker needs the
+   whole providers directory or the bundle fails to resolve at runtime. */
+fs.cpSync(path.join(root, 'server', 'providers'), path.join(server, 'providers'), { recursive: true });
 
 fs.writeFileSync(
   path.join(server, 'index.js'),

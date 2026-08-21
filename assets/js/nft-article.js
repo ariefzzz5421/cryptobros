@@ -4,7 +4,7 @@
    above the headline, then thesis, why it moved, the factors behind it, the
    floor chart, and the dated triggers. */
 
-import { NFT_BY_SLUG, FLOOR_THRESHOLD_ETH } from './nft-config.js';
+import { NFT_BY_SLUG, HISTORICAL_RULE, nftMetrics, qualificationLabel } from './nft-config.js';
 import { fetchNftFloors, fmtEth, fmtResearchDate } from './nft-data.js';
 import { renderFloorChart } from './nft-chart.js';
 import { brandedSourceLink } from './source-brands.js';
@@ -28,22 +28,25 @@ function metaCard(label, value, emphasis = false) {
 }
 
 function renderMeta() {
-  const floor = live?.floorNative;
+  const metrics = nftMetrics(item, live);
+  const floor = metrics.currentFloorEth;
   $('docMeta').replaceChildren(
     metaCard('Launch', fmtResearchDate(item.launch)),
     metaCard('Mint price', item.mint),
     metaCard('Supply', fmtNum(item.supply)),
     metaCard('Peak floor', item.peakFloor?.label || 'Not sourced'),
-    metaCard('Live floor', Number.isFinite(floor) ? fmtEth(floor) : 'Unavailable', true),
+    /* Lifetime volume is the second half of the inclusion rule, so it sits in
+       the masthead beside the peak floor rather than being inferred. */
+    metaCard('Lifetime volume', Number.isFinite(metrics.lifetimeVolumeEth)
+      ? fmtEth(metrics.lifetimeVolumeEth, 0) : 'Unavailable'),
+    metaCard('Current floor', Number.isFinite(floor) ? fmtEth(floor) : 'Unavailable', true),
   );
 
   const snapshot = $('liveSnapshot');
   if (Number.isFinite(floor)) {
     snapshot.replaceChildren(
-      el('span', { class: `nft-flag${floor >= FLOOR_THRESHOLD_ETH ? ' is-live' : ''}` },
-        floor >= FLOOR_THRESHOLD_ETH
-          ? `Above the ${FLOOR_THRESHOLD_ETH} ETH research threshold`
-          : `Below the ${FLOOR_THRESHOLD_ETH} ETH research threshold today`),
+      el('span', { class: `nft-flag is-${metrics.qualifiesHistoricalRule}${metrics.qualifiesHistoricalRule === 'qualified' ? ' is-live' : ''}` },
+        qualificationLabel(metrics)),
       el('span', { class: 'nft-flag' },
         `${fmtEth(floor)}${Number.isFinite(live.floorUsd) ? ` · ${fmtUsd(live.floorUsd, 0)}` : ''}`),
       Number.isFinite(live.floorChange24h)
@@ -62,8 +65,9 @@ function renderMeta() {
     );
   } else {
     snapshot.replaceChildren(
+      el('span', { class: `nft-flag is-${metrics.qualifiesHistoricalRule}` }, qualificationLabel(metrics)),
       el('span', { class: 'nft-flag' },
-        `Documented above the ${FLOOR_THRESHOLD_ETH} ETH threshold · live floor unavailable right now`),
+        `Historical rule: ${HISTORICAL_RULE.summary} · current floor unavailable right now`),
     );
   }
 }

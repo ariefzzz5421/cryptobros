@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NFT Collections Above 0.5 ETH — Floor Breakout Research</title>
-<meta name="description" content="Sourced research on the most successful NFT launches ever: launch dates, mint prices, documented peak floors, live floor prices, and what triggered each run. Only collections with a documented floor above 0.5 ETH.">
+<title>NFT History — Peak Floor and Lifetime Volume Research</title>
+<meta name="description" content="Historical NFT research: launch dates, mint prices, documented peak floors, lifetime trading volume, current floors, and what triggered each run. A collection qualifies on a documented peak floor of 0.1 ETH or more together with lifetime volume of 25 ETH or more.">
 <link rel="stylesheet" href="/assets/css/style.css">
 <link rel="icon" type="image/png" href="/assets/img/brand/crypto-bros-favicon.png">
 </head>
@@ -22,26 +22,28 @@
 <main class="wrap">
   <section class="route-hero cases-hero">
     <div>
-      <p class="eyebrow">NFT research · floor threshold <span id="thresholdValue">0.5 ETH</span></p>
-      <h2>The launches that broke 0.5 ETH</h2>
-      <p>Every collection here has a publicly documented floor price above the threshold. Each case opens as an article with its collection logo, thesis, reasons behind the move, a floor chart, and dated triggers. Live floors come from the CoinGecko NFT API; sourced history is linked per claim.</p>
+      <p class="eyebrow">NFT history · <span data-rule-summary>Peak floor ≥ 0.1 ETH AND lifetime volume ≥ 25 ETH</span></p>
+      <h2>NFT history</h2>
+      <p>Historical inclusion: a documented peak floor of <strong>0.1 ETH or more</strong> together with documented lifetime trading volume of <strong>25 ETH or more</strong>. Both conditions are required. The test is the peak a collection reached, not where its floor sits today — a collection that once met the threshold stays a historical qualifier.</p>
       <p class="hero-meta">Research cutoff <strong id="researchCutoff">—</strong></p>
     </div>
     <div class="hero-kpis">
-      <article><span>Collections researched</span><strong id="kpiCollections">—</strong><small>documented floor above the threshold</small></article>
-      <article><span>Above the line now</span><strong id="kpiAbove">—</strong><small id="kpiAboveSub">checking live floors</small></article>
-      <article><span>Live collection cap</span><strong id="kpiMcap">—</strong><small>sum of the resolved collections</small></article>
+      <article><span>Collections qualified</span><strong id="kpiQualified">—</strong><small id="kpiQualifiedSub">checking both conditions</small></article>
+      <article><span>Combined lifetime volume</span><strong id="kpiVolume">—</strong><small id="kpiVolumeSub">where a source is available</small></article>
+      <article><span>Highest peak floor</span><strong id="kpiPeak">—</strong><small>documented peak across the set</small></article>
+      <article><span>Above 0.1 ETH today</span><strong id="kpiAbove">—</strong><small id="kpiAboveSub">checking live floors</small></article>
     </div>
   </section>
 
-  <p class="verified-line"><span class="dot"></span>Inclusion rule: a collection qualifies when its floor is publicly documented above <span class="num">0.5 ETH</span>. Peak floors are only stated where a single figure is sourced — otherwise the page says so.</p>
+  <p class="verified-line"><span class="dot"></span><span>Inclusion rule: <strong>documented peak floor ≥ 0.1 ETH</strong> <em>and</em> <strong>documented lifetime volume ≥ 25 ETH</strong>. Current floor, peak floor and lifetime volume are stored and shown separately — a current floor is never read as a peak, and a 24h volume is never read as a lifetime one.</span></p>
 
   <section class="panel" id="collections">
     <div class="panel-head">
       <div>
         <p class="eyebrow">Case set</p>
-        <h2>Collections, sorted by live floor</h2>
-        <p class="panel-sub">Live floor, sourced peak floor, and the 24h floor move. Collections the upstream cannot resolve keep their sourced record and show the live value as unavailable.</p>
+        <h2>Collections, sorted by documented peak floor</h2>
+        <p class="panel-sub">Current floor, documented peak floor, lifetime volume and 24h volume, each labelled with where it came from. Collections the upstream cannot resolve keep their sourced record and show the live value as unavailable.</p>
+        <p class="panel-sub" id="providerState">Checking data providers…</p>
       </div>
     </div>
     <div class="nft-grid" id="nftGrid"><div class="panel-loading"><span class="spinner"></span> Loading collections…</div></div>
@@ -57,10 +59,12 @@
   <details class="panel method-disclosure">
     <summary>Inclusion method</summary>
     <ol>
-      <li>The collection has a publicly documented floor price above 0.5 ETH.</li>
+      <li>The collection has a documented peak floor of 0.1 ETH or more <em>and</em> documented lifetime trading volume of 25 ETH or more. Both are required; either alone is not enough.</li>
+      <li>Lifetime volume means cumulative collection trading volume, not a rolling window. It is read from the OpenSea V2 collection stats endpoint through a server-side provider. Where no key is configured it is reported as unavailable and the collection's qualification stays pending — a 24h volume is never substituted for it.</li>
+      <li>The peak-floor condition is historical. A collection that once met it remains a qualifier even if today's floor is lower.</li>
       <li>Launch date, mint price, and supply are attributable to the project or to a publication, and are shown at the granularity the source supports — a month stays a month.</li>
       <li>Peak floor is stated only where a single figure is sourced. Where it is not, the page shows the sourced high-water event instead of a number.</li>
-      <li>Live floors come from the CoinGecko NFT collections API and are never mixed with historical figures without a label.</li>
+      <li>Live floors come from the CoinGecko NFT collections API and OpenSea, and are never mixed with historical figures without a label.</li>
     </ol>
   </details>
 

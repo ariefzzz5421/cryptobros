@@ -1,6 +1,7 @@
 import { fmtClock, fmtUsd, el } from './utils.js';
 import { tokenDetailHref } from './token-registry.js';
 import { brandedSourceLink } from './source-brands.js';
+import { rankBoard, rankCard } from './ranking-board.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -76,6 +77,57 @@ function tokenRow(launchpad, project, index) {
   );
 }
 
+/* The phone presentation of the same row. Market cap and 24h volume are what
+   the page exists to show, so they are visible without any interaction; chain
+   and platform ratio follow; contract, provenance and the chart link — the
+   evidence a reader opens deliberately — sit behind a disclosure. */
+function tokenCard(launchpad, project, index) {
+  const detailUrl = tokenDetailHref({ ...project, coingeckoId: project.id });
+  const platformSymbol = launchpad.nativeToken?.symbol;
+  const comparison = project.platformComparison;
+  const ratio = !platformSymbol || !comparison
+    ? 'N/A'
+    : comparison.direction === 'platform-larger'
+      ? `1 : ${comparison.platformToProjectMultiple.toFixed(2)}`
+      : `${comparison.projectToPlatformMultiple.toFixed(2)} : 1`;
+
+  return rankCard({
+    rank: String(index + 1),
+    logo: el('img', {
+      class: 'row-logo', src: project.image || '/assets/img/brand/crypto-bros-mark.webp', alt: '',
+      width: '30', height: '30', loading: 'lazy', decoding: 'async',
+    }),
+    title: project.name,
+    subtitle: `${project.sym} · ${project.chain}`,
+    href: detailUrl,
+    metrics: [
+      { label: 'Market cap', value: fmtUsd(project.mcap), note: project.marketSource || null },
+      { label: '24h volume', value: fmtUsd(project.vol) },
+      {
+        label: platformSymbol ? `Project : ${platformSymbol}` : 'Project : platform',
+        value: ratio,
+      },
+    ],
+    detailsLabel: 'Contract and provenance',
+    details: [
+      { label: 'Chain', value: project.chain },
+      { label: 'Contract', value: el('code', { class: 'contract-cell' }, project.contract) },
+      {
+        label: 'Provenance',
+        value: el('a', {
+          class: 'provenance-badge', href: project.launchpadSource, target: '_blank', rel: 'noreferrer',
+        }, 'Verified launch source'),
+      },
+      {
+        label: 'Chart',
+        value: project.dexScreenerUrl
+          ? el('a', { href: project.dexScreenerUrl, target: '_blank', rel: 'noreferrer' }, 'DEX Screener')
+          : el('span', { class: 'muted' }, 'Unavailable'),
+      },
+    ],
+  });
+}
+
 function projectsTable(launchpad) {
   if (!launchpad.projects.length) {
     return el('p', { class: 'empty-state' },
@@ -83,18 +135,22 @@ function projectsTable(launchpad) {
   }
   const table = el('table', { class: 'data-table launchpad-token-table' });
   table.append(el('thead', {}, el('tr', {},
-    el('th', {}, '#'),
-    el('th', {}, 'Token'),
-    el('th', { class: 'r' }, 'Market cap'),
-    el('th', { class: 'r' }, '24h volume'),
-    el('th', {}, 'Contract'),
-    el('th', {}, 'Chain'),
-    el('th', {}, 'Provenance'),
-    el('th', {}, 'Project : platform'),
-    el('th', { class: 'r' }, 'Chart'),
+    el('th', { scope: 'col' }, '#'),
+    el('th', { scope: 'col' }, 'Token'),
+    el('th', { class: 'r', scope: 'col' }, 'Market cap'),
+    el('th', { class: 'r', scope: 'col' }, '24h volume'),
+    el('th', { scope: 'col' }, 'Contract'),
+    el('th', { scope: 'col' }, 'Chain'),
+    el('th', { scope: 'col' }, 'Provenance'),
+    el('th', { scope: 'col' }, 'Project : platform'),
+    el('th', { class: 'r', scope: 'col' }, 'Chart'),
   )));
   table.append(el('tbody', {}, ...launchpad.projects.map((project, index) => tokenRow(launchpad, project, index))));
-  return el('div', { class: 'table-scroll' }, table);
+  return rankBoard({
+    table,
+    cards: launchpad.projects.map((project, index) => tokenCard(launchpad, project, index)),
+    label: `Tokens launched on ${launchpad.name}`,
+  });
 }
 
 function launchpadCard(launchpad, fetchedAt) {
@@ -109,7 +165,7 @@ function launchpadCard(launchpad, fetchedAt) {
         isRanked ? String(launchpad.rank).padStart(2, '0') : 'TRACKED'),
       el('img', {
         class: 'platform-logo', src: launchpad.logo, alt: `${launchpad.name} logo`,
-        width: '48', height: '48', loading: 'lazy', decoding: 'async',
+        width: '54', height: '54', loading: 'lazy', decoding: 'async',
         onerror: (event) => { event.currentTarget.src = '/assets/img/brand/crypto-bros-mark.webp'; },
       }),
       el('div', { class: 'launchpad-card-title' },

@@ -63,6 +63,15 @@ export const ROUTE_COLUMNS = [
         icon: 'M6 3h9l4 4v14H6zM15 3v4h4M9 12h7M9 16h7',
       },
       {
+        href: '/airdrops/',
+        label: 'Airdrops',
+        labelId: 'Airdrop',
+        note: 'Historical distributions & wallet data',
+        noteId: 'Distribusi historis & data wallet',
+        /* a parachute — tokens dropped to a wide set of wallets */
+        icon: 'M12 3a8 8 0 0 0-8 8h16a8 8 0 0 0-8-8zM4 11l5 4M20 11l-5 4M12 3v12M9 15h6l-1.5 6h-3z',
+      },
+      {
         href: '/2026-memecoins/',
         label: 'Breakouts',
         labelId: 'Memecoin 2026',
@@ -75,8 +84,8 @@ export const ROUTE_COLUMNS = [
         href: '/nft/',
         label: 'NFT history',
         labelId: 'Sejarah NFT',
-        note: 'Collections whose floor broke 0.5 ETH',
-        noteId: 'Koleksi yang menembus floor 0,5 ETH',
+        note: 'Peak floor ≥ 0.1 ETH and ≥ 25 ETH volume',
+        noteId: 'Floor puncak ≥ 0,1 ETH dan volume ≥ 25 ETH',
         /* ETH-style diamond */
         icon: 'M12 2 5 12l7 4 7-4zM5 14l7 8 7-8-7 4z',
       },
