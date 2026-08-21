@@ -4291,6 +4291,13 @@ a.rank-card-title::after {
 /* Hidden in the header from the first paint, so the shell's move into the
    footer costs no reflow and the mobile header is brand + theme + menu only. */
 .site-head .status-bar { display: none; }
+
+/* The footer row now carries a second item, so it has to be able to wrap and
+   its children have to be allowed to shrink — flex items default to
+   min-width: auto, which pushed the status line past the right edge at 768px. */
+.site-foot { flex-wrap: wrap; gap: var(--space-2) var(--space-4); }
+.site-foot > * { min-width: 0; }
+.site-foot p { overflow-wrap: anywhere; }
 /* Host for a ranking board: the board supplies its own scroll region, so the
    host must not be one as well. */
 .rank-board-host { min-width: 0; }
@@ -4505,3 +4512,18 @@ a.rank-card-title::after {
 .nft-flag.is-qualified { border-color: var(--good); }
 .nft-flag.is-pending { border-style: dashed; color: var(--muted); }
 .nft-flag.is-excluded { border-color: var(--warn); }
+
+/* A panel head is a flex row, and flex items default to min-width: auto, so a
+   segmented control wider than the column pushed the panel past the viewport
+   instead of wrapping. Let both sides shrink, and let a long control wrap onto
+   a second row rather than run off the edge. */
+.panel-head > * { min-width: 0; max-width: 100%; }
+.seg { max-width: 100%; flex-wrap: wrap; }
+.seg-btn { min-width: 0; min-height: 44px; }
+
+@media (max-width: 40rem) {
+  /* Four ranking metrics fit as two rows of two on a phone; a horizontal
+     scroller would hide half of them behind a gesture. */
+  .seg { display: flex; width: 100%; }
+  .seg-btn { flex: 1 1 45%; }
+}
