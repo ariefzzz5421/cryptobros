@@ -158,14 +158,12 @@ export const ALL_TIME_AIRDROP_TOP_30 = rows
   .slice(0, 30)
   .map((item, index) => ({ ...item, rank: index + 1 }));
 
+/* Reuse repo-native token art where it already exists. For the projects whose
+   artwork is not yet stored in the repository, the project favicon is used and
+   a text fallback is rendered if that request fails. This avoids broken logo
+   cells while keeping the page usable offline after the native assets load. */
 const LOCAL_LOGOS = new Map(Object.entries({
-  UNI: '/assets/img/airdrops/uniswap.svg',
-  APE: '/assets/img/airdrops/apecoin.svg',
-  ARB: '/assets/img/airdrops/arbitrum.svg',
-  ENS: '/assets/img/airdrops/ens.svg',
-  HYPE: '/assets/img/airdrops/hyperliquid.svg',
-  TIA: '/assets/img/airdrops/celestia.svg',
-  '1INCH': '/assets/img/airdrops/1inch.svg',
+  HYPE: '/assets/img/coins/majors/hype.png',
   BONK: '/assets/img/coins/bonk.jpg',
   PENGU: '/assets/img/coins/pengu.png',
 }));
