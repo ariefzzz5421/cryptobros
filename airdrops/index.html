@@ -4,12 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Airdrop Cases — Historical Distribution Research</title>
-<meta name="description" content="Historical airdrop research: who received the tokens, how much value was distributed on the day, why each distribution worked, and what happened afterwards. Distribution value and peak value are measured and labelled separately.">
+<meta name="description" content="Historical airdrop research with a sourced top-30 leaderboard, project logos, distribution-day valuations, recipient counts, and detailed case studies.">
 <link rel="stylesheet" href="/assets/css/style.css">
+<link rel="stylesheet" href="/assets/css/airdrops-v2.css">
 <link rel="icon" type="image/png" href="/assets/img/brand/crypto-bros-favicon.png">
 </head>
 <body>
-<a class="skip" href="#airdropRanking">Skip to the airdrop ranking</a>
+<a class="skip" href="#airdropTop30">Skip to the airdrop ranking</a>
 <header class="site-head">
   <div class="wrap head-inner">
     <a class="brand brand-link" href="/"><img class="brand-mark" src="/assets/img/brand/crypto-bros-mark.webp" alt="" width="44" height="44" decoding="async"><div><h1>Crypto Bros</h1><p class="brand-sub">Sourced airdrop distribution research</p></div></a>
@@ -22,25 +23,44 @@
 <main class="wrap">
   <section class="route-hero cases-hero">
     <div>
-      <p class="eyebrow">Airdrop research · value at distribution</p>
+      <p class="eyebrow">Airdrop intelligence · historical distributions</p>
       <h2>Airdrop cases</h2>
-      <p>Who received the tokens, how much value was distributed, why the distribution worked, and what happened afterwards.</p>
+      <p>Compare the largest historical token distributions, then open the deeper cases to inspect recipients, launch-day value, eligibility logic, and what happened afterwards.</p>
       <p class="hero-meta">Research cutoff <strong id="researchCutoff">—</strong></p>
     </div>
     <div class="hero-kpis">
-      <article><span>Airdrops researched</span><strong id="kpiCases">—</strong><small id="kpiCasesSub">candidate pool screened</small></article>
-      <article><span>Total value distributed</span><strong id="kpiValue">—</strong><small>at sourced distribution-day prices</small></article>
-      <article><span>Total recipient wallets</span><strong id="kpiWallets">—</strong><small id="kpiWalletsSub">where a count was published</small></article>
-      <article><span>Largest distribution</span><strong id="kpiLargest">—</strong><small id="kpiLargestSub">by value at distribution</small></article>
+      <article><span>Top leaderboard</span><strong>30</strong><small>ranked historical airdrop events</small></article>
+      <article><span>Airdrops deeply researched</span><strong id="kpiCases">—</strong><small id="kpiCasesSub">candidate pool screened</small></article>
+      <article><span>Total launch-day value</span><strong id="kpiValue">—</strong><small>strict sourced case set only</small></article>
+      <article><span>Largest launch-day case</span><strong id="kpiLargest">—</strong><small id="kpiLargestSub">by value at distribution</small></article>
     </div>
   </section>
 
-  <p class="verified-line"><span class="dot"></span><span>Ranking metric: <strong>tokens actually distributed × a sourced distribution-day price</strong>. Peak value — the same tokens at the token’s all-time high — is a separate measurement and is never presented as value distributed at launch.</span></p>
+  <section class="panel airdrop-top30-panel" id="airdropTop30">
+    <div class="airdrop-top30-head">
+      <div>
+        <p class="eyebrow">All-time leaderboard · research cutoff 21 Aug 2026</p>
+        <div class="airdrop-top30-title-row">
+          <h2>Top 30 airdrop events</h2>
+          <span class="airdrop-method-pill">Peak value of distributed allocation</span>
+        </div>
+        <p class="airdrop-top30-summary">This broad historical board values the tokens allocated to each airdrop at the token's ATH. It is useful for comparing the maximum economic size of distributions across cycles. It is deliberately separate from the stricter launch-day ranking below.</p>
+      </div>
+      <div class="airdrop-top30-controls" id="top30Controls" aria-label="Filter all-time airdrops"></div>
+    </div>
+    <div id="top30Board"><div class="panel-loading"><span class="spinner"></span> Building top-30 board…</div></div>
+    <div class="airdrop-top30-foot">
+      <span>2020–2023 legacy rows use CoinGecko's historical table. Large 2024–2025 additions are reconstructed from disclosed allocations and token ATH prices. Round-specific airdrops remain separate events.</span>
+      <a href="https://www.coingecko.com/research/publications/biggest-crypto-airdrops" target="_blank" rel="noreferrer">Base historical dataset ↗</a>
+    </div>
+  </section>
+
+  <p class="verified-line"><span class="dot"></span><span>The next ranking uses a different metric: <strong>tokens actually distributed × a sourced distribution-day price</strong>. Peak value and launch-day value are never substituted for each other.</span></p>
 
   <section class="panel" id="airdropRanking">
     <div class="panel-head">
       <div>
-        <p class="eyebrow">Ranking</p>
+        <p class="eyebrow">Deep-case ranking</p>
         <h2 id="rankingTitle">Ranked by value at distribution</h2>
         <p class="panel-sub" id="rankingNote">Tokens distributed × a sourced distribution-day price.</p>
       </div>
@@ -65,14 +85,14 @@
   <section class="panel doc-section">
     <p class="eyebrow">Candidate pool</p>
     <h2>What was screened, and what was left out</h2>
-    <p class="panel-sub">Every project considered for this set. A candidate is only published as a case when its distribution figures could be attributed to a source.</p>
+    <p class="panel-sub">Every project considered for the deep-case set. A candidate is only published as a case when its distribution figures could be attributed to a source.</p>
     <ul class="candidate-pool" id="candidatePool"></ul>
   </section>
 
-  <p class="risk-line">⚠ A distribution-day value is what recipients received, not what they realised. Most recipients in the cases below sold quickly, and a peak-value figure was never available to anyone who did. Historical distributions are not a guide to future ones.</p>
+  <p class="risk-line">⚠ Peak allocation value is a historical comparison, not money every recipient could have realised. Distribution-day value is a separate measurement. Historical airdrops are not a guide to future returns.</p>
 </main>
 
-<footer class="site-foot wrap"><p>Sources are linked per claim on every case · <span id="updatedAt">—</span></p></footer>
+<footer class="site-foot wrap"><p>Sources are linked per claim and per leaderboard reconstruction · <span id="updatedAt">—</span></p></footer>
 <script type="module" src="/assets/js/theme.js"></script>
 <script type="module" src="/assets/js/airdrops-page.js"></script>
 </body>
