@@ -1,0 +1,294 @@
+/* Airdrop leaderboard v2 -------------------------------------------------
+   A compact, logo-forward historical board that sits above the deeper
+   distribution-day case research. It intentionally has its own stylesheet so
+   the rest of Crypto Bros keeps the existing design system untouched. */
+
+.airdrop-top30-panel {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 88% 4%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 34%),
+    linear-gradient(145deg, color-mix(in srgb, var(--surface) 96%, var(--accent)), var(--surface));
+}
+
+.airdrop-top30-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 24px;
+  align-items: end;
+  margin-bottom: 18px;
+}
+
+.airdrop-top30-title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.airdrop-method-pill,
+.airdrop-round-pill,
+.airdrop-source-kind {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 3px 8px;
+  border: 1px solid color-mix(in srgb, var(--accent) 38%, var(--border));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 10%, var(--plane));
+  color: var(--ink-2);
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+
+.airdrop-round-pill {
+  border-color: var(--border);
+  background: var(--plane);
+  color: var(--muted);
+}
+
+.airdrop-top30-summary {
+  max-width: 850px;
+  margin: 7px 0 0;
+  color: var(--ink-2);
+  line-height: 1.65;
+}
+
+.airdrop-top30-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.airdrop-filter-btn {
+  min-height: 34px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--plane);
+  color: var(--muted);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.airdrop-filter-btn:hover,
+.airdrop-filter-btn:focus-visible,
+.airdrop-filter-btn.is-on {
+  border-color: color-mix(in srgb, var(--accent) 52%, var(--border));
+  color: var(--ink);
+  background: color-mix(in srgb, var(--accent) 12%, var(--plane));
+}
+
+.airdrop-logo {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--surface-raised) 86%, var(--accent));
+  box-shadow: inset 0 0 0 1px var(--ink-03);
+}
+
+.airdrop-logo.is-sm {
+  width: 32px;
+  height: 32px;
+  flex-basis: 32px;
+  border-radius: 9px;
+}
+
+.airdrop-logo img {
+  display: block;
+  width: 78%;
+  height: 78%;
+  object-fit: contain;
+}
+
+.airdrop-logo-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--ink-2);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: .03em;
+}
+
+.airdrop-logo img + .airdrop-logo-fallback { visibility: hidden; }
+.airdrop-logo.is-fallback img { display: none; }
+.airdrop-logo.is-fallback .airdrop-logo-fallback { visibility: visible; }
+
+.airdrop-project-cell,
+.airdrop-card-project {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 11px;
+}
+
+.airdrop-project-copy {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.airdrop-project-copy strong,
+.airdrop-project-copy a {
+  color: var(--ink);
+  font-weight: 680;
+  text-decoration: none;
+}
+
+.airdrop-project-copy a:hover,
+.airdrop-project-copy a:focus-visible { color: var(--accent); }
+.airdrop-project-copy small { color: var(--muted); }
+
+.airdrop-top30-table td { vertical-align: middle; }
+.airdrop-top30-table .rank-cell {
+  width: 48px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.airdrop-top30-table tr:nth-child(-n+3) .rank-cell {
+  color: var(--ink);
+  font-weight: 760;
+}
+
+.airdrop-value-main {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 720;
+  white-space: nowrap;
+}
+
+.airdrop-formula {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.35;
+  white-space: normal;
+}
+
+.airdrop-source-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  min-height: 32px;
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--ink-2);
+  background: var(--plane);
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.airdrop-source-link:hover,
+.airdrop-source-link:focus-visible {
+  color: var(--ink);
+  border-color: var(--accent);
+}
+
+.airdrop-top30-cards {
+  display: none;
+  gap: 10px;
+}
+
+.airdrop-top30-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--plane);
+}
+
+.airdrop-top30-card .rank-chip {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: var(--ink-04);
+  color: var(--muted);
+  font-weight: 760;
+}
+
+.airdrop-top30-card .airdrop-card-project { grid-column: 2; }
+.airdrop-top30-card .airdrop-card-value {
+  grid-column: 3;
+  grid-row: 1;
+  text-align: right;
+}
+
+.airdrop-top30-card .airdrop-card-meta {
+  grid-column: 2 / -1;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.airdrop-top30-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: flex-start;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.airdrop-top30-foot a { color: var(--ink-2); }
+
+/* Existing case board: add the same icon language without changing data. */
+.airdrop-table .airdrop-project-cell .table-link { min-width: 0; }
+.airdrop-card-head.has-logo {
+  align-items: center;
+  gap: 12px;
+}
+.airdrop-card-head.has-logo > .airdrop-project-copy { flex: 1 1 auto; }
+
+@media (max-width: 900px) {
+  .airdrop-top30-head { grid-template-columns: 1fr; align-items: start; }
+  .airdrop-top30-controls { justify-content: flex-start; }
+}
+
+@media (max-width: 760px) {
+  .airdrop-top30-panel .table-scroll { display: none; }
+  .airdrop-top30-cards { display: grid; }
+  .airdrop-top30-foot { flex-direction: column; gap: 8px; }
+}
+
+@media (max-width: 520px) {
+  .airdrop-logo { width: 38px; height: 38px; flex-basis: 38px; }
+  .airdrop-top30-card {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+  }
+  .airdrop-top30-card .airdrop-card-value {
+    grid-column: 2;
+    grid-row: auto;
+    text-align: left;
+  }
+  .airdrop-top30-card .airdrop-card-meta { grid-column: 2; }
+}
