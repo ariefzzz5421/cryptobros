@@ -3,6 +3,7 @@ import { initMotion } from './motion.js';
 import { initAppShell } from './app-shell.js';
 import { hydrateSourceLinks } from './source-brands.js';
 import { initI18n, t } from './i18n.js';
+import { initUiUpgrades } from './ui-upgrades.js';
 
 const STORAGE_KEY = 'heatmap-volume-theme';
 const root = document.documentElement;
@@ -81,6 +82,7 @@ function initSharedUi() {
   initAppShell();
   hydrateSourceLinks();
   initMotion();
+  initUiUpgrades();
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initSharedUi);
