@@ -95,6 +95,13 @@ function card(item, live) {
       ),
     ),
 
+    /* Empty on purpose: the global UI layer turns this into the supplied
+       research-enter artwork without ever flashing a text CTA. */
+    el('a', {
+      class: 'nft-read-link',
+      href: `/nft/${item.slug}/`,
+      'aria-label': `Open ${item.name} research`,
+    }),
     el('span', {
       class: `nft-flag is-${metrics.qualifiesHistoricalRule}${metrics.qualifiesHistoricalRule === 'qualified' ? ' is-live' : ''}`,
     }, qualificationLabel(metrics)),
