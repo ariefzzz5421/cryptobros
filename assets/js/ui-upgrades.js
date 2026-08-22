@@ -1,17 +1,36 @@
 /* UI upgrades shared by every Crypto Bros route.
    Uiverse references:
    - switch: Bodyhc / light-lion-39 (MIT)
-   - loader: xXJollyHAKERXx / lucky-falcon-75 (MIT)
-   The markup is adapted to the site's existing button semantics and route shell. */
+   - site search input: OnlyCodeChannel / ugly-penguin-43 (MIT)
+   - route loader: andrew-manzyk / fast-vampirebat-53 (MIT)
+   Markup and motion are adapted to the site's existing accessible shell. */
 
 const STYLE_ID = 'crypto-bros-ui-upgrades';
 const GLOBE_STYLE_ID = 'crypto-bros-dashboard-globe';
+const RESEARCH_ICON = '/assets/img/ui/research-enter.png';
 
 const CHAIN_LOGOS = {
   Arbitrum: { src: '/assets/img/chains/arbitrum.png', alt: 'Arbitrum logo' },
   MegaETH: { src: '/assets/img/chains/megaeth.png', alt: 'MegaETH logo' },
   'X Layer': { src: '/assets/img/chains/xlayer.png', alt: 'X Layer logo' },
 };
+
+const SEARCH_SEED = [
+  { title: 'Dashboard', href: '/', type: 'Live market', keywords: 'crypto volume heatmap trading hours memecoin' },
+  { title: 'Maps', href: '/maps/', type: 'Live market', keywords: '3d globe jurisdiction exchange volume' },
+  { title: 'Sentiment', href: '/sentiment/', type: 'Live market', keywords: 'platform volume revenue chains protocol' },
+  { title: 'Launchpads', href: '/launchpads/', type: 'Live market', keywords: 'launchpad fees tokens' },
+  { title: 'Memecoin cases', href: '/cases/', type: 'Research', keywords: 'case study token dossier lore' },
+  { title: 'Airdrops', href: '/airdrops/', type: 'Research', keywords: 'airdrop distribution wallets allocation' },
+  { title: '2026 Breakouts', href: '/2026-memecoins/', type: 'Research', keywords: '100m market cap threshold event memecoin' },
+  { title: 'NFT history', href: '/nft/', type: 'Research', keywords: 'nft floor volume collection history' },
+  { title: 'NFT 2026', href: '/nft-2026/', type: 'Research', keywords: 'nft launches 2026 floor volume' },
+  { title: 'The White Whale', href: '/2026-memecoins/the-white-whale/', type: 'Threshold research', keywords: 'whitewhale solana 100m' },
+  { title: 'Nietzschean Penguin', href: '/2026-memecoins/nietzschean-penguin/', type: 'Threshold research', keywords: 'penguin solana 100m' },
+  { title: 'The Black Bull', href: '/2026-memecoins/the-black-bull/', type: 'Threshold research', keywords: 'ansem black bull solana 100m' },
+  { title: 'Cash Cat', href: '/2026-memecoins/cash-cat/', type: 'Threshold research', keywords: 'cashcat robinhood chain 100m' },
+  { title: 'Troll', href: '/2026-memecoins/troll/', type: 'Threshold research', keywords: 'troll memecoin 100m' },
+];
 
 function ensureStylesheet(id, href) {
   if (document.getElementById(id) || document.querySelector(`link[href="${href}"]`)) return;
@@ -65,9 +84,7 @@ function enhanceDashboardGlobe() {
   }
 
   const subtitle = panel.querySelector('.panel-sub');
-  if (subtitle) {
-    subtitle.textContent = 'Reported 24h exchange volume grouped by legal jurisdiction · drag to rotate, scroll or pinch to zoom.';
-  }
+  if (subtitle) subtitle.textContent = 'Reported 24h exchange volume grouped by legal jurisdiction · drag to rotate, scroll or pinch to zoom.';
 
   if (!holder.querySelector('.globe-hud')) {
     const hud = document.createElement('div');
@@ -124,7 +141,8 @@ function patchChainTable() {
     }
 
     const image = cell.querySelector('img.chain-logo');
-    if (image) {
+    if (image && image.dataset.logoErrorBound !== 'true') {
+      image.dataset.logoErrorBound = 'true';
       image.width = 30;
       image.height = 30;
       image.addEventListener('error', () => {
@@ -148,8 +166,244 @@ function observeChainTable() {
   observer.observe(holder, { childList: true, subtree: true });
 }
 
+function cleanSearchLabel(value = '') {
+  return String(value).replace(/\s+/g, ' ').trim();
+}
+
+function collectSiteSearchEntries() {
+  const entries = new Map();
+  const add = (entry) => {
+    if (!entry?.href || !entry?.title) return;
+    let url;
+    try { url = new URL(entry.href, location.origin); } catch { return; }
+    if (url.origin !== location.origin) return;
+    const key = `${url.pathname}${url.search}`;
+    const next = {
+      title: cleanSearchLabel(entry.title),
+      href: key || '/',
+      type: cleanSearchLabel(entry.type || 'Page'),
+      keywords: cleanSearchLabel(entry.keywords || ''),
+    };
+    if (!next.title || next.title.length > 120) return;
+    const previous = entries.get(key);
+    if (!previous || next.title.length < previous.title.length) entries.set(key, next);
+  };
+
+  SEARCH_SEED.forEach(add);
+  document.querySelectorAll('a[href]').forEach((anchor) => {
+    let url;
+    try { url = new URL(anchor.href, location.href); } catch { return; }
+    if (url.origin !== location.origin || url.hash && url.pathname === location.pathname) return;
+    if (/\.(?:png|jpe?g|gif|webp|svg|pdf|zip|json|xml|txt)$/i.test(url.pathname)) return;
+    const card = anchor.closest('.research-card, .breakout-preview-card, .nft-card, .airdrop-card, .case-card');
+    const heading = card?.querySelector('h2, h3, strong, .nft-card-title, .case-card-name');
+    const label = cleanSearchLabel(
+      anchor.getAttribute('aria-label')
+      || heading?.textContent
+      || anchor.querySelector('strong, h2, h3')?.textContent
+      || anchor.textContent,
+    );
+    if (!label || label.length < 2) return;
+    const section = anchor.closest('main')?.querySelector('.eyebrow')?.textContent || '';
+    add({
+      title: label.replace(/^(open|read|view)\s+(research|dossier|case|detail)\s*/i, ''),
+      href: `${url.pathname}${url.search}`,
+      type: card ? 'Research' : 'Page',
+      keywords: `${section} ${card?.textContent || ''}`.slice(0, 500),
+    });
+  });
+
+  return [...entries.values()];
+}
+
+function searchEntries(entries, query) {
+  const terms = cleanSearchLabel(query).toLowerCase().split(' ').filter(Boolean);
+  if (!terms.length) return entries.slice(0, 8);
+  return entries
+    .map((entry) => {
+      const title = entry.title.toLowerCase();
+      const haystack = `${entry.title} ${entry.type} ${entry.keywords} ${entry.href}`.toLowerCase();
+      if (!terms.every((term) => haystack.includes(term))) return null;
+      let score = 0;
+      terms.forEach((term) => {
+        if (title === term) score += 12;
+        else if (title.startsWith(term)) score += 7;
+        else if (title.includes(term)) score += 4;
+        else score += 1;
+      });
+      return { entry, score };
+    })
+    .filter(Boolean)
+    .sort((a, b) => b.score - a.score || a.entry.title.localeCompare(b.entry.title))
+    .slice(0, 8)
+    .map((item) => item.entry);
+}
+
+function createSearchResult(entry) {
+  const link = document.createElement('a');
+  link.className = 'site-search-result';
+  link.href = entry.href;
+  link.setAttribute('role', 'option');
+  const copy = document.createElement('span');
+  copy.className = 'site-search-result-copy';
+  const title = document.createElement('strong');
+  title.textContent = entry.title;
+  const meta = document.createElement('small');
+  meta.textContent = entry.type;
+  copy.append(title, meta);
+  const arrow = document.createElement('span');
+  arrow.className = 'site-search-result-arrow';
+  arrow.setAttribute('aria-hidden', 'true');
+  arrow.textContent = '↗';
+  link.append(copy, arrow);
+  return link;
+}
+
+function installSiteSearch() {
+  const actions = document.querySelector('.head-actions');
+  if (!actions || actions.querySelector('[data-site-search]')) return;
+
+  const shell = document.createElement('div');
+  shell.className = 'site-search';
+  shell.dataset.siteSearch = '';
+  shell.innerHTML = `
+    <button class="site-search-trigger" type="button" aria-label="Search Crypto Bros" aria-expanded="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4.2 4.2"></path></svg>
+    </button>
+    <div class="site-search-panel" hidden>
+      <div class="site-search-input-wrap">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4.2 4.2"></path></svg>
+        <input class="site-search-input" type="search" inputmode="search" autocomplete="off" spellcheck="false" placeholder="Search research, tokens, pages…" aria-label="Search this site">
+        <kbd>Esc</kbd>
+      </div>
+      <div class="site-search-results" role="listbox" aria-label="Search results"></div>
+    </div>`;
+
+  const theme = actions.querySelector('[data-theme-toggle]');
+  if (theme) theme.before(shell);
+  else actions.prepend(shell);
+
+  const trigger = shell.querySelector('.site-search-trigger');
+  const panel = shell.querySelector('.site-search-panel');
+  const input = shell.querySelector('.site-search-input');
+  const results = shell.querySelector('.site-search-results');
+  let entries = collectSiteSearchEntries();
+
+  const render = () => {
+    const matches = searchEntries(entries, input.value);
+    results.replaceChildren(...matches.map(createSearchResult));
+    if (!matches.length) {
+      const empty = document.createElement('p');
+      empty.className = 'site-search-empty';
+      empty.textContent = 'No matching page';
+      results.append(empty);
+    }
+  };
+
+  const setOpen = (open) => {
+    panel.hidden = !open;
+    trigger.setAttribute('aria-expanded', String(open));
+    shell.classList.toggle('is-open', open);
+    if (open) {
+      entries = collectSiteSearchEntries();
+      render();
+      requestAnimationFrame(() => input.focus());
+    }
+  };
+
+  trigger.addEventListener('click', () => setOpen(panel.hidden));
+  input.addEventListener('input', render);
+  document.addEventListener('pointerdown', (event) => {
+    if (!panel.hidden && !shell.contains(event.target)) setOpen(false);
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !panel.hidden) {
+      setOpen(false);
+      trigger.focus({ preventScroll: true });
+      return;
+    }
+    const typing = event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement || event.target?.isContentEditable;
+    if (event.key === '/' && !typing && !event.metaKey && !event.ctrlKey && !event.altKey) {
+      event.preventDefault();
+      setOpen(true);
+    }
+  });
+}
+
+function researchTitle(card) {
+  return cleanSearchLabel(
+    card.querySelector('h2, h3, .nft-card-title, .case-card-name, .airdrop-project-copy strong, strong')?.textContent
+    || card.getAttribute('aria-label')
+    || 'research',
+  );
+}
+
+function makeResearchIcon() {
+  const image = document.createElement('img');
+  image.className = 'research-enter-icon';
+  image.src = RESEARCH_ICON;
+  image.alt = '';
+  image.width = 64;
+  image.height = 64;
+  image.loading = 'lazy';
+  image.decoding = 'async';
+  return image;
+}
+
+function decorateResearchCard(card) {
+  if (!(card instanceof HTMLElement) || card.dataset.researchEnterReady === 'true') return;
+  const href = card.matches('a[href]') ? card.getAttribute('href') : card.querySelector('a[href]')?.getAttribute('href');
+  if (!href) return;
+
+  card.dataset.researchEnterReady = 'true';
+  card.classList.add('research-card-premium');
+  const title = researchTitle(card);
+  let ctas = [...card.querySelectorAll('.breakout-preview-cta, .case-card-cta, .nft-read-link')];
+
+  if (!ctas.length && card.matches('a[href]')) {
+    const cta = document.createElement('span');
+    cta.className = 'research-enter-cta';
+    cta.setAttribute('aria-hidden', 'true');
+    card.append(cta);
+    ctas = [cta];
+  }
+
+  ctas.forEach((cta) => {
+    cta.classList.add('research-enter-cta');
+    cta.replaceChildren(makeResearchIcon());
+    if (cta.matches('a[href]')) {
+      cta.setAttribute('aria-label', `Open ${title} research`);
+      cta.removeAttribute('aria-hidden');
+    } else {
+      cta.setAttribute('aria-hidden', 'true');
+    }
+  });
+}
+
+function decorateResearchCards(root = document) {
+  const selector = '.breakout-preview-card, .research-card, .nft-card';
+  const cards = [
+    ...(root.matches?.(selector) ? [root] : []),
+    ...(root.querySelectorAll ? root.querySelectorAll(selector) : []),
+  ];
+  cards.forEach(decorateResearchCard);
+}
+
+function observeResearchCards() {
+  decorateResearchCards();
+  const observer = new MutationObserver((records) => {
+    records.forEach((record) => record.addedNodes.forEach((node) => {
+      if (node.nodeType === Node.ELEMENT_NODE) decorateResearchCards(node);
+    }));
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+}
+
 function routeTarget(anchor, event) {
   if (!anchor || anchor.hasAttribute('download') || anchor.dataset.noRouteTransition != null) return null;
+  /* The drawer/sidebar deliberately navigates immediately: the transition is
+     for page content and research entry points, not the navigation chrome. */
+  if (anchor.closest('.primary-nav, [data-nav-panel], .nav-panel')) return null;
   if (anchor.target && anchor.target !== '_self') return null;
   if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return null;
   let url;
@@ -170,14 +424,12 @@ function createRouteTransition() {
   overlay.hidden = true;
   overlay.setAttribute('aria-hidden', 'true');
   overlay.innerHTML = `
-    <div class="falcon-loader-shell" role="status" aria-label="Opening page">
-      <div class="falcon-loader" aria-hidden="true">
-        <span class="falcon-orbit falcon-orbit-a"></span>
-        <span class="falcon-orbit falcon-orbit-b"></span>
-        <span class="falcon-orbit falcon-orbit-c"></span>
-        <span class="falcon-core"></span>
-      </div>
-      <span class="falcon-loader-label">Opening research endpoint</span>
+    <div class="peg-top-loader" role="status" aria-label="Opening page">
+      <span class="peg-top-dot peg-top-dot-1" aria-hidden="true"></span>
+      <span class="peg-top-dot peg-top-dot-2" aria-hidden="true"></span>
+      <span class="peg-top-dot peg-top-dot-3" aria-hidden="true"></span>
+      <span class="peg-top-dot peg-top-dot-4" aria-hidden="true"></span>
+      <span class="peg-top-dot peg-top-dot-5" aria-hidden="true"></span>
     </div>`;
   document.body.append(overlay);
   return overlay;
@@ -211,7 +463,7 @@ function installRouteTransitions() {
     requestAnimationFrame(() => overlay.classList.add('is-visible'));
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    window.setTimeout(() => window.location.assign(url.href), reduced ? 0 : 165);
+    window.setTimeout(() => window.location.assign(url.href), reduced ? 0 : 185);
   });
 }
 
@@ -220,5 +472,7 @@ export function initUiUpgrades() {
   decorateThemeToggle();
   enhanceDashboardGlobe();
   observeChainTable();
+  installSiteSearch();
+  observeResearchCards();
   installRouteTransitions();
 }
