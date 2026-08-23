@@ -7,7 +7,9 @@
 
 const STYLE_ID = 'crypto-bros-ui-upgrades';
 const GLOBE_STYLE_ID = 'crypto-bros-dashboard-globe';
-const RESEARCH_ICON = '/assets/img/ui/research-enter.png';
+/* SVG, not PNG: the previous research-enter.png shipped with a corrupt IDAT
+   chunk and decoded to pixel noise on every research card. */
+const RESEARCH_ICON = '/assets/img/ui/research-enter.svg';
 
 const CHAIN_LOGOS = {
   Arbitrum: { src: '/assets/img/chains/arbitrum.png', alt: 'Arbitrum logo' },

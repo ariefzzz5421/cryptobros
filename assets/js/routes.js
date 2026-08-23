@@ -72,6 +72,15 @@ export const ROUTE_COLUMNS = [
         icon: 'M12 3a8 8 0 0 0-8 8h16a8 8 0 0 0-8-8zM4 11l5 4M20 11l-5 4M12 3v12M9 15h6l-1.5 6h-3z',
       },
       {
+        href: '/neobank/',
+        label: 'NeoBank',
+        labelId: 'NeoBank',
+        note: 'Top 20 digital banks: users, volume, revenue',
+        noteId: 'Top 20 bank digital: pengguna, volume, pendapatan',
+        /* a card over a phone — banking without a branch */
+        icon: 'M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM9 8h6M9 12h6M11 17h2',
+      },
+      {
         href: '/2026-memecoins/',
         label: 'Breakouts',
         labelId: 'Memecoin 2026',

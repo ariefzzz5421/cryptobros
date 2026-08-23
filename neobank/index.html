@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NeoBank — Top 20 Digital Banks by Customers</title>
+<meta name="description" content="Sourced research on the world's twenty largest neobanks: customer accounts, transaction volume, revenue and licensing model, each figure attributed to a source and dated. Unattributed figures are shown as unavailable rather than estimated.">
+<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="icon" type="image/svg+xml" href="/assets/img/brand/crypto-bros-hex.svg">
+<link rel="alternate icon" type="image/png" href="/assets/img/brand/crypto-bros-favicon.png">
+</head>
+<body>
+<a class="skip" href="#neobankRanking">Skip to the neobank ranking</a>
+<header class="site-head">
+  <div class="wrap head-inner">
+    <a class="brand brand-link" href="/"><img class="brand-mark" src="/assets/img/brand/crypto-bros-hex.svg" alt="" width="44" height="44" decoding="async"><div><h1>Crypto Bros</h1><p class="brand-sub">Sourced neobank research</p></div></a>
+    <nav class="primary-nav"></nav>
+    <div class="head-actions"><button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme"><span class="theme-icon theme-icon-sun" aria-hidden="true">☀</span><span class="theme-icon theme-icon-moon" aria-hidden="true">☾</span></button></div>
+  </div>
+  <div class="status-bar wrap"><span class="dot busy" id="statusDot"></span><span id="statusText">Loading neobank research…</span></div>
+</header>
+
+<main class="wrap">
+  <section class="route-hero cases-hero">
+    <div>
+      <p class="eyebrow">Neobank research · ranked by customer accounts</p>
+      <h2>NeoBank</h2>
+      <p>The twenty largest digital banks, with what each one actually reports: customer accounts, transaction volume where it is published, revenue, and whether the bank holds its own licence or rents one.</p>
+      <p class="hero-meta">Research cutoff <strong id="researchCutoff">—</strong></p>
+    </div>
+    <div class="hero-kpis">
+      <article><span>Neobanks researched</span><strong id="kpiCount">—</strong><small id="kpiCountSub">ranked by customer accounts</small></article>
+      <article><span>Combined customers</span><strong id="kpiCustomers">—</strong><small id="kpiCustomersSub">where a count is sourced</small></article>
+      <article><span>Combined revenue</span><strong id="kpiRevenue">—</strong><small id="kpiRevenueSub">USD-reported only</small></article>
+      <article><span>Largest by customers</span><strong id="kpiLargest">—</strong><small id="kpiLargestSub">—</small></article>
+    </div>
+  </section>
+
+  <p class="verified-line"><span class="dot"></span><span>Registered accounts and active customers are different measurements and are never mixed: the basis is stated on every row. Revenue is each company’s own reported top line in its own currency, and a figure this pass could not attribute is shown as <strong>unavailable</strong> rather than estimated.</span></p>
+
+  <section class="panel" id="neobankRanking">
+    <div class="panel-head">
+      <div>
+        <p class="eyebrow">Ranking</p>
+        <h2 id="rankingTitle">Ranked by customer accounts</h2>
+        <p class="panel-sub" id="rankingNote">Reported customer accounts, newest sourced figure first.</p>
+      </div>
+      <div class="seg" role="group" aria-label="Ranking metric" id="rankingControls"></div>
+    </div>
+    <div class="rank-board-host" id="neobankTable"><div class="panel-loading"><span class="spinner"></span> Loading research…</div></div>
+    <p class="note" id="rankingNulls"></p>
+  </section>
+
+  <section class="panel doc-section">
+    <p class="eyebrow">Profiles</p>
+    <h2>Open a neobank</h2>
+    <div class="airdrop-grid" id="neobankGrid"></div>
+  </section>
+
+  <details class="panel method-disclosure">
+    <summary>Research methodology</summary>
+    <ol id="methodList"></ol>
+  </details>
+
+  <p class="risk-line">⚠ A customer count is not a measure of deposits, and revenue is not profit. Several entries here hold no banking licence of their own — deposits sit with a sponsor bank, and the protection that applies is the sponsor’s, not the app’s.</p>
+</main>
+
+<footer class="site-foot wrap"><p>Sources are linked per figure on every row · <span id="updatedAt">—</span></p></footer>
+<script type="module" src="/assets/js/theme.js"></script>
+<script type="module" src="/assets/js/neobank-page.js"></script>
+</body>
+</html>

@@ -5,6 +5,11 @@
 @font-face { font-family: "Geist"; src: url("/assets/fonts/geist-500.ttf") format("truetype"); font-style: normal; font-weight: 500; font-display: swap; }
 @font-face { font-family: "Geist"; src: url("/assets/fonts/geist-600.ttf") format("truetype"); font-style: normal; font-weight: 600; font-display: swap; }
 @font-face { font-family: "Geist"; src: url("/assets/fonts/geist-700.ttf") format("truetype"); font-style: normal; font-weight: 700; font-display: swap; }
+/* Display face for titles. Playfair Display is the editorial/museum serif the
+   brief pointed at; it is self-hosted as a latin woff2 subset alongside Geist
+   rather than pulled from a CDN, so the site keeps its single-origin fonts.
+   It is a variable face, so one file covers 400-900. */
+@font-face { font-family: "Playfair Display"; src: url("/assets/fonts/playfair-display-600.woff2") format("woff2"); font-style: normal; font-weight: 400 900; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 /* ============================================================
    Crypto Bros — market intelligence UI
    Token warna mengikuti palet data-viz tervalidasi.
@@ -120,6 +125,8 @@
   --space-6: 32px;
 
   --font: "Geist", "Segoe UI", sans-serif;
+  /* Titles carry the display serif; everything else stays on Geist. */
+  --font-title: "Playfair Display", "Iowan Old Style", Georgia, serif;
 }
 
 :root[data-theme="light"] {
@@ -4291,6 +4298,13 @@ a.rank-card-title::after {
 /* Hidden in the header from the first paint, so the shell's move into the
    footer costs no reflow and the mobile header is brand + theme + menu only. */
 .site-head .status-bar { display: none; }
+
+/* The footer row now carries a second item, so it has to be able to wrap and
+   its children have to be allowed to shrink — flex items default to
+   min-width: auto, which pushed the status line past the right edge at 768px. */
+.site-foot { flex-wrap: wrap; gap: var(--space-2) var(--space-4); }
+.site-foot > * { min-width: 0; }
+.site-foot p { overflow-wrap: anywhere; }
 /* Host for a ranking board: the board supplies its own scroll region, so the
    host must not be one as well. */
 .rank-board-host { min-width: 0; }
@@ -4505,3 +4519,94 @@ a.rank-card-title::after {
 .nft-flag.is-qualified { border-color: var(--good); }
 .nft-flag.is-pending { border-style: dashed; color: var(--muted); }
 .nft-flag.is-excluded { border-color: var(--warn); }
+
+/* A panel head is a flex row, and flex items default to min-width: auto, so a
+   segmented control wider than the column pushed the panel past the viewport
+   instead of wrapping. Let both sides shrink, and let a long control wrap onto
+   a second row rather than run off the edge. */
+.panel-head > * { min-width: 0; max-width: 100%; }
+.seg { max-width: 100%; flex-wrap: wrap; }
+.seg-btn { min-width: 0; min-height: 44px; }
+
+@media (max-width: 40rem) {
+  /* Four ranking metrics fit as two rows of two on a phone; a horizontal
+     scroller would hide half of them behind a gesture. */
+  .seg { display: flex; width: 100%; }
+  .seg-btn { flex: 1 1 45%; }
+}
+/* ============================================================
+   Display typography — titles in the serif, data in the sans
+   ------------------------------------------------------------
+   The display face is reserved for identity and headline copy. Every number,
+   label, table and control stays on Geist, because a serif's proportional
+   figures undermine the tabular alignment the research tables depend on.
+   ============================================================ */
+
+.brand h1,
+.route-hero h2,
+.doc-title,
+.command-copy h2,
+.panel-head h2,
+.panel > h2,
+.doc-section > h2,
+.airdrop-card-head strong,
+.nft-card-title,
+.case-card-name {
+  font-family: var(--font-title);
+  font-weight: 600;
+  letter-spacing: -0.012em;
+}
+
+/* The serif carries more optical weight at the same size, so the hero and the
+   brand lockup are re-tuned rather than left on the sans metrics. */
+.brand h1 { font-size: 19px; letter-spacing: -0.005em; }
+.route-hero h2 { letter-spacing: -0.02em; line-height: 1.02; }
+.doc-title { letter-spacing: -0.015em; }
+
+/* Numerals never take the display face: tabular alignment beats flourish. */
+.num,
+.kpi-val,
+.evidence-value,
+.valuation-value,
+.flow-value,
+.rank-card-metrics dd,
+.data-table,
+.doc-meta strong { font-family: var(--font); }
+
+@media (max-width: 33.99rem) {
+  .brand h1 { font-size: 16px; }
+}
+
+/* Airdrop case masthead: the project's own mark and its official page, so a
+   case identifies its subject before it starts quoting numbers about it. */
+.airdrop-doc-logo { margin-bottom: var(--space-3); }
+.airdrop-logo.is-doc {
+  display: inline-grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--plane);
+}
+.airdrop-logo.is-doc img { width: 72px; height: 72px; object-fit: contain; padding: 8px; box-sizing: border-box; }
+.airdrop-logo.is-doc .airdrop-logo-fallback { display: none; color: var(--muted); font-size: 15px; font-weight: 700; letter-spacing: .06em; }
+.airdrop-logo.is-doc.is-fallback img { display: none; }
+.airdrop-logo.is-doc.is-fallback .airdrop-logo-fallback { display: block; }
+
+.doc-official { margin-top: var(--space-3); }
+.official-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 6px 13px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  color: var(--seq-hi);
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.official-link:hover, .official-link:focus-visible { border-color: var(--accent); color: var(--ink); }

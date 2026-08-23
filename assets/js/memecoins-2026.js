@@ -53,7 +53,7 @@ function renderCard(event) {
     el('div', { class: 'breakout-preview-main' },
       el('img', {
         class: 'breakout-preview-logo',
-        src: event.current?.image || TOKEN_LOGOS[event.id] || '/assets/img/brand/crypto-bros-mark.webp',
+        src: event.current?.image || TOKEN_LOGOS[event.id] || '/assets/img/brand/crypto-bros-hex.svg',
         alt: `${event.name} logo`,
         width: '56',
         height: '56',

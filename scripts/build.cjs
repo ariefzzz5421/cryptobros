@@ -11,7 +11,7 @@ fs.mkdirSync(client, { recursive: true });
 fs.mkdirSync(server, { recursive: true });
 
 fs.copyFileSync(path.join(root, 'index.html'), path.join(client, 'index.html'));
-for (const directory of ['assets', 'maps', 'sentiment', 'launchpads', 'cases', '2026-memecoins', 'nft', 'nft-2026', 'airdrops']) {
+for (const directory of ['assets', 'maps', 'sentiment', 'launchpads', 'cases', '2026-memecoins', 'nft', 'nft-2026', 'airdrops', 'neobank']) {
   fs.cpSync(path.join(root, directory), path.join(client, directory), { recursive: true });
 }
 fs.copyFileSync(

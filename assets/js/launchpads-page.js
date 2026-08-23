@@ -56,7 +56,7 @@ function tokenRow(launchpad, project, index) {
     el('td', { class: 'muted num' }, String(index + 1)),
     el('td', {}, el('a', { class: 'coin-cell launchpad-token-link', href: detailUrl },
       el('img', {
-        class: 'row-logo', src: project.image || '/assets/img/brand/crypto-bros-mark.webp', alt: '',
+        class: 'row-logo', src: project.image || '/assets/img/brand/crypto-bros-hex.svg', alt: '',
         width: '30', height: '30', loading: 'lazy', decoding: 'async',
       }),
       el('span', {}, el('strong', {}, project.name), el('small', {}, project.sym)),
@@ -94,7 +94,7 @@ function tokenCard(launchpad, project, index) {
   return rankCard({
     rank: String(index + 1),
     logo: el('img', {
-      class: 'row-logo', src: project.image || '/assets/img/brand/crypto-bros-mark.webp', alt: '',
+      class: 'row-logo', src: project.image || '/assets/img/brand/crypto-bros-hex.svg', alt: '',
       width: '30', height: '30', loading: 'lazy', decoding: 'async',
     }),
     title: project.name,
@@ -166,7 +166,7 @@ function launchpadCard(launchpad, fetchedAt) {
       el('img', {
         class: 'platform-logo', src: launchpad.logo, alt: `${launchpad.name} logo`,
         width: '54', height: '54', loading: 'lazy', decoding: 'async',
-        onerror: (event) => { event.currentTarget.src = '/assets/img/brand/crypto-bros-mark.webp'; },
+        onerror: (event) => { event.currentTarget.src = '/assets/img/brand/crypto-bros-hex.svg'; },
       }),
       el('div', { class: 'launchpad-card-title' },
         el('p', { class: 'eyebrow' }, `${launchpad.chain} · ${launchpad.category}`),

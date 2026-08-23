@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="Arbitrum">
+  <title>Arbitrum</title>
+  <defs>
+    <linearGradient id="arb-face" x1="18" y1="16" x2="110" y2="116" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2b3a56"/>
+      <stop offset="1" stop-color="#12182a"/>
+    </linearGradient>
+  </defs>
+  <!-- hexagonal token body -->
+  <path d="M64 6 112 34v60L64 122 16 94V34z" fill="url(#arb-face)" stroke="#8fa4c8" stroke-opacity=".38" stroke-width="2"/>
+  <!-- the two chevron strokes of the Arbitrum mark -->
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M45 90 64 40l19 50" stroke="#ffffff" stroke-width="9"/>
+    <path d="M72 74h-16" stroke="#12182a" stroke-width="9"/>
+    <path d="M83 90 96 62" stroke="#28a0f0" stroke-width="8"/>
+    <path d="M45 90 32 62" stroke="#28a0f0" stroke-width="8"/>
+  </g>
+</svg>

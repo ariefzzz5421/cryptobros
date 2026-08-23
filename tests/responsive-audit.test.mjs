@@ -22,6 +22,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
+import { existsSync, readdirSync } from 'node:fs';
 import { join, extname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -32,6 +33,25 @@ try {
   ({ chromium } = await import('playwright'));
 } catch {
   /* optional */
+}
+
+/* A CI image often ships a Chromium build that does not match the revision the
+   installed Playwright pins, and Playwright then refuses to launch. Where a
+   usable binary exists under PLAYWRIGHT_BROWSERS_PATH, point at it directly
+   rather than telling the run to download one. */
+function resolveChromium() {
+  const home = process.env.PLAYWRIGHT_BROWSERS_PATH;
+  if (!home || !existsSync(home)) return undefined;
+  const candidates = [];
+  for (const entry of readdirSync(home)) {
+    if (!entry.startsWith('chromium')) continue;
+    candidates.push(
+      join(home, entry, 'chrome-linux', 'chrome'),
+      join(home, entry, 'chrome-headless-shell-linux64', 'chrome-headless-shell'),
+      join(home, entry, 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium'),
+    );
+  }
+  return candidates.find((candidate) => existsSync(candidate));
 }
 
 const ROUTES = [
@@ -49,12 +69,13 @@ const ROUTES = [
   '/nft-2026/mancers/',
   '/airdrops/',
   '/airdrops/arkham/',
+  '/neobank/',
 ];
 
 const WIDTHS = [360, 390, 430, 768, 1440];
 
 /* The three routes the brief calls out specifically. */
-const CRITICAL = ['/launchpads/', '/nft/', '/airdrops/'];
+const CRITICAL = ['/launchpads/', '/nft/', '/airdrops/', '/neobank/'];
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -107,9 +128,18 @@ function startServer() {
 
 const measure = () => {
   const viewport = window.innerWidth;
-  const scrollers = new Set(
-    [...document.querySelectorAll('*')]
-      .filter((node) => /auto|scroll/.test(getComputedStyle(node).overflowX)),
+
+  /* An ancestor contains its child's width when it both confines overflow on
+     the inline axis and fits in the viewport itself. Requiring the second half
+     is what makes this test catch the /launchpads/ bug: that card carried
+     `overflow: clip` and was still laid out at 1534px, so it confined nothing.
+     A marquee track inside a 100%-wide `overflow: hidden` viewport, by
+     contrast, is genuinely contained. */
+  const containers = new Set(
+    [...document.querySelectorAll('*')].filter((node) => {
+      if (!/auto|scroll|hidden|clip/.test(getComputedStyle(node).overflowX)) return false;
+      return node.getBoundingClientRect().width <= viewport + 1;
+    }),
   );
 
   const wide = [];
@@ -117,11 +147,11 @@ const measure = () => {
     const box = node.getBoundingClientRect();
     if (box.width <= viewport + 1) continue;
     if (getComputedStyle(node).position === 'fixed') continue;
-    let inScroller = false;
+    let contained = false;
     for (let parent = node.parentElement; parent; parent = parent.parentElement) {
-      if (scrollers.has(parent)) { inScroller = true; break; }
+      if (containers.has(parent)) { contained = true; break; }
     }
-    if (inScroller) continue;
+    if (contained) continue;
     const cls = typeof node.className === 'string' ? node.className.trim().split(/\s+/).slice(0, 2).join('.') : '';
     wide.push(`${node.tagName.toLowerCase()}${cls ? `.${cls}` : ''} (${Math.round(box.width)}px)`);
   }
@@ -153,7 +183,8 @@ const measure = () => {
 test('responsive audit', { skip: chromium ? false : 'playwright not installed' }, async (suite) => {
   const server = await startServer();
   const base = `http://127.0.0.1:${server.address().port}`;
-  const browser = await chromium.launch();
+  const executablePath = resolveChromium();
+  const browser = await chromium.launch(executablePath ? { executablePath } : {});
   const page = await browser.newPage();
 
   /* Reveal the true layout: the clip on html/body is a guard, not a fix, and a
