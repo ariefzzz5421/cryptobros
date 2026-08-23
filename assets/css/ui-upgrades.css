@@ -147,24 +147,43 @@ html.is-route-leaving body > *:not(.route-transition) { transition: opacity 155m
   background-size: 30px 30px; mask-image: linear-gradient(115deg, transparent 0 48%, #000 75% 100%);
 }
 .research-card-premium:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--seq-mid) 45%, var(--border)) !important; box-shadow: 0 20px 44px -34px rgba(64,111,255,.52); }
+/* One size everywhere. The CTA is pinned to the card's top-right corner so it
+   sits where a reader looks for "open this", and so cards of different heights
+   still align — it used to sit in the metric flow at 76px, which both dwarfed
+   the content and moved with it. */
+.research-card-premium.has-corner-enter { position: relative; }
 .research-enter-cta {
-  position: relative; z-index: 2; flex: none; display: inline-grid !important; place-items: center;
-  width: 76px; height: 76px; margin-left: auto; padding: 5px !important;
-  color: transparent !important; font-size: 0 !important; line-height: 0 !important; text-decoration: none !important;
-  border: 1px solid color-mix(in srgb, #70b7ff 26%, var(--border)); border-radius: 24px;
-  background:
-    radial-gradient(circle at 30% 18%, rgba(226,84,255,.12), transparent 38%),
-    radial-gradient(circle at 82% 78%, rgba(34,211,238,.12), transparent 42%),
-    color-mix(in srgb, var(--plane) 83%, transparent);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.045), 0 12px 32px -22px rgba(70,110,255,.72);
-  transition: transform 180ms cubic-bezier(.16,1,.3,1), border-color 180ms ease, background-color 180ms ease, filter 180ms ease;
+  position: absolute; top: 12px; right: 12px; z-index: 3;
+  flex: none; display: inline-grid !important; place-items: center;
+  width: 38px; height: 38px; margin: 0 !important; padding: 0 !important;
+  color: var(--muted); font-size: 0 !important; line-height: 0 !important; text-decoration: none !important;
+  border: 1px solid var(--border); border-radius: 11px;
+  background: color-mix(in srgb, var(--plane) 82%, transparent);
+  transition: transform 160ms cubic-bezier(.16,1,.3,1), border-color 160ms ease, color 160ms ease, background-color 160ms ease;
 }
-.research-enter-cta::before { content: ''; position: absolute; inset: 9px; z-index: -1; border-radius: 18px; background: radial-gradient(circle, rgba(70,120,255,.13), transparent 68%); filter: blur(5px); }
-.research-enter-cta:hover, .research-card-premium:hover .research-enter-cta { transform: translateY(-2px) scale(1.035); border-color: rgba(118,171,255,.48); filter: brightness(1.05); }
-.research-enter-icon { display: block; width: 64px; height: 64px; object-fit: contain; filter: drop-shadow(0 5px 11px rgba(27,61,255,.28)) drop-shadow(0 0 12px rgba(210,64,255,.13)); pointer-events: none; }
-.breakout-preview-card.research-card-premium .breakout-preview-cta { margin: 8px 15px 15px auto; }
-.case-card.research-card-premium .case-card-cta, .airdrop-card.research-card-premium .case-card-cta { margin-top: 8px; align-self: end; }
-.nft-card.research-card-premium .nft-read-link { margin-left: auto; }
+.research-enter-cta:hover,
+.research-card-premium:hover .research-enter-cta,
+.research-card-premium:focus-within .research-enter-cta {
+  color: var(--seq-hi);
+  border-color: color-mix(in srgb, var(--seq-mid) 55%, var(--border));
+  background: color-mix(in srgb, var(--seq-mid) 12%, var(--plane));
+  transform: translateY(-1px);
+}
+.research-enter-cta:focus-visible { outline: 2px solid var(--seq-mid); outline-offset: 2px; }
+.research-enter-icon { display: block; width: 20px; height: 20px; pointer-events: none; }
+
+/* The corner button overlaps the card's own padding, so identity copy keeps
+   clear of it rather than running underneath. */
+.research-card-premium.has-corner-enter > :first-child,
+.research-card-premium.has-corner-enter .airdrop-card-head,
+.research-card-premium.has-corner-enter .nft-card-head,
+.research-card-premium.has-corner-enter .case-card-head { padding-right: 46px; }
+
+/* A touch target smaller than 44px needs its hit area extended rather than its
+   box enlarged, so the visual size stays compact. */
+@media (pointer: coarse) {
+  .research-enter-cta::after { content: ''; position: absolute; inset: -5px; }
+}
 
 /* Dashboard globe: use the same 3D visual language as /maps/. */
 .dashboard-globe-panel .map-layout { align-items: stretch; }
@@ -204,8 +223,9 @@ html.is-route-leaving body > *:not(.route-transition) { transition: opacity 155m
   :root[data-theme="dark"] .theme-switch-thumb { transform: translateX(22px); }
   .site-search-trigger { width: 40px; height: 40px; }
   .site-search-panel { position: fixed; top: calc(var(--head-h, 60px) + 8px); left: 12px; right: 12px; width: auto; transform-origin: top center; }
-  .research-enter-cta { width: 68px; height: 68px; border-radius: 21px; }
-  .research-enter-icon { width: 57px; height: 57px; }
+  /* One size across every breakpoint — the CTA no longer scales with the
+     viewport, so a card looks the same on a phone as on a desktop. */
+  .research-enter-cta { top: 10px; right: 10px; }
   .chain-ranking-table { min-width: 720px; }
   .chain-ranking-table th:nth-child(2) { width: 29%; }
   .chain-ranking-table .chain-hot { display: none; }
@@ -215,4 +235,30 @@ html.is-route-leaving body > *:not(.route-transition) { transition: opacity 155m
   .research-card-premium, .research-enter-cta, html.is-route-leaving body > *:not(.route-transition) {
     animation: none !important; transition: none !important; transform: none !important;
   }
+}
+
+/* The table equivalent of the corner CTA: same glyph, same size, so a reader
+   learns one affordance rather than three. */
+.detail-enter-link {
+  display: inline-grid !important;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--plane) 78%, transparent);
+  transition: color 150ms ease, border-color 150ms ease, background-color 150ms ease;
+}
+.detail-enter-link:hover,
+.detail-enter-link:focus-visible,
+tr:hover .detail-enter-link {
+  color: var(--seq-hi);
+  border-color: color-mix(in srgb, var(--seq-mid) 55%, var(--border));
+  background: color-mix(in srgb, var(--seq-mid) 12%, var(--plane));
+}
+.detail-enter-link .research-enter-icon { width: 18px; height: 18px; }
+@media (pointer: coarse) {
+  .detail-enter-link::after { content: ''; position: absolute; inset: -6px; }
+  .detail-enter-link { position: relative; }
 }

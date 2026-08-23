@@ -6,6 +6,7 @@
    ============================================================ */
 
 import { CASE_BY_SLUG } from './cases-config.js';
+import { chainBadges } from './chain-brands.js';
 import { fetchCaseMarkets } from './cases-data.js';
 import { fmtDate, fmtDuration, DAY } from './cases-chart.js';
 import { fetchDexLaunch, renderDexScreenerChart } from './dexscreener.js';
@@ -109,7 +110,7 @@ function renderMeta() {
     ),
     el('div', {},
       el('span', {}, 'Chains'),
-      el('strong', {}, caseDef.contracts.map((contract) => contract.network).join(' · ')),
+      el('strong', {}, chainBadges(caseDef.contracts.map((contract) => contract.network))),
     ),
     el('div', {},
       el('span', {}, 'ATH'),

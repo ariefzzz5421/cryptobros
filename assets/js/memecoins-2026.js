@@ -1,15 +1,9 @@
 import { fmtClock, fmtPrice, fmtUsd, el } from './utils.js';
+import { chainBadge, chainLabel } from './chain-brands.js';
 import { startAutoRefresh } from './autorefresh.js';
 import { findToken } from './token-registry.js';
 
 const $ = (id) => document.getElementById(id);
-const CHAIN_LOGOS = {
-  Solana: '/assets/img/chains/solana.png',
-  'Robinhood Chain': '/assets/img/chains/robinhood.png',
-  Base: '/assets/img/chains/base.png',
-  Ethereum: '/assets/img/chains/ethereum.png',
-  'BNB Chain': '/assets/img/chains/bnb.svg',
-};
 const TOKEN_LOGOS = {
   'the-white-whale': '/assets/img/coins/the-white-whale.jpg',
   'nietzschean-penguin': '/assets/img/coins/nietzschean-penguin.png',
@@ -41,7 +35,6 @@ async function fetchRecords() {
 }
 
 function renderCard(event) {
-  const chainLogo = CHAIN_LOGOS[event.chain];
   const priceAth = event.priceAth;
   const registryToken = findToken({ id: event.marketId || event.id });
 
@@ -63,8 +56,8 @@ function renderCard(event) {
         el('p', { class: 'eyebrow' }, event.launchCohort),
         el('h3', {}, event.name),
         el('p', { class: 'chain-label' },
-          chainLogo ? el('img', { src: chainLogo, alt: '', width: '18', height: '18' }) : null,
-          `${event.symbol} · ${event.chain}`,
+          el('span', {}, `${event.symbol} · `),
+          chainBadge(event.chain),
         ),
       ),
     ),

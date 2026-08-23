@@ -64,13 +64,32 @@ const NFT_COLLECTIONS = [
   { slug: '8skullz', ids: ['8skullz'], openSeaSlug: '8skullz' },
 ];
 
+/* `kind` separates the two things this tape carries. A crypto row is priced by
+   CoinGecko with a Yahoo fallback; an index row has no CoinGecko id at all and
+   is quoted in points rather than dollars, so the client must not format it as
+   a currency. */
 const TICKER_ASSETS = [
-  { id: 'bitcoin', symbol: 'BTC', name: 'Bitcoin', yahoo: 'BTC-USD', yahooName: /bitcoin/i },
-  { id: 'ethereum', symbol: 'ETH', name: 'Ethereum', yahoo: 'ETH-USD', yahooName: /ethereum/i },
-  { id: 'solana', symbol: 'SOL', name: 'Solana', yahoo: 'SOL-USD', yahooName: /solana/i },
-  { id: 'hyperliquid', symbol: 'HYPE', name: 'Hyperliquid', officialFallback: 'hyperliquid' },
-  { id: 'zcash', symbol: 'ZEC', name: 'Zcash', yahoo: 'ZEC-USD', yahooName: /zcash/i },
+  { id: 'bitcoin', symbol: 'BTC', name: 'Bitcoin', kind: 'crypto', yahoo: 'BTC-USD', yahooName: /bitcoin/i },
+  { id: 'ethereum', symbol: 'ETH', name: 'Ethereum', kind: 'crypto', yahoo: 'ETH-USD', yahooName: /ethereum/i },
+  { id: 'solana', symbol: 'SOL', name: 'Solana', kind: 'crypto', yahoo: 'SOL-USD', yahooName: /solana/i },
+  { id: 'binancecoin', symbol: 'BNB', name: 'BNB', kind: 'crypto', yahoo: 'BNB-USD', yahooName: /bnb|binance/i },
+  { id: 'hyperliquid', symbol: 'HYPE', name: 'Hyperliquid', kind: 'crypto', officialFallback: 'hyperliquid' },
+  { id: 'zcash', symbol: 'ZEC', name: 'Zcash', kind: 'crypto', yahoo: 'ZEC-USD', yahooName: /zcash/i },
+  {
+    id: 'sp500',
+    symbol: 'S&P 500',
+    name: 'S&P 500 index',
+    kind: 'index',
+    unit: 'points',
+    indexOnly: true,
+    yahoo: '^GSPC',
+    yahooName: /s&p 500|gspc/i,
+  },
 ];
+
+/* CoinGecko's markets endpoint only knows the crypto rows; asking it for
+   `sp500` would return nothing and waste a slot in the id list. */
+const TICKER_COINGECKO_IDS = TICKER_ASSETS.filter((asset) => !asset.indexOnly).map((asset) => asset.id);
 
 const DEX_PAIRS = {
   'shiba-inu': { chain: 'ethereum', pairAddress: '0xCF6dAAB95c476106ECa715D48DE4b13287ffDEAa' },
@@ -754,7 +773,7 @@ async function loadTicker() {
   let coinGeckoRows = [];
   try {
     coinGeckoRows = await fetchJSON(
-      `${CG}/coins/markets?vs_currency=usd&ids=${TICKER_ASSETS.map((asset) => asset.id).join(',')}` +
+      `${CG}/coins/markets?vs_currency=usd&ids=${TICKER_COINGECKO_IDS.join(',')}` +
       '&order=market_cap_desc&per_page=20&page=1&sparkline=false&price_change_percentage=24h',
       { timeout: 12_000, retries: 0 },
     );
@@ -784,6 +803,8 @@ async function loadTicker() {
         id: asset.id,
         symbol: asset.symbol,
         name: asset.name,
+        kind: asset.kind || 'crypto',
+        unit: asset.unit || 'usd',
         price: Number(row.current_price),
         change24h: Number.isFinite(row.price_change_percentage_24h)
           ? row.price_change_percentage_24h
@@ -797,6 +818,8 @@ async function loadTicker() {
       id: asset.id,
       symbol: asset.symbol,
       name: asset.name,
+      kind: asset.kind || 'crypto',
+      unit: asset.unit || 'usd',
       price: fallback.price,
       change24h: fallback.changePct,
       source: asset.officialFallback === 'hyperliquid' ? 'Hyperliquid API' : 'Yahoo Finance',

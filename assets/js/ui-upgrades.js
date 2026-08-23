@@ -7,9 +7,10 @@
 
 const STYLE_ID = 'crypto-bros-ui-upgrades';
 const GLOBE_STYLE_ID = 'crypto-bros-dashboard-globe';
-/* SVG, not PNG: the previous research-enter.png shipped with a corrupt IDAT
-   chunk and decoded to pixel noise on every research card. */
-const RESEARCH_ICON = '/assets/img/ui/research-enter.svg';
+/* A compact open-in-place glyph rather than the previous oversized arrow: it
+   is inlined instead of loaded through <img> so it inherits currentColor and
+   costs no request. */
+const RESEARCH_ICON_SVG = `<svg class="research-enter-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 4.5H19.5V10.5"/><path d="M19.5 4.5 11.25 12.75"/><path d="M18 14.25v3.9A2.85 2.85 0 0 1 15.15 21H5.85A2.85 2.85 0 0 1 3 18.15V8.85A2.85 2.85 0 0 1 5.85 6h3.9"/></svg>`;
 
 const CHAIN_LOGOS = {
   Arbitrum: { src: '/assets/img/chains/arbitrum.png', alt: 'Arbitrum logo' },
@@ -341,15 +342,9 @@ function researchTitle(card) {
 }
 
 function makeResearchIcon() {
-  const image = document.createElement('img');
-  image.className = 'research-enter-icon';
-  image.src = RESEARCH_ICON;
-  image.alt = '';
-  image.width = 64;
-  image.height = 64;
-  image.loading = 'lazy';
-  image.decoding = 'async';
-  return image;
+  const holder = document.createElement('span');
+  holder.innerHTML = RESEARCH_ICON_SVG;
+  return holder.firstElementChild;
 }
 
 function decorateResearchCard(card) {
@@ -369,6 +364,9 @@ function decorateResearchCard(card) {
     card.append(cta);
     ctas = [cta];
   }
+  /* The corner is where a reader looks for "open this", and it keeps the CTA
+     out of the metric flow so cards of different heights still line up. */
+  card.classList.add('has-corner-enter');
 
   ctas.forEach((cta) => {
     cta.classList.add('research-enter-cta');
@@ -391,11 +389,42 @@ function decorateResearchCards(root = document) {
   cards.forEach(decorateResearchCard);
 }
 
+/* The same glyph inside a research table's last column. The words it replaces
+   ("Detail", "Case", "Open") carry no information a reader does not already
+   have from the row they sit in, and a column of repeated words is noise —
+   but the label still has to exist for anyone not reading the screen, so it
+   moves to aria-label rather than being deleted. */
+const DETAIL_LABELS = /^(detail|details|case|open|open case|read|read research|open dossier)$/i;
+
+function detailRowLabel(link) {
+  const row = link.closest('tr');
+  const name = row?.querySelector('th, td')?.parentElement
+    ?.querySelector('a, strong')?.textContent?.trim();
+  return name ? `Open ${cleanSearchLabel(name)}` : 'Open research';
+}
+
+function decorateDetailLinks(root = document) {
+  const scope = root.querySelectorAll ? root : document;
+  scope.querySelectorAll('.data-table a.table-link').forEach((link) => {
+    if (link.dataset.detailIconReady === 'true') return;
+    const text = link.textContent.trim();
+    if (!DETAIL_LABELS.test(text)) return;
+    link.dataset.detailIconReady = 'true';
+    link.classList.add('detail-enter-link');
+    link.setAttribute('aria-label', detailRowLabel(link));
+    link.title = text;
+    link.replaceChildren(makeResearchIcon());
+  });
+}
+
 function observeResearchCards() {
   decorateResearchCards();
+  decorateDetailLinks();
   const observer = new MutationObserver((records) => {
     records.forEach((record) => record.addedNodes.forEach((node) => {
-      if (node.nodeType === Node.ELEMENT_NODE) decorateResearchCards(node);
+      if (node.nodeType !== Node.ELEMENT_NODE) return;
+      decorateResearchCards(node);
+      decorateDetailLinks(node);
     }));
   });
   observer.observe(document.body, { childList: true, subtree: true });
