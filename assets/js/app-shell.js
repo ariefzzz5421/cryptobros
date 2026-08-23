@@ -157,7 +157,7 @@ export function initAppShell() {
   const brandMark = brand?.querySelector('.brand-mark');
   if (brandTitle) brandTitle.textContent = 'Crypto Bros';
   if (brandMark) {
-    brandMark.src = '/assets/img/brand/crypto-bros-mark.webp';
+    brandMark.src = '/assets/img/brand/crypto-bros-hex.svg';
     brandMark.alt = 'Crypto Bros';
   }
   initSiteStatus();

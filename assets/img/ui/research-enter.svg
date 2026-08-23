@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="Enter research">
+  <title>Enter research</title>
+  <defs>
+    <linearGradient id="re-bracket" x1="46" y1="10" x2="112" y2="120" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2f7bff"/>
+      <stop offset=".38" stop-color="#33c9ff"/>
+      <stop offset=".72" stop-color="#4d7dff"/>
+      <stop offset="1" stop-color="#b264ff"/>
+    </linearGradient>
+    <!-- The arrow keeps its own blue rather than going white: the CTA sits on a
+         pale plane in the light theme, where a white arrow disappears. -->
+    <linearGradient id="re-arrow" x1="36" y1="46" x2="104" y2="86" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1f6bff"/>
+      <stop offset=".55" stop-color="#3ea8ff"/>
+      <stop offset="1" stop-color="#7fd4ff"/>
+    </linearGradient>
+    <linearGradient id="re-trail" x1="10" y1="64" x2="60" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2f7bff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#2f7bff"/>
+    </linearGradient>
+    <filter id="re-glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="2.6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- speed trail: the motion that reads as "entering" -->
+  <g stroke="url(#re-trail)" stroke-linecap="round" fill="none">
+    <path d="M12 42h34" stroke-width="9"/>
+    <path d="M26 64h10" stroke-width="8" opacity=".92"/>
+    <path d="M18 86h32" stroke-width="9" opacity=".85"/>
+  </g>
+  <circle cx="14" cy="64" r="6.5" fill="#2f7bff"/>
+
+  <!-- the door: an open bracket the arrow passes into -->
+  <g filter="url(#re-glow)">
+    <path d="M62 14 106 40v48L62 114"
+          fill="none" stroke="url(#re-bracket)" stroke-width="11"
+          stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- the arrow itself -->
+  <path d="M40 64h44M72 46l20 18-20 18"
+        fill="none" stroke="url(#re-arrow)" stroke-width="12"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

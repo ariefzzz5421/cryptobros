@@ -1,0 +1,821 @@
+{
+  "$comment": "Neobank research. Same discipline as the airdrop set: every figure carries a source and an as-of date, and a figure this pass could not attribute is null rather than estimated. Customer counts, transaction volume and revenue are three different measurements and are never substituted for one another.",
+  "researchCutoff": "2026-08-23",
+  "methodology": {
+    "rankingMetric": "customers.value",
+    "rankingRule": "Ranked by reported customer accounts. A neobank whose customer count this pass could not attribute to a source is listed with a null count and sorts last rather than being given an invented figure.",
+    "customerCaveat": "Reported customer counts are registered accounts unless the entry says active. Registered and active are not comparable: Wise reports 15.6M active customers while several peers report every account ever opened. The basis is stated per row.",
+    "volumeCaveat": "Transaction volume is only shown where a company reports one. Most consumer neobanks report deposits or revenue rather than throughput, so volume is null for them — it is never back-filled from revenue.",
+    "revenueCaveat": "Revenue is the company's own reported top line for the stated period. Where a company reports in a currency other than USD the original figure is kept and the currency named."
+  },
+  "neobanks": [
+    {
+      "rank": 1,
+      "id": "webank",
+      "name": "WeBank",
+      "country": "China",
+      "founded": 2014,
+      "site": "https://www.webank.com/",
+      "model": "Licensed digital bank, Tencent-backed",
+      "customers": {
+        "value": 400000000,
+        "basis": "registered",
+        "asOf": "2025",
+        "source": {
+          "label": "Yellow — Top 5 largest neobanks in 2025",
+          "url": "https://yellow.com/news/top-5-largest-neobanks-in-2025-digital-financial-platforms-reshaping-finance",
+          "kind": "press"
+        }
+      },
+      "volumeUsd": {
+        "value": null,
+        "period": null,
+        "source": null
+      },
+      "revenue": {
+        "value": null,
+        "currency": null,
+        "period": null,
+        "source": null
+      },
+      "note": "The largest neobank in the world by account count, and profitable. Ranked the region's best digital bank by The Asian Banker.",
+      "sources": [
+        {
+          "label": "WeBank official site",
+          "url": "https://www.webank.com/",
+          "kind": "official"
+        },
+        {
+          "label": "The Asian Banker — world's top digital banks",
+          "url": "https://www.theasianbanker.com/press-releases/nubank-ing-global-and-webank-are-the-world-s-top-digital-banks-with-61-of-the-top-100-reporting-full-year-profitability",
+          "kind": "research"
+        }
+      ]
+    },
+    {
+      "rank": 2,
+      "id": "nubank",
+      "name": "Nubank",
+      "country": "Brazil",
+      "founded": 2013,
+      "site": "https://nubank.com.br/",
+      "model": "Licensed digital bank, NYSE-listed (NU)",
+      "customers": {
+        "value": 125000000,
+        "basis": "registered",
+        "asOf": "2025",
+        "source": {
+          "label": "Yellow — Top 5 largest neobanks in 2025",
+          "url": "https://yellow.com/news/top-5-largest-neobanks-in-2025-digital-financial-platforms-reshaping-finance",
+          "kind": "press"
+        }
+      },
+      "volumeUsd": {
+        "value": null,
+        "period": null,
+        "source": null
+      },
+      "revenue": {
+        "value": 16300000000,
+        "currency": "USD",
+        "period": "FY2025",
+        "source": {
+          "label": "Reported FY2025 revenue, highest of any neobank",
+          "url": "https://www.emergingfintech.co/p/nubank-is-crushing-every-neobank",
+          "kind": "research"
+        }
+      },
+      "note": "Highest revenue of any neobank globally and one of the few at scale with sustained net income.",
+      "sources": [
+        {
+          "label": "Nubank official site",
+          "url": "https://nubank.com.br/",
+          "kind": "official"
+        },
+        {
+          "label": "Emerging Fintech — Nubank versus every other neobank",
+          "url": "https://www.emergingfintech.co/p/nubank-is-crushing-every-neobank",
+          "kind": "research"
+        }
+      ]
+    },
+    {
+      "rank": 3,
+      "id": "revolut",
+      "name": "Revolut",
+      "country": "United Kingdom",
+      "founded": 2015,
+      "site": "https://www.revolut.com/",
+      "model": "Licensed bank in the EU and UK, private",
+      "customers": {
+        "value": 65000000,
+        "basis": "registered",
+        "asOf": "2025",
+        "source": {
+          "label": "Yellow — Top 5 largest neobanks in 2025",
+          "url": "https://yellow.com/news/top-5-largest-neobanks-in-2025-digital-financial-platforms-reshaping-finance",
+          "kind": "press"
+        }
+      },
+      "volumeUsd": {
+        "value": null,
+        "period": null,
+        "source": null
+      },
+      "revenue": {
+        "value": 6000000000,
+        "currency": "USD",
+        "period": "FY2025",
+        "source": {
+          "label": "Reported 2025 revenue",
+          "url": "https://fintechnews.ch/virtual-banking/revolut-dethrones-nubank-as-worlds-most-valuable-neobank/78510/",
+          "kind": "press"
+        }
+      },
+      "note": "Operates in 48+ countries. Valued at $75B in a 2025 secondary sale, the highest of any neobank.",
+      "sources": [
+        {
+          "label": "Revolut official site",
+          "url": "https://www.revolut.com/",
+          "kind": "official"
+        },
+        {
+          "label": "Fintech News CH — Revolut dethrones Nubank as most valuable neobank",
+          "url": "https://fintechnews.ch/virtual-banking/revolut-dethrones-nubank-as-worlds-most-valuable-neobank/78510/",
+          "kind": "press"
+        }
+      ]
+    },
+    {
+      "rank": 4,
+      "id": "kakaobank",
+      "name": "KakaoBank",
+      "country": "South Korea",
+      "founded": 2016,
+      "site": "https://www.kakaobank.com/",
+      "model": "Licensed internet-only bank, KRX-listed (323410)",
+      "customers": {
+        "value": 26700000,
+        "basis": "registered",
+        "asOf": "2025",
+        "source": {
+          "label": "BigGo Finance — South Korea's internet banks post 2025 results",
+          "url": "https://finance.biggo.com/news/bB3lTJ0B-x-dxYpbmvnJ",
+          "kind": "press"
+        }
+      },
+      "volumeUsd": {
+        "value": null,
+        "period": null,
+        "source": null
+      },
+      "revenue": {
+        "value": null,
+        "currency": null,
+        "period": null,
+        "source": null
+      },
+      "note": "Record net profit of ₩480.3bn in 2025, up 9.1% year on year; non-interest income passed ₩1tn for the first time. Net profit is not revenue, so the revenue field stays null.",
+      "sources": [
+        {
+          "label": "KakaoBank official site",
+          "url": "https://www.kakaobank.com/",
+          "kind": "official"
+        },
+        {
+          "label": "BigGo Finance — 2025 results for Korea's internet banks",
+          "url": "https://finance.biggo.com/news/bB3lTJ0B-x-dxYpbmvnJ",
+          "kind": "press"
+        }
+      ]
+    },
+    {
+      "rank": 5,
+      "id": "chime",
+      "name": "Chime",
+      "country": "United States",
+      "founded": 2012,
+      "site": "https://www.chime.com/",
+      "model": "BaaS-powered, deposits held at sponsor banks",
+      "customers": {
+        "value": 22000000,
+        "basis": "registered",
+        "asOf": "2025",
+        "source": {
+          "label": "Yellow — Top 5 largest neobanks in 2025",
+          "url": "https://yellow.com/news/top-5-largest-neobanks-in-2025-digital-financial-platforms-reshaping-finance",
+          "kind": "press"
+        }
+      },
+      "volumeUsd": {
+        "value": null,
+        "period": null,
+        "source": null
+      },
+      "revenue": {
+        "value": 2190000000,
+        "currency": "USD",
+        "period": "FY2025",
+        "source": {
+          "label": "Reported 2025 revenue",
+          "url": "https://www.emergingfintech.co/p/nubank-is-crushing-every-neobank",
+          "kind": "research"
+        }
+      },
+      "note": "The largest US neobank by customers. Holds no banking licence of its own — deposits sit with sponsor banks.",
+      "sources": [
+        {
+          "label": "Chime official site",
+          "url": "https://www.chime.com/",
+          "kind": "official"
+        },
+        {
+          "label": "Emerging Fintech — neobank comparison data",
+          "url": "https://www.emergingfintech.co/p/nubank-is-crushing-every-neobank",
+          "kind": "research"
+        }
+      ]
+    },
+    {
+      "rank": 6,
+      "id": "wise",
+      "name": "Wise",
+      "country": "United Kingdom",
+      "founded": 2011,
+      "site": "https://wise.com/",
+      "model": "Cross-border payments and multi-currency accounts, LSE-listed (WISE)",
+      "customers": {
+        "value": 15600000,
+        "basis": "active",
+        "asOf": "FY2025",
+        "source": {
+          "label": "Wise plc — results for the financial year ended 31 March 2025",
+          "url": "https://wise.com/imaginary-v2/images/7225a78f5d177b9bba2c8152e664ee7e-Wiseplc-FY2025.pdf",
+          "kind": "official"
+        }
+      },
+      "volumeUsd": {
+        "value": null,
+        "currencyOriginal": "GBP",
+        "valueOriginal": 145000000000,
+        "period": "FY2025 cross-border volume",
+        "source": {
+          "label": "Wise plc FY2025 results — £145bn cross-border volume, up 23%",
+          "url": "https://wise.com/imaginary-v2/images/7225a78f5d177b9bba2c8152e664ee7e-Wiseplc-FY2025.pdf",
+          "kind": "official"
+        }
+      },
+      "revenue": {
+        "value": 1400000000,
+        "currency": "GBP",
+        "period": "FY2025 underlying income",
+        "source": {
+          "label": "Wise plc FY2025 results",
+          "url": "https://wise.com/imaginary-v2/images/7225a78f5d177b9bba2c8152e664ee7e-Wiseplc-FY2025.pdf",
+          "kind": "official"
+        }
+      },
+      "note": "The only entry here reporting active customers rather than registered accounts, and one of the few publishing transaction volume. Both are stated in GBP as reported and are not converted.",
+      "sources": [
+        {
+          "label": "Wise official site",
+          "url": "https://wise.com/",
+          "kind": "official"
+        },
+        {
+          "label": "Wise plc — FY2025 results",
+          "url": "https://wise.com/imaginary-v2/images/7225a78f5d177b9bba2c8152e664ee7e-Wiseplc-FY2025.pdf",
+          "kind": "official"
+        }
+      ]
+    },
+    {
+      "rank": 7,
+      "id": "n26",
+      "name": "N26",
+      "country": "Germany",
+      "founded": 2013,
+      "site": "https://n26.com/",
+      "model": "Licensed German bank, private",
+      "customers": {
+        "value": 10000000,
+        "basis": "registered",
+        "asOf": "2025",
+        "source": {
+          "label": "Statrys — top neobanks",
+          "url": "https://statrys.com/blog/top-neobanks",
+          "kind": "press"
+        }
+      },
+      "volumeUsd": {
+        "value": null,
+        "period": null,
+        "source": null
+      },
+      "revenue": {
+        "value": null,
+        "currency": null,
+        "period": null,
+        "source": null
+      },
+      "note": "Holds a full German banking licence.",
+      "sources": [
+        {
+          "label": "N26 official site",
+          "url": "https://n26.com/",
+          "kind": "official"
+        },
+        {
+          "label": "Statrys — top neobanks",
+          "url": "https://statrys.com/blog/top-neobanks",
+          "kind": "press"
+        }
+      ]
+    },
+    {
+      "rank": 8,
+      "id": "monzo",
+      "name": "Monzo",
+      "country": "United Kingdom",
+      "founded": 2015,
+      "site": "https://monzo.com/",
+      "model": "Licensed UK bank, private",
+      "customers": {
+        "value": 8000000,
+        "basis": "registered",
+        "qualifier": "at-least",
+        "asOf": "2025",
+        "source": {
+          "label": "Statrys — top neobanks",
+          "url": "https://statrys.com/blog/top-neobanks",
+          "kind": "press"
+        }
+      },
+      "volumeUsd": {
+        "value": null,
+        "period": null,
+        "source": null
+      },
+      "revenue": {
+        "value": 1200000000,
+        "currency": "GBP",
+        "period": "FY2025",
+        "source": {
+          "label": "Reported FY2025 revenue of £1.2bn",
+          "url": "https://www.emergingfintech.co/p/nubank-is-crushing-every-neobank",
+          "kind": "research"
+        }
+      },
+      "note": "Holds its own UK banking licence and FSCS deposit protection.",
+      "sources": [
+        {
+          "label": "Monzo official site",
+          "url": "https://monzo.com/",
+          "kind": "official"
+        },
+        {
+          "label": "Emerging Fintech — neobank comparison data",
+          "url": "https://www.emergingfintech.co/p/nubank-is-crushing-every-neobank",
+          "kind": "research"
+        }
+      ]
+    },
+    {
+      "rank": 9,
+      "id": "starling",
+      "name": "Starling Bank",
+      "country": "United Kingdom",
+      "founded": 2014,
+      "site": "https://www.starlingbank.com/",
+      "model": "Licensed UK bank, private",
+      "customers": {
+        "value": 4600000,
+        "basis": "registered",
+        "asOf": "2025",
+        "source": {
+          "label": "Statrys — top neobanks",
+          "url": "https://statrys.com/blog/top-neobanks",
+          "kind": "press"
+        }
+      },
+      "volumeUsd": {
+        "value": null,
+        "period": null,
+        "source": null
+      },
+      "revenue": {
+        "value": null,
+        "currency": null,
+        "period": null,
+        "source": null
+      },
+      "note": "Generates more revenue per customer than Monzo on a smaller base, and runs its own Engine banking-software business.",
+      "sources": [
+        {
+          "label": "Starling official site",
+          "url": "https://www.starlingbank.com/",
+          "kind": "official"
+        },
+        {
+          "label": "Statrys — top neobanks",
+          "url": "https://statrys.com/blog/top-neobanks",
+          "kind": "press"
+        }
+      ]
+    },
+    {
+      "rank": 10,
+      "id": "mybank",
+      "name": "MYbank",
+      "country": "China",
+      "founded": 2015,
+      "site": "https://www.mybank.cn/",
+      "model": "Licensed digital bank, Ant Group-backed, SME lending",
+      "customers": {
+        "value": null,
+        "basis": null,
+        "asOf": null,
+        "source": null
+      },
+      "volumeUsd": {
+        "value": null,
+        "period": null,
+        "source": null
+      },
+      "revenue": {
+        "value": null,
+        "currency": null,
+        "period": null,
+        "source": null
+      },
+      "note": "Ranked second only to WeBank in The Asian Banker's regional digital-bank ranking and reached profitability early, but no customer, volume or revenue figure was attributed in this research pass.",
+      "sources": [
+        {
+          "label": "MYbank official site",
+          "url": "https://www.mybank.cn/",
+          "kind": "official"
+        },
+        {
+          "label": "TAB Insights — 2026 World's Best Digital Banks ranking",
+          "url": "https://tabinsights.com/article/-nubank--webank-and-mybank-top-the-2026-world-s-best-digital-banks-ranking",
+          "kind": "research"
+        }
+      ]
+    },
+    {
+      "rank": 11,
+      "id": "sofi",
+      "name": "SoFi",
+      "country": "United States",
+      "founded": 2011,
+      "site": "https://www.sofi.com/",
+      "model": "Licensed US bank holding company, Nasdaq-listed (SOFI)",
+      "customers": {
+        "value": null,
+        "basis": null,
+        "asOf": null,
+        "source": null
+      },
+      "volumeUsd": {
+        "value": null,
+        "period": null,
+        "source": null
+      },
+      "revenue": {
+        "value": null,
+        "currency": null,
+        "period": null,
+        "source": null
+      },
+      "note": "Holds a US national bank charter. Member counts and revenue are published quarterly but were not attributed in this research pass.",
+      "sources": [
+        {
+          "label": "SoFi official site",
+          "url": "https://www.sofi.com/",
+          "kind": "official"
+        }
+      ]
+    },
+    {
+      "rank": 12,
+      "id": "toss-bank",
+      "name": "Toss Bank",
+      "country": "South Korea",
+      "founded": 2021,
+      "site": "https://www.tossbank.com/",
+      "model": "Licensed internet-only bank",
+      "customers": {
+        "value": null,
+        "basis": null,
+        "asOf": null,
+        "source": null
+      },
+      "volumeUsd": {
+        "value": null,
+        "period": null,
+        "source": null
+      },
+      "revenue": {
+        "value": null,
+        "currency": null,
+        "period": null,
+        "source": null
+      },
+      "note": "Profitable for a second consecutive year in 2025 and closing on K Bank, but no customer or revenue figure was attributed in this pass.",
+      "sources": [
+        {
+          "label": "Toss Bank official site",
+          "url": "https://www.tossbank.com/",
+          "kind": "official"
+        },
+        {
+          "label": "BigGo Finance — 2025 results for Korea's internet banks",
+          "url": "https://finance.biggo.com/news/bB3lTJ0B-x-dxYpbmvnJ",
+          "kind": "press"
+        }
+      ]
+    },
+    {
+      "rank": 13,
+      "id": "varo",
+      "name": "Varo Bank",
+      "country": "United States",
+      "founded": 2015,
+      "site": "https://www.varomoney.com/",
+      "model": "Licensed US national bank",
+      "customers": {
+        "value": null,
+        "basis": null,
+        "asOf": null,
+        "source": null
+      },
+      "volumeUsd": {
+        "value": null,
+        "period": null,
+        "source": null
+      },
+      "revenue": {
+        "value": null,
+        "currency": null,
+        "period": null,
+        "source": null
+      },
+      "note": "The first US consumer fintech to obtain a national bank charter rather than rent one.",
+      "sources": [
+        {
+          "label": "Varo official site",
+          "url": "https://www.varomoney.com/",
+          "kind": "official"
+        }
+      ]
+    },
+    {
+      "rank": 14,
+      "id": "bunq",
+      "name": "bunq",
+      "country": "Netherlands",
+      "founded": 2012,
+      "site": "https://www.bunq.com/",
+      "model": "Licensed EU bank",
+      "customers": {
+        "value": null,
+        "basis": null,
+        "asOf": null,
+        "source": null
+      },
+      "volumeUsd": {
+        "value": null,
+        "period": null,
+        "source": null
+      },
+      "revenue": {
+        "value": null,
+        "currency": null,
+        "period": null,
+        "source": null
+      },
+      "note": "Holds its own EU banking licence; positions around European digital nomads.",
+      "sources": [
+        {
+          "label": "bunq official site",
+          "url": "https://www.bunq.com/",
+          "kind": "official"
+        }
+      ]
+    },
+    {
+      "rank": 15,
+      "id": "dave",
+      "name": "Dave",
+      "country": "United States",
+      "founded": 2016,
+      "site": "https://www.dave.com/",
+      "model": "BaaS-powered, Nasdaq-listed (DAVE)",
+      "customers": {
+        "value": null,
+        "basis": null,
+        "asOf": null,
+        "source": null
+      },
+      "volumeUsd": {
+        "value": null,
+        "period": null,
+        "source": null
+      },
+      "revenue": {
+        "value": null,
+        "currency": null,
+        "period": null,
+        "source": null
+      },
+      "note": "Relies on a sponsor bank for deposit insurance rather than holding a charter.",
+      "sources": [
+        {
+          "label": "Dave official site",
+          "url": "https://www.dave.com/",
+          "kind": "official"
+        }
+      ]
+    },
+    {
+      "rank": 16,
+      "id": "current",
+      "name": "Current",
+      "country": "United States",
+      "founded": 2015,
+      "site": "https://current.com/",
+      "model": "BaaS-powered",
+      "customers": {
+        "value": null,
+        "basis": null,
+        "asOf": null,
+        "source": null
+      },
+      "volumeUsd": {
+        "value": null,
+        "period": null,
+        "source": null
+      },
+      "revenue": {
+        "value": null,
+        "currency": null,
+        "period": null,
+        "source": null
+      },
+      "note": "Sponsor-bank model; no charter of its own.",
+      "sources": [
+        {
+          "label": "Current official site",
+          "url": "https://current.com/",
+          "kind": "official"
+        }
+      ]
+    },
+    {
+      "rank": 17,
+      "id": "atom-bank",
+      "name": "Atom bank",
+      "country": "United Kingdom",
+      "founded": 2014,
+      "site": "https://www.atombank.co.uk/",
+      "model": "Licensed UK bank, app-only",
+      "customers": {
+        "value": null,
+        "basis": null,
+        "asOf": null,
+        "source": null
+      },
+      "volumeUsd": {
+        "value": null,
+        "period": null,
+        "source": null
+      },
+      "revenue": {
+        "value": null,
+        "currency": null,
+        "period": null,
+        "source": null
+      },
+      "note": "The UK's first app-only bank; savings and mortgage led rather than current-account led.",
+      "sources": [
+        {
+          "label": "Atom bank official site",
+          "url": "https://www.atombank.co.uk/",
+          "kind": "official"
+        }
+      ]
+    },
+    {
+      "rank": 18,
+      "id": "upgrade",
+      "name": "Upgrade",
+      "country": "United States",
+      "founded": 2017,
+      "site": "https://www.upgrade.com/",
+      "model": "Credit-led neobank, BaaS-powered",
+      "customers": {
+        "value": null,
+        "basis": null,
+        "asOf": null,
+        "source": null
+      },
+      "volumeUsd": {
+        "value": null,
+        "period": null,
+        "source": null
+      },
+      "revenue": {
+        "value": null,
+        "currency": null,
+        "period": null,
+        "source": null
+      },
+      "note": "Named among the top players in the neobanking market; credit products rather than deposits are the entry point.",
+      "sources": [
+        {
+          "label": "Upgrade official site",
+          "url": "https://www.upgrade.com/",
+          "kind": "official"
+        }
+      ]
+    },
+    {
+      "rank": 19,
+      "id": "k-bank",
+      "name": "K Bank",
+      "country": "South Korea",
+      "founded": 2016,
+      "site": "https://www.kbanknow.com/",
+      "model": "Licensed internet-only bank",
+      "customers": {
+        "value": null,
+        "basis": null,
+        "asOf": null,
+        "source": null
+      },
+      "volumeUsd": {
+        "value": null,
+        "period": null,
+        "source": null
+      },
+      "revenue": {
+        "value": null,
+        "currency": null,
+        "period": null,
+        "source": null
+      },
+      "note": "Net profit fell in 2025 on higher interest expense after a fee increase on deposits from the crypto exchange Upbit — a concentration risk the other Korean internet banks do not carry.",
+      "sources": [
+        {
+          "label": "K Bank official site",
+          "url": "https://www.kbanknow.com/",
+          "kind": "official"
+        },
+        {
+          "label": "BigGo Finance — 2025 results for Korea's internet banks",
+          "url": "https://finance.biggo.com/news/bB3lTJ0B-x-dxYpbmvnJ",
+          "kind": "press"
+        }
+      ]
+    },
+    {
+      "rank": 20,
+      "id": "t-bank",
+      "name": "T-Bank",
+      "country": "Russia",
+      "founded": 2006,
+      "site": "https://www.tbank.ru/",
+      "model": "Licensed branchless bank, formerly Tinkoff",
+      "customers": {
+        "value": null,
+        "basis": null,
+        "asOf": null,
+        "source": null
+      },
+      "volumeUsd": {
+        "value": null,
+        "period": null,
+        "source": null
+      },
+      "revenue": {
+        "value": null,
+        "currency": null,
+        "period": null,
+        "source": null
+      },
+      "note": "One of the oldest branchless banks at scale. No 2025 customer or revenue figure was attributed in this pass, and the entity is subject to international sanctions, which limits comparable public reporting.",
+      "sources": [
+        {
+          "label": "T-Bank official site",
+          "url": "https://www.tbank.ru/",
+          "kind": "official"
+        },
+        {
+          "label": "T-Bank — Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/T-Bank",
+          "kind": "research"
+        }
+      ]
+    }
+  ]
+}

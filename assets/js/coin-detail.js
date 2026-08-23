@@ -167,7 +167,7 @@ function renderIdentity() {
   $('tokenName').textContent = name;
   $('tokenSym').textContent = symbol;
   $('crumbToken').textContent = symbol;
-  $('tokenLogo').src = tokenPayload?.coin?.image || token.logo || '/assets/img/brand/crypto-bros-mark.webp';
+  $('tokenLogo').src = tokenPayload?.coin?.image || token.logo || '/assets/img/brand/crypto-bros-hex.svg';
   $('tokenLogo').alt = `${name} logo`;
   renderTokenLore($('tokenLore'), token);
 

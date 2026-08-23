@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="Crypto Bros">
+  <title>Crypto Bros</title>
+  <defs>
+    <!-- brushed steel, lit from the upper left so the bevels read as depth -->
+    <linearGradient id="cb-steel-a" x1="52" y1="26" x2="204" y2="158" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f6f9fd"/>
+      <stop offset=".32" stop-color="#c6cfdb"/>
+      <stop offset=".63" stop-color="#8b95a4"/>
+      <stop offset="1" stop-color="#dbe2ec"/>
+    </linearGradient>
+    <linearGradient id="cb-steel-b" x1="70" y1="46" x2="190" y2="150" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#b3bdcb"/>
+      <stop offset=".5" stop-color="#6e7988"/>
+      <stop offset="1" stop-color="#a6b1c0"/>
+    </linearGradient>
+    <linearGradient id="cb-core" x1="104" y1="86" x2="152" y2="146" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9ad8ff"/>
+      <stop offset=".5" stop-color="#2f97ff"/>
+      <stop offset="1" stop-color="#1257e0"/>
+    </linearGradient>
+    <radialGradient id="cb-halo" cx="128" cy="112" r="54" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5cb6ff" stop-opacity=".95"/>
+      <stop offset=".55" stop-color="#2f7bff" stop-opacity=".3"/>
+      <stop offset="1" stop-color="#2f7bff" stop-opacity="0"/>
+    </radialGradient>
+    <!-- every band is cut to the silhouette, so the stack reads as one solid -->
+    <clipPath id="cb-body">
+      <path d="M128 16 216 66v124l-88 50-88-50V66z"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#cb-body)">
+    <!-- outer shell -->
+    <path d="M128 16 216 66v124l-88 50-88-50V66z" fill="url(#cb-steel-a)"/>
+    <path d="M128 33 201 75v106l-73 42-73-42V75z" fill="#0f141c"/>
+
+    <!-- second ring -->
+    <path d="M128 45 190 81v94l-62 36-62-36V81z" fill="url(#cb-steel-b)"/>
+    <path d="M128 59 178 88v80l-50 29-50-29V88z" fill="#0c1118"/>
+
+    <!-- inner ring, carrying the light of the core -->
+    <path d="M128 69 169 93v70l-41 24-41-24V93z" fill="url(#cb-core)" opacity=".5"/>
+    <path d="M128 81 158 99v58l-30 18-30-18V99z" fill="#0a0f16"/>
+
+    <!-- the core: a lit cube seen isometrically -->
+    <circle cx="128" cy="112" r="48" fill="url(#cb-halo)"/>
+    <path d="M128 86l27 16v32l-27 16-27-16v-32z" fill="url(#cb-core)"/>
+    <path d="M128 86l27 16-27 16-27-16z" fill="#c8e8ff" opacity=".95"/>
+    <path d="M128 118v32l-27-16v-32z" fill="#1465e6" opacity=".85"/>
+
+    <!-- stacked base bands: the silhouette's lower third, cut into slabs -->
+    <g>
+      <path d="M24 170h208v20l-104 22-104-22z" fill="url(#cb-steel-a)"/>
+      <path d="M24 194h208v18l-104 22-104-22z" fill="url(#cb-steel-b)"/>
+      <g fill="#3aa2ff">
+        <path d="M50 176h56v9l-56-3z" opacity=".9"/>
+        <path d="M150 176h56v6l-56 3z" opacity=".9"/>
+        <path d="M62 199h48v8l-48-3z" opacity=".8"/>
+        <path d="M146 199h48v5l-48 3z" opacity=".8"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- a single crisp edge so the mark holds its shape at favicon size -->
+  <path d="M128 16 216 66v124l-88 50-88-50V66z" fill="none"
+        stroke="#e8eef6" stroke-opacity=".35" stroke-width="3"/>
+</svg>

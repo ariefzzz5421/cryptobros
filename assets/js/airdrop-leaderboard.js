@@ -164,7 +164,8 @@ export const ALL_TIME_AIRDROP_TOP_30 = rows
 const LOCAL_LOGOS = new Map(Object.entries({
   UNI: '/assets/img/airdrops/uniswap.webp',
   APE: '/assets/img/airdrops/apecoin.webp',
-  ARB: '/assets/img/airdrops/arbitrum.webp',
+  /* the stored arbitrum.webp decodes at 64x64 but is entirely transparent */
+  ARB: '/assets/img/airdrops/arbitrum.svg',
   ENS: '/assets/img/airdrops/ens.webp',
   HYPE: '/assets/img/airdrops/hyperliquid.webp',
   TIA: '/assets/img/airdrops/celestia.webp',

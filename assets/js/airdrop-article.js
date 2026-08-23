@@ -13,6 +13,7 @@ import {
   loadAirdrops, findCase, walletFunnel,
   fmtBigUsd, fmtWallets, fmtTokens, fmtAirdropDate,
 } from './airdrop-config.js';
+import { airdropLogoUrl, airdropInitials, ALL_TIME_AIRDROP_TOP_30 } from './airdrop-leaderboard.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -197,7 +198,59 @@ function renderSources(item) {
   })));
 }
 
+/* The official site is the project's own domain, taken from the case's
+   official-kind source. It is also what the logo lookup falls back to, so the
+   mark and the link always point at the same project. */
+function officialSource(item) {
+  return (item.sources || []).find((source) => source?.kind === 'official' && source?.url) || null;
+}
+
+function logoRecord(item) {
+  const symbol = String(item.tokenSymbol || '').toUpperCase();
+  const match = ALL_TIME_AIRDROP_TOP_30.find((row) => String(row.symbol || '').toUpperCase() === symbol);
+  if (match) return match;
+  let site = '';
+  try { site = new URL(officialSource(item)?.url || '').hostname.replace(/^www\./, ''); } catch { /* no official url */ }
+  return { symbol, project: item.project, site };
+}
+
+/* Official artwork, with the project's initials as the documented fallback —
+   a missing logo never leaves an empty frame. */
+function renderProjectLogo(item) {
+  const host = $('docLogo');
+  if (!host) return;
+  const record = logoRecord(item);
+  const src = airdropLogoUrl(record);
+  const wrap = el('span', { class: 'airdrop-logo is-doc', 'aria-hidden': 'true' },
+    el('span', { class: 'airdrop-logo-fallback' }, airdropInitials(record)));
+  if (!src) {
+    wrap.classList.add('is-fallback');
+  } else {
+    wrap.prepend(el('img', {
+      src, alt: '', width: '72', height: '72', decoding: 'async',
+      onerror: () => wrap.classList.add('is-fallback'),
+    }));
+  }
+  host.replaceChildren(wrap);
+}
+
+function renderOfficialLink(item) {
+  const host = $('docOfficial');
+  const source = officialSource(item);
+  if (!host) return;
+  if (!source) {
+    host.replaceChildren(el('p', { class: 'doc-note' },
+      'No official project page is recorded for this distribution.'));
+    return;
+  }
+  host.replaceChildren(el('a', {
+    class: 'official-link', href: source.url, target: '_blank', rel: 'noreferrer',
+  }, `Official · ${source.label}`));
+}
+
 function renderHero(item) {
+  renderProjectLogo(item);
+  renderOfficialLink(item);
   document.title = `${item.project} (${item.tokenSymbol}) — Airdrop Case Study`;
   $('docTitle').textContent = item.project;
   $('docSym').textContent = item.tokenSymbol;
