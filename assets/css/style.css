@@ -4610,3 +4610,74 @@ a.rank-card-title::after {
   text-decoration: none;
 }
 .official-link:hover, .official-link:focus-visible { border-color: var(--accent); color: var(--ink); }
+
+/* ============================================================
+   Ticker tidy-up
+   ------------------------------------------------------------
+   Every mark now sits in the same circular frame, so a logo that ships with
+   its own disc (BTC, ZEC) and one that does not (ETH) read at the same weight
+   instead of one floating loose beside the other.
+   ============================================================ */
+.market-tape-logo {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--ink) 8%, transparent);
+  box-shadow: inset 0 0 0 1px var(--border-2);
+}
+.market-tape-logo img { width: 22px; height: 22px; object-fit: contain; display: block; }
+.market-tape-item { gap: 9px; }
+/* "S&P 500" is far wider than a three-letter ticker, so the symbol column is
+   allowed to size to its content rather than forcing a uniform width. */
+.market-tape-item strong { white-space: nowrap; }
+
+/* ============================================================
+   Chain badge — one presentation for every chain, everywhere
+   ------------------------------------------------------------
+   Chain names arrive from research config, CoinGecko platform ids and
+   DeFiLlama slugs, so the same chain used to appear as "Solana" on one route
+   and "solana" on another. chain-brands.js canonicalises the name; this styles
+   it the same way wherever it lands.
+   ============================================================ */
+.chain-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  vertical-align: middle;
+}
+.chain-badge-logo {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--ink) 7%, transparent);
+}
+.chain-badge-name { min-width: 0; overflow-wrap: anywhere; }
+.chain-badge.is-unknown { color: var(--muted); }
+
+/* Several chains for one token read as a row, wrapping rather than stretching
+   the cell that holds them. */
+.chain-badge-set { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; min-width: 0; }
+
+.rank-card-details .chain-badge-logo,
+.data-table .chain-badge-logo { width: 16px; height: 16px; }
+.doc-meta .chain-badge-logo { width: 20px; height: 20px; }
+/* `.doc-meta span` styles the field label ("CHAINS") as small uppercase. Every
+   element of a chain badge is also a <span>, so all three levels — set,
+   badge, name — have to opt back out, or the chain renders as "ETHEREUM" two
+   sizes below its siblings. A chain name is a proper noun, not a label. */
+.doc-meta .chain-badge-set,
+.doc-meta .chain-badge,
+.doc-meta .chain-badge-name,
+.chain-badge-name {
+  text-transform: none;
+  letter-spacing: normal;
+  color: inherit;
+  font-size: inherit;
+}

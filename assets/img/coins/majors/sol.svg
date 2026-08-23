@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="Solana">
+  <title>Solana</title>
+  <defs>
+    <linearGradient id="sol-a" x1="18" y1="44" x2="46" y2="20" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9945FF"/><stop offset=".5" stop-color="#5C6FFF"/><stop offset="1" stop-color="#14F195"/>
+    </linearGradient>
+    <linearGradient id="sol-b" x1="18" y1="32" x2="46" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9945FF"/><stop offset=".5" stop-color="#00D3FF"/><stop offset="1" stop-color="#14F195"/>
+    </linearGradient>
+    <linearGradient id="sol-c" x1="18" y1="20" x2="46" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9945FF"/><stop offset=".5" stop-color="#5C6FFF"/><stop offset="1" stop-color="#14F195"/>
+    </linearGradient>
+  </defs>
+  <!-- The badge is the point of this file: the shipped sol.png had no disc, so
+       the mark floated unanchored next to BTC/ETH/ZEC in the ticker. -->
+  <circle cx="32" cy="32" r="32" fill="#0d1117"/>
+  <g>
+    <path d="M20.8 41.4a1.4 1.4 0 0 1 1-.42h23.4c.62 0 .94.76.5 1.2l-4.5 4.5a1.4 1.4 0 0 1-1 .42H16.8c-.62 0-.94-.76-.5-1.2z" fill="url(#sol-a)"/>
+    <path d="M20.8 17.1a1.4 1.4 0 0 1 1-.42h23.4c.62 0 .94.76.5 1.2l-4.5 4.5a1.4 1.4 0 0 1-1 .42H16.8c-.62 0-.94-.76-.5-1.2z" fill="url(#sol-c)"/>
+    <path d="M41.7 29.18a1.4 1.4 0 0 0-1-.42H17.3c-.62 0-.94.76-.5 1.2l4.5 4.5a1.4 1.4 0 0 0 1 .42h23.4c.62 0 .94-.76.5-1.2z" fill="url(#sol-b)"/>
+  </g>
+</svg>

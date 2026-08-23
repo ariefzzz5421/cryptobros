@@ -2,6 +2,7 @@ import { fmtClock, fmtUsd, el } from './utils.js';
 import { tokenDetailHref } from './token-registry.js';
 import { brandedSourceLink } from './source-brands.js';
 import { rankBoard, rankCard } from './ranking-board.js';
+import { chainBadge, chainLabel } from './chain-brands.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -66,7 +67,7 @@ function tokenRow(launchpad, project, index) {
       project.marketSource ? el('small', { class: 'market-source-note' }, project.marketSource) : null),
     el('td', { class: 'r num' }, fmtUsd(project.vol)),
     el('td', {}, el('code', { class: 'contract-cell', title: project.contract }, project.contract)),
-    el('td', {}, project.chain),
+    el('td', {}, chainBadge(project.chain)),
     el('td', {}, el('a', {
       class: 'provenance-badge', href: project.launchpadSource, target: '_blank', rel: 'noreferrer',
     }, 'Verified')),
@@ -98,7 +99,7 @@ function tokenCard(launchpad, project, index) {
       width: '30', height: '30', loading: 'lazy', decoding: 'async',
     }),
     title: project.name,
-    subtitle: `${project.sym} · ${project.chain}`,
+    subtitle: `${project.sym} · ${chainLabel(project.chain)}`,
     href: detailUrl,
     metrics: [
       { label: 'Market cap', value: fmtUsd(project.mcap), note: project.marketSource || null },
@@ -110,7 +111,7 @@ function tokenCard(launchpad, project, index) {
     ],
     detailsLabel: 'Contract and provenance',
     details: [
-      { label: 'Chain', value: project.chain },
+      { label: 'Chain', value: chainBadge(project.chain) },
       { label: 'Contract', value: el('code', { class: 'contract-cell' }, project.contract) },
       {
         label: 'Provenance',
