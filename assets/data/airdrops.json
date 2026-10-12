@@ -993,24 +993,5 @@
         { "label": "CoinDesk — Wormhole debuts at $3B valuation in 617M token airdrop", "url": "https://www.coindesk.com/business/2024/04/03/wormhole-debuts-at-3b-valuation-in-617m-token-airdrop", "kind": "press" }
       ]
     }
-  ],
-
-  "candidatePool": [
-    { "project": "Uniswap", "symbol": "UNI", "status": "researched", "slug": "uniswap" },
-    { "project": "ApeCoin", "symbol": "APE", "status": "researched", "slug": "apecoin" },
-    { "project": "dYdX", "symbol": "DYDX", "status": "researched", "slug": "dydx" },
-    { "project": "Arbitrum", "symbol": "ARB", "status": "researched", "slug": "arbitrum" },
-    { "project": "Ethereum Name Service", "symbol": "ENS", "status": "researched", "slug": "ens" },
-    { "project": "Hyperliquid", "symbol": "HYPE", "status": "researched", "slug": "hyperliquid" },
-    { "project": "Starknet", "symbol": "STRK", "status": "researched", "slug": "starknet" },
-    { "project": "Pudgy Penguins", "symbol": "PENGU", "status": "researched", "slug": "pudgy-penguins" },
-    { "project": "Wormhole", "symbol": "W", "status": "researched", "slug": "wormhole" },
-    { "project": "Jupiter", "symbol": "JUP", "status": "researched", "slug": "jupiter" },
-    { "project": "Celestia", "symbol": "TIA", "status": "researched", "slug": "celestia" },
-    { "project": "Arkham Intelligence", "symbol": "ARKM", "status": "researched", "slug": "arkham" },
-    { "project": "Internet Computer", "symbol": "ICP", "status": "not-published", "reason": "The ICP genesis distribution was a seed-round and Genesis Unicorn allocation rather than a retroactive user airdrop, and no sourced distribution-day figure for a user airdrop was verified. Not published rather than published on an unverified basis." },
-    { "project": "BONK", "symbol": "BONK", "status": "not-published", "reason": "50% of supply was distributed to the Solana community in December 2022, but no primary source for the distribution-day token price or the recipient count was verified. Publishing a value would require inventing one." },
-    { "project": "Story Protocol", "symbol": "IP", "status": "not-published", "reason": "No primary source verified for tokens distributed, recipient count, or distribution-day price." },
-    { "project": "Berachain", "symbol": "BERA", "status": "not-published", "reason": "No primary source verified for tokens distributed, recipient count, or distribution-day price." }
   ]
 }

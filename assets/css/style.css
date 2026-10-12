@@ -4427,7 +4427,6 @@ a.rank-card-title::after {
 .neobank-logo.is-fallback img { display: none; }
 .neobank-card-link { display: inline-flex; align-items: center; gap: 10px; }
 
-.candidate-pool { display: grid; gap: var(--space-3); margin: var(--space-4) 0 0; padding: 0; list-style: none; }
 .candidate {
   display: grid;
   gap: 3px;
@@ -4848,4 +4847,138 @@ a.rank-card-title::after {
   .breakout-preview-facts > div { padding: 4px 8px; }
   .breakout-preview-facts > div:nth-child(odd) { border-left: 0; padding-left: 0; }
   .breakout-preview-facts > div:last-child { grid-column: 1 / -1; }
+}
+
+/* Research indexes share a quiet leaderboard rhythm: one project per row,
+   decision-useful facts inline, and the evidence remains attached to that row. */
+.case-grid,
+.nft-grid,
+.airdrop-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+
+.case-card {
+  align-items: center;
+  gap: 14px;
+  padding: 14px 8px;
+  border: 0;
+  border-top: 1px solid var(--border-2);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  transition: background-color 140ms ease;
+}
+.case-card:last-child { border-bottom: 1px solid var(--border-2); }
+.case-card:hover,
+.case-card:focus-visible { transform: none; background: color-mix(in srgb, var(--seq-mid) 5%, var(--surface)); }
+.case-card-logo { width: 40px; height: 40px; border-radius: 10px; }
+.case-card-name { margin-bottom: 3px; white-space: normal; }
+.case-card-body { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 3px 14px; }
+.case-card-head,
+.case-card-name,
+.case-card-body > .research-summary { grid-column: 1; }
+.case-card-body > .research-meta { grid-column: 2; grid-row: 1 / span 2; display: grid; gap: 4px; text-align: right; }
+.case-card-body > .case-card-cta { grid-column: 2; grid-row: 3; justify-self: end; }
+.case-card-body > .research-summary { margin: 2px 0 0; }
+
+.nft-card {
+  grid-template-columns: minmax(14rem, 1.1fr) minmax(0, 2fr) auto;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 13px 8px;
+  border: 0;
+  border-top: 1px solid var(--border-2);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  transition: background-color 140ms ease;
+}
+.nft-card:last-child { border-bottom: 1px solid var(--border-2); }
+.nft-card:hover { transform: none; background: color-mix(in srgb, var(--seq-mid) 5%, var(--surface)); }
+.nft-card-head { grid-column: 1; grid-row: 1; }
+.nft-card-stats { grid-column: 2; grid-row: 1 / span 2; align-self: center; padding-top: 0; border-top: 0; }
+.nft-card-more { grid-column: 1; grid-row: 2; margin-top: 0; }
+.nft-card > .nft-flag { grid-column: 3; grid-row: 1; align-self: center; white-space: nowrap; }
+.nft-card > .nft-read-link { display: none; }
+.nft-card > p { grid-column: 1; grid-row: 2; max-width: 50ch; }
+.nft-card .nft-card-actions { grid-column: 1 / -1; grid-row: 3; padding-top: 6px; }
+
+.airdrop-card {
+  grid-template-columns: minmax(14rem, 1.1fr) minmax(0, 1.5fr) minmax(12rem, .8fr) auto;
+  align-items: center;
+  gap: 8px 18px;
+  padding: 14px 8px;
+  border: 0;
+  border-top: 1px solid var(--border-2);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.airdrop-card:last-child { border-bottom: 1px solid var(--border-2); }
+.airdrop-card.is-featured { background: color-mix(in srgb, var(--accent-10) 24%, transparent); }
+.airdrop-card > .airdrop-card-head { grid-column: 1; grid-row: 1; }
+.airdrop-card > .research-summary { grid-column: 2; grid-row: 1; margin: 0; }
+.airdrop-card > .airdrop-card-stats { grid-column: 3; grid-row: 1; gap: 8px; }
+.airdrop-card > .airdrop-card-sources { grid-column: 1 / 4; grid-row: 2; padding-top: 8px; }
+.airdrop-card > .case-card-cta { grid-column: 4; grid-row: 1; justify-self: end; white-space: nowrap; }
+
+.platform-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; margin-bottom: 20px; }
+.platform-card,
+.platform-card:nth-child(1),
+.platform-card:nth-child(2) {
+  display: grid;
+  grid-template-columns: minmax(13rem, 1fr) minmax(16rem, 1.3fr) minmax(12rem, .8fr);
+  align-items: center;
+  gap: 10px 18px;
+  grid-column: 1;
+  padding: 13px 8px;
+  border: 0;
+  border-top: 1px solid var(--border-2);
+  border-radius: 0;
+  background: transparent;
+}
+.platform-card:last-child { border-bottom: 1px solid var(--border-2); }
+.platform-card-head { align-items: center; margin: 0; }
+.platform-card-head .pulse-badge { display: none; }
+.platform-card .platform-metrics { gap: 10px; }
+.platform-card .platform-metric { padding: 8px 10px; }
+.platform-card .metric-value { font-size: 17px; }
+.platform-card .metric-bars { gap: 5px; margin: 0; }
+.platform-card .platform-chains { grid-column: 2 / -1; margin: 0; white-space: normal; }
+
+@media (max-width: 800px) {
+  .case-card-body { grid-template-columns: minmax(0, 1fr); }
+  .case-card-body > .research-meta,
+  .case-card-body > .case-card-cta { grid-column: 1; grid-row: auto; justify-self: start; text-align: left; }
+  .case-card-body > .research-meta { display: flex; flex-wrap: wrap; gap: 8px 14px; }
+  .nft-card { grid-template-columns: minmax(0, 1fr) auto; }
+  .nft-card-head { grid-column: 1; grid-row: 1; }
+  .nft-card > .nft-flag { grid-column: 2; grid-row: 1; justify-self: end; }
+  .nft-card-stats { grid-column: 1 / -1; grid-row: 2; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .nft-card-more,
+  .nft-card > p { grid-column: 1 / -1; grid-row: 3; }
+  .nft-card .nft-card-actions { grid-column: 1 / -1; grid-row: 4; }
+  .airdrop-card { grid-template-columns: minmax(0, 1fr) auto; }
+  .airdrop-card > .airdrop-card-head { grid-column: 1; grid-row: 1; }
+  .airdrop-card > .case-card-cta { grid-column: 2; grid-row: 1; }
+  .airdrop-card > .research-summary { grid-column: 1 / -1; grid-row: 2; }
+  .airdrop-card > .airdrop-card-stats { grid-column: 1 / -1; grid-row: 3; }
+  .airdrop-card > .airdrop-card-sources { grid-column: 1 / -1; grid-row: 4; }
+  .platform-card,
+  .platform-card:nth-child(1),
+  .platform-card:nth-child(2) { grid-template-columns: minmax(0, 1fr) auto; gap: 8px 12px; }
+  .platform-card-head { grid-column: 1 / -1; }
+  .platform-card-head .pulse-badge { display: inline-flex; }
+  .platform-card .platform-metrics { grid-column: 1 / -1; }
+  .platform-card .metric-bars { grid-column: 1 / -1; }
+  .platform-card .platform-chains { grid-column: 1 / -1; }
+}
+
+@media (max-width: 520px) {
+  .case-card { align-items: flex-start; padding-inline: 2px; }
+  .nft-card { padding-inline: 2px; }
+  .airdrop-card { padding-inline: 2px; }
+  .airdrop-card > .airdrop-card-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

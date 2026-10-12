@@ -29,11 +29,11 @@ function setStatus(text, kind = 'busy') {
 }
 
 function top30Match(item = {}) {
-  const symbol = String(item.symbol || item.tokenSymbol || '').toUpperCase();
-  const project = String(item.project || '').toLowerCase();
-  return ALL_TIME_AIRDROP_TOP_30.find((row) => row.symbol === symbol)
-    || ALL_TIME_AIRDROP_TOP_30.find((row) => project && row.project.toLowerCase().includes(project))
-    || null;
+  const project = String(item.project || '').trim().toLocaleLowerCase().replace(/[^a-z0-9]+/g, ' ');
+  if (!project) return null;
+  return ALL_TIME_AIRDROP_TOP_30.find((row) =>
+    row.project.trim().toLocaleLowerCase().replace(/[^a-z0-9]+/g, ' ') === project,
+  ) || null;
 }
 
 function officialDomain(item = {}) {
@@ -355,17 +355,6 @@ function renderMethod() {
   $('methodWhy').textContent = method.whyNotTheUsualList;
 }
 
-function renderPool() {
-  $('candidatePool').replaceChildren(...state.data.candidatePool.map((entry) => el('li', {
-    class: `candidate${entry.status === 'researched' ? ' is-published' : ''}`,
-  },
-    entry.slug
-      ? el('a', { href: `/airdrops/${entry.slug}/` }, `${entry.project} · ${entry.symbol}`)
-      : el('strong', {}, `${entry.project} · ${entry.symbol}`),
-    el('small', {}, entry.status === 'researched' ? 'Published as a case' : entry.reason),
-  )));
-}
-
 function renderKpis() {
   const ranked = rankByDistributionValue(state.data.cases);
   const total = ranked.reduce((sum, item) => sum + item.valueAtDistributionUsd, 0);
@@ -373,7 +362,7 @@ function renderKpis() {
   const wallets = walletRows.reduce((sum, item) => sum + recipientCount(item), 0);
 
   $('kpiCases').textContent = String(state.data.cases.length);
-  $('kpiCasesSub').textContent = `${state.data.candidatePool.length} candidates screened`;
+  $('kpiCasesSub').textContent = 'with sourced distribution research';
   $('kpiValue').textContent = fmtBigUsd(total);
   $('kpiWallets').textContent = fmtWallets(wallets);
   $('kpiWalletsSub').textContent = `across ${walletRows.length} of ${state.data.cases.length} cases that published a count`;
@@ -395,7 +384,6 @@ async function init() {
     renderRanking();
     renderGrid();
     renderMethod();
-    renderPool();
     setStatus('Airdrop research ready · top 30 + sourced deep cases', 'ok');
   } catch (error) {
     console.error(error);

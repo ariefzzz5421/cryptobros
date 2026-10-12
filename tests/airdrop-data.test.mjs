@@ -15,7 +15,7 @@ const research = JSON.parse(readFileSync(
   'utf8',
 ));
 
-const { cases, candidatePool, methodology } = research;
+const { cases, methodology } = research;
 
 test('every case has a unique slug and id', () => {
   const slugs = cases.map((item) => item.slug);
@@ -210,21 +210,10 @@ test('share of supply agrees with the token counts it is derived from', () => {
   }
 });
 
-test('the candidate pool accounts for every published case', () => {
-  const published = new Set(cases.map((item) => item.slug));
-  const pooled = new Set(candidatePool.filter((row) => row.slug).map((row) => row.slug));
-  for (const slug of published) {
-    assert.ok(pooled.has(slug), `${slug} is published but missing from the candidate pool`);
-  }
-  for (const row of candidatePool) {
-    if (row.status === 'researched') {
-      assert.ok(row.slug && published.has(row.slug), `${row.project} is marked researched but has no case`);
-    } else {
-      assert.ok(
-        typeof row.reason === 'string' && row.reason.length > 20,
-        `${row.project} was excluded with no stated reason`,
-      );
-    }
+test('the published payload contains only project-linked cases and methodology', () => {
+  assert.equal(Object.hasOwn(research, 'candidatePool'), false);
+  for (const item of cases) {
+    assert.ok(item.slug && item.sources?.length, `${item.project} must retain its own sourced case`);
   }
 });
 
