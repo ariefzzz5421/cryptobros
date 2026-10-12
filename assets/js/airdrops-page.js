@@ -8,6 +8,7 @@
 
 import { el, fmtClock } from './utils.js';
 import { rankBoard, rankCard } from './ranking-board.js';
+import { brandedSourceLink } from './source-brands.js';
 import {
   loadAirdrops, RANKINGS, rankByDistributionValue, recipientCount, recipientCountLabel,
   fmtBigUsd, fmtWallets, fmtTokens, fmtAirdropDate,
@@ -72,6 +73,29 @@ function projectLogo(item, { small = false } = {}) {
   });
   wrap.prepend(img);
   return wrap;
+}
+
+function projectCardSources(item) {
+  const officialSite = top30Match(item)?.site;
+  const candidates = [
+    {
+      source: (item.sources || []).find((source) => source.kind === 'official')
+        || (officialSite ? { label: 'Project website', url: `https://${officialSite}/` } : null),
+      label: 'Project',
+    },
+    { source: item.valueAtDistributionSource, label: 'Distribution' },
+    { source: item.peakValueSource, label: 'Peak value' },
+  ];
+  const seen = new Set();
+  return candidates
+    .filter(({ source }) => source?.url && !seen.has(source.url) && seen.add(source.url))
+    .slice(0, 3)
+    .map(({ source, label }) => brandedSourceLink({
+      label,
+      url: source.url,
+      note: source.label,
+      className: 'source-button airdrop-card-source',
+    }));
 }
 
 function projectNameNode(item, { deepCase = false } = {}) {
@@ -294,14 +318,13 @@ function renderControls() {
 }
 
 function renderGrid() {
-  $('airdropGrid').replaceChildren(...state.data.cases.map((item) => el('a', {
+  $('airdropGrid').replaceChildren(...state.data.cases.map((item) => el('article', {
     class: `airdrop-card research-card${item.featured ? ' is-featured' : ''}`,
-    href: `/airdrops/${item.slug}/`,
   },
     el('div', { class: 'airdrop-card-head has-logo' },
       projectLogo(item),
       el('span', { class: 'airdrop-project-copy' },
-        el('strong', {}, item.project),
+        el('a', { class: 'airdrop-card-title', href: `/airdrops/${item.slug}/` }, item.project),
         el('small', { class: 'airdrop-card-sym num' }, item.tokenSymbol),
       ),
     ),
@@ -316,7 +339,8 @@ function renderGrid() {
         el('dd', { class: 'num' }, fmtWallets(recipientCount(item))),
       ),
     ),
-    el('span', { class: 'case-card-cta' }, item.featured ? 'Featured case' : 'Open case'),
+    el('div', { class: 'airdrop-card-sources', 'aria-label': `${item.project} sources` }, ...projectCardSources(item)),
+    el('a', { class: 'case-card-cta', href: `/airdrops/${item.slug}/` }, 'Read case'),
   )));
 }
 

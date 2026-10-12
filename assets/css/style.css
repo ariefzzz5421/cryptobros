@@ -3002,8 +3002,8 @@ body[data-nav-open] .nav-launcher-bars span:nth-child(3) { transform: translateY
   right: max(20px, calc((100vw - var(--wrap)) / 2 + 20px));
   top: calc(var(--head-h, 58px) + var(--space-2));
   display: block;
-  width: min(46rem, calc(100vw - 40px));
-  max-height: min(72dvh, 34rem);
+  width: min(30rem, calc(100vw - 40px));
+  max-height: min(88dvh, 42rem);
   padding: var(--space-md);
   overflow-y: auto;
   color: var(--ink);
@@ -3053,9 +3053,9 @@ body[data-nav-open] { overflow: hidden; }
 .nav-panel-sub { margin: 0; color: var(--muted); font-size: 11.5px; }
 
 .nav-columns {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-  gap: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
 .nav-column {
@@ -3133,11 +3133,9 @@ body[data-nav-open] { overflow: hidden; }
   .nav-launcher:hover { border-color: var(--ink-20); background: var(--surface-hover); }
 }
 
-@media (min-width: 34rem) {
-  .nav-column + .nav-column {
-    padding-left: var(--space-md);
-    border-left: 1px solid var(--border-2);
-  }
+.nav-column + .nav-column {
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-2);
 }
 
 @media (min-width: 60rem) {
@@ -3162,7 +3160,7 @@ body[data-nav-open] { overflow: hidden; }
     padding: var(--space-3);
   }
   .nav-panel-sub { display: none; }
-  .nav-columns { grid-template-columns: minmax(0, 1fr); gap: var(--space-3); }
+  .nav-columns { gap: var(--space-2); }
 }
 
 .site-foot {
@@ -3494,14 +3492,15 @@ body[data-nav-open] { overflow: hidden; }
 
 .nft-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-3);
 }
 
 .nft-card {
   text-decoration: none;
   display: grid;
-  align-content: start;
+  grid-template-columns: minmax(12rem, .72fr) minmax(0, 1.55fr) auto;
+  align-items: center;
   gap: var(--space-2);
   padding: var(--space-md);
   border: 1px solid var(--border);
@@ -3512,13 +3511,47 @@ body[data-nav-open] { overflow: hidden; }
     border-color var(--dur-micro) var(--ease-out);
 }
 .nft-card-head { display: flex; align-items: center; gap: var(--space-3); }
+.nft-card-logo-wrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+  overflow: hidden;
+  border: 1px solid var(--border-2);
+  border-radius: 14px;
+  background: var(--plane);
+}
 .nft-card-logo {
   width: 52px;
   height: 52px;
   object-fit: contain;
-  border: 1px solid var(--border-2);
-  border-radius: 14px;
-  background: var(--plane);
+}
+.nft-card-logo-fallback {
+  display: none;
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: .04em;
+}
+.nft-card-logo-wrap.is-fallback .nft-card-logo-fallback { display: block; }
+.nft-card-logo-wrap.is-fallback .nft-card-logo { display: none; }
+.nft-card-head { grid-column: 1; grid-row: 1; }
+.nft-card-stats { grid-column: 2; grid-row: 1 / span 2; }
+.nft-card-more { grid-column: 1; grid-row: 2; }
+.nft-card > .nft-flag { grid-column: 3; grid-row: 2; align-self: start; white-space: nowrap; }
+.nft-card > .nft-read-link { display: none; }
+.nft-card-head { padding-right: 0 !important; }
+.nft-card.is-context { background: var(--plane); }
+.nft-card .nft-card-actions { grid-column: 1 / -1; }
+@media (max-width: 52rem) {
+  .nft-card { grid-template-columns: minmax(0, 1fr) auto; align-items: start; }
+  .nft-card-head { grid-column: 1; grid-row: 1; }
+  .nft-card > .nft-flag { grid-column: 2; grid-row: 2; justify-self: end; }
+  .nft-card-stats { grid-column: 1 / -1; grid-row: 3; }
+  .nft-card-more { grid-column: 1 / -1; grid-row: 4; }
+  .nft-card .nft-card-actions { grid-row: 5; }
 }
 .nft-card-head strong { display: block; color: var(--ink); font-size: 16px; }
 .nft-card-head small { color: var(--muted); font-size: 12px; }
@@ -3569,7 +3602,6 @@ body[data-nav-open] { overflow: hidden; }
 .nft-flag.is-live { color: var(--seq-hi); border-color: var(--accent-28); background: var(--accent-14); }
 
 @media (max-width: 28rem) {
-  .nft-grid { grid-template-columns: minmax(0, 1fr); }
   .nft-card-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
@@ -4316,7 +4348,7 @@ a.rank-card-title::after {
 .airdrop-grid {
   display: grid;
   gap: var(--space-3);
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .airdrop-card {
@@ -4338,6 +4370,67 @@ a.rank-card-title::after {
 .airdrop-card-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr)); gap: var(--space-3); margin: 0; }
 .airdrop-card-stats dt { margin-bottom: 3px; color: var(--muted); font-size: 10px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; }
 .airdrop-card-stats dd { margin: 0; font-size: 17px; font-weight: 600; overflow-wrap: anywhere; }
+.airdrop-card-sources {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-2);
+}
+.airdrop-card-source {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  max-width: 100%;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  color: var(--ink-2);
+  background: var(--plane);
+  font-size: 11px;
+  font-weight: 620;
+  text-decoration: none;
+}
+.airdrop-card-source .source-logo-wrap { width: 18px; height: 18px; flex-basis: 18px; }
+.airdrop-card-source .source-logo { width: 18px; height: 18px; }
+.airdrop-card-source .source-copy { min-width: 0; }
+.airdrop-card-source .source-copy strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.airdrop-card-source:hover, .airdrop-card-source:focus-visible { border-color: var(--accent); color: var(--ink); }
+.airdrop-card-title { color: var(--ink); font-weight: 700; text-decoration: none; }
+.airdrop-card-title:hover, .airdrop-card-title:focus-visible { color: var(--seq-hi); }
+.airdrop-card-head { padding-right: 0 !important; }
+@media (min-width: 52rem) {
+  .airdrop-card {
+    grid-template-columns: minmax(13rem, .75fr) minmax(0, 1.6fr);
+    align-items: center;
+  }
+  .airdrop-card-head { grid-column: 1; grid-row: 1; }
+  .airdrop-card > .research-summary { grid-column: 2; grid-row: 1; }
+  .airdrop-card-stats { grid-column: 2; grid-row: 2; }
+  .airdrop-card-sources { grid-column: 2; grid-row: 3; }
+  .airdrop-card > .case-card-cta { grid-column: 1; grid-row: 2 / span 2; }
+}
+
+.neobank-name-cell { display: inline-flex; align-items: center; gap: 9px; min-width: 0; }
+.neobank-logo {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--plane);
+}
+.neobank-logo.is-small { width: 28px; height: 28px; flex-basis: 28px; border-radius: 8px; }
+.neobank-logo img { width: 100%; height: 100%; object-fit: contain; padding: 3px; }
+.neobank-logo-fallback { display: none; color: var(--muted); font-size: 10px; font-weight: 750; }
+.neobank-logo.is-fallback .neobank-logo-fallback { display: block; }
+.neobank-logo.is-fallback img { display: none; }
+.neobank-card-link { display: inline-flex; align-items: center; gap: 10px; }
 
 .candidate-pool { display: grid; gap: var(--space-3); margin: var(--space-4) 0 0; padding: 0; list-style: none; }
 .candidate {

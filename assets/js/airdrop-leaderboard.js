@@ -158,9 +158,8 @@ export const ALL_TIME_AIRDROP_TOP_30 = rows
   .slice(0, 30)
   .map((item, index) => ({ ...item, rank: index + 1 }));
 
-/* Use the user's supplied project artwork where available, then reuse existing
-   repo-native token art. Projects without a stored image fall back to their
-   official-domain favicon and finally to a compact symbol badge. */
+/* Logos are bundled locally: the assets are official-site favicons collected
+   at build time, so cards never depend on a third-party image request. */
 const LOCAL_LOGOS = new Map(Object.entries({
   UNI: '/assets/img/airdrops/uniswap.webp',
   APE: '/assets/img/airdrops/apecoin.webp',
@@ -172,13 +171,31 @@ const LOCAL_LOGOS = new Map(Object.entries({
   '1INCH': '/assets/img/airdrops/1inch.webp',
   BONK: '/assets/img/coins/bonk.jpg',
   PENGU: '/assets/img/coins/pengu.png',
+  DYDX: '/assets/img/airdrops/official-DYDX.png',
+  STRK: '/assets/img/airdrops/official-STRK.png',
+  JUP: '/assets/img/airdrops/official-JUP.png',
+  ICP: '/assets/img/airdrops/official-ICP.png',
+  IP: '/assets/img/airdrops/official-IP.png',
+  ZK: '/assets/img/airdrops/official-ZK.png',
+  BERA: '/assets/img/airdrops/official-BERA.png',
+  ENA: '/assets/img/airdrops/official-ENA.png',
+  W: '/assets/img/airdrops/official-W.png',
+  OP: '/assets/img/airdrops/official-OP.png',
+  EIGEN: '/assets/img/airdrops/official-EIGEN.png',
+  ZRO: '/assets/img/airdrops/official-ZRO.png',
+  BLAST: '/assets/img/airdrops/official-BLAST.png',
+  BLUR: '/assets/img/airdrops/official-BLUR.png',
+  APT: '/assets/img/airdrops/official-APT.png',
+  AGLD: '/assets/img/airdrops/official-AGLD.png',
+  JTO: '/assets/img/airdrops/official-JTO.png',
+  GTC: '/assets/img/airdrops/official-GTC.png',
+  PSP: '/assets/img/airdrops/official-PSP.png',
 }));
 
 export function airdropLogoUrl(item = {}) {
   const local = LOCAL_LOGOS.get(String(item.symbol || item.tokenSymbol || '').toUpperCase());
   if (local) return local;
-  const domain = String(item.site || '').replace(/^https?:\/\//, '').replace(/\/$/, '');
-  return domain ? `https://www.google.com/s2/favicons?domain_url=https://${domain}&sz=128` : '';
+  return '';
 }
 
 export function airdropInitials(item = {}) {

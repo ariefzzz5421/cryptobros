@@ -36,11 +36,9 @@ npm run build
 | `/nft-2026/` | Collections launched in 2026 with a documented floor above `0.1 ETH` |
 | `/nft-2026/{slug}/` | 2026 collection case study, same format as the historic route |
 
-Navigation is a drawer opened from the three-line launcher pinned to the
-top-right corner, directly under the theme toggle. Routes are defined once in
-`assets/js/routes.js` — label, description, and a small identifying icon — and
-rendered as topic columns by `assets/js/app-shell.js`, so every page picks up a
-new route without editing its markup.
+Navigation is a drawer opened from the three-line launcher in the header. Routes
+are defined once in `assets/js/routes.js` and shown as one compact, top-to-bottom
+list grouped by topic.
 
 ### Case article format
 
@@ -52,6 +50,13 @@ the dated triggers, followed by identity and sources.
 NFT collections carry their official artwork from the CoinGecko NFT image CDN,
 with a local mark as the `onerror` fallback so a blocked or slow CDN never
 leaves a broken image. Every collection links to its OpenSea page.
+
+Historical research is curated locally: Airdrop dossiers are stored in
+`assets/data/airdrops.json`, and token/NFT case narratives live in their
+configuration files. Opening a research page does not query a research API;
+only live market snapshots, prices and floors hydrate at runtime. Logos used by
+the airdrop and NeoBank lists are bundled locally, with a readable fallback for
+an unavailable mark.
 
 ### Contract-first token identity
 
@@ -103,6 +108,7 @@ on-chain omniscience.
 - `assets/img/flags/` — local country flags
 - `assets/img/coins/` — locally stored token imagery
 - `assets/img/platforms/` — locally stored platform imagery
+- `assets/img/airdrops/` and `assets/img/neobanks/` — locally stored project marks
 
 ## Generated case pages
 

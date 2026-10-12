@@ -224,10 +224,9 @@ const ANSEM_LAUNCH_TOKENS = [
     loreSources: [
       'https://ansem.io/launch/coin/RmtMAYVTTFv2iK9muMrXEoAnSSsZPPgRPbqZCKwNDYk',
       'https://solscan.io/token/RmtMAYVTTFv2iK9muMrXEoAnSSsZPPgRPbqZCKwNDYk',
-      'https://dexscreener.com/solana/NSP5KUp9PcXVRx6nxQgyDGGrSKamkexVpHBprvGZuKE',
       'https://www.kucoin.com/news/flash/ansem-launches-platform-for-token-teams-to-buy-his-attention-via-airdrops',
     ],
-    dexScreener: { chain: 'solana', pairAddress: 'NSP5KUp9PcXVRx6nxQgyDGGrSKamkexVpHBprvGZuKE', url: 'https://dexscreener.com/solana/NSP5KUp9PcXVRx6nxQgyDGGrSKamkexVpHBprvGZuKE' },
+    dexScreener: null,
   },
   {
     id: 'ansem-z',
@@ -246,10 +245,9 @@ const ANSEM_LAUNCH_TOKENS = [
     loreSources: [
       'https://ansem.io/launch/coin/7MQSupJTpY31HGChEHUAsS1pQhLSrHS5CCsB9bnaN3eS',
       'https://solscan.io/token/7MQSupJTpY31HGChEHUAsS1pQhLSrHS5CCsB9bnaN3eS',
-      'https://dexscreener.com/solana/EHDht6efDab3GNd6N9sgHYnMR7nW2Wv5rZ4W3zuDvLKo',
       'https://www.kucoin.com/news/flash/ansem-launches-platform-for-token-teams-to-buy-his-attention-via-airdrops',
     ],
-    dexScreener: { chain: 'solana', pairAddress: 'EHDht6efDab3GNd6N9sgHYnMR7nW2Wv5rZ4W3zuDvLKo', url: 'https://dexscreener.com/solana/EHDht6efDab3GNd6N9sgHYnMR7nW2Wv5rZ4W3zuDvLKo' },
+    dexScreener: null,
   },
 ];
 

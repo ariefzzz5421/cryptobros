@@ -37,6 +37,29 @@ function setStatus(text, kind = 'busy') {
   $('statusDot').className = `dot ${kind}`;
 }
 
+function collectionLogo(item, live) {
+  const initials = item.name.split(/\s+/).map((part) => part[0]).join('').slice(0, 2).toUpperCase();
+  const wrap = el('span', { class: 'nft-card-logo-wrap', 'aria-label': `${item.name} logo` },
+    el('span', { class: 'nft-card-logo-fallback', 'aria-hidden': 'true' }, initials),
+  );
+  const image = el('img', {
+    class: 'nft-card-logo', src: live?.image || item.logo, alt: '',
+    width: 52, height: 52, loading: 'lazy', decoding: 'async',
+    onerror: (event) => {
+      const img = event.currentTarget;
+      if (!img.dataset.localFallback) {
+        img.dataset.localFallback = '1';
+        img.src = item.logoFallback;
+        return;
+      }
+      img.hidden = true;
+      wrap.classList.add('is-fallback');
+    },
+  });
+  wrap.prepend(image);
+  return wrap;
+}
+
 function card(sourceItem, live) {
   const item = localizeNft2026(sourceItem, getLocale());
   const ui = copy();
@@ -46,19 +69,8 @@ function card(sourceItem, live) {
   const liveLabel = Number.isFinite(floor)
     ? `${floor.toLocaleString(localeTag(), { maximumFractionDigits: 4 })} ${currency}`
     : ui.unavailable;
-  const logo = el('img', {
-    class: 'nft-card-logo', src: live?.image || item.logo, alt: `${item.name} logo`,
-    width: 52, height: 52, loading: 'lazy', decoding: 'async',
-    onerror: (event) => {
-      const img = event.currentTarget;
-      if (img.dataset.fallback) return;
-      img.dataset.fallback = '1';
-      img.src = item.logoFallback;
-    },
-  });
-
   return el('article', { class: `nft-card${item.status === 'context' ? ' is-context' : ''}` },
-    el('div', { class: 'nft-card-head' }, logo,
+    el('div', { class: 'nft-card-head' }, collectionLogo(item, live),
       el('div', {}, el('strong', {}, item.name),
         el('small', {}, `${item.chain} · ${ui.launched} ${fmtResearchDate(item.launch, localeTag())}`))),
     el('p', {}, item.narrative),

@@ -169,6 +169,28 @@ function observeChainTable() {
   observer.observe(holder, { childList: true, subtree: true });
 }
 
+function installLogoFallbacks() {
+  const targets = 'img.row-logo, img.case-card-logo, img.platform-logo, img.coin-logo, img.token-logo';
+  const makeFallback = (image) => {
+    if (image.dataset.logoFallbackApplied === 'true') return;
+    image.dataset.logoFallbackApplied = 'true';
+    const parentText = image.parentElement?.textContent || image.closest('tr')?.textContent || '';
+    const label = cleanSearchLabel(image.alt || parentText);
+    const initials = (label.match(/[\p{L}\p{N}]+/gu) || ['?'])
+      .slice(0, 2).map((part) => part[0]).join('').toUpperCase().slice(0, 3) || '?';
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#142943"/><path d="M0 48 64 16v48H0Z" fill="#1678d2" opacity=".5"/><text x="32" y="37" text-anchor="middle" dominant-baseline="middle" fill="#eaf4ff" font-family="Arial,sans-serif" font-size="${initials.length > 2 ? 18 : 23}" font-weight="700">${initials}</text></svg>`;
+    image.src = `data:image/svg+xml,${encodeURIComponent(svg)}`;
+    image.alt = label ? `${label} mark` : 'Project mark';
+    image.classList.add('is-logo-fallback');
+  };
+  document.addEventListener('error', (event) => {
+    if (event.target instanceof HTMLImageElement && event.target.matches(targets)) makeFallback(event.target);
+  }, true);
+  document.querySelectorAll(targets).forEach((image) => {
+    if (image.complete && image.naturalWidth === 0) makeFallback(image);
+  });
+}
+
 function cleanSearchLabel(value = '') {
   return String(value).replace(/\s+/g, ' ').trim();
 }
@@ -500,6 +522,7 @@ function installRouteTransitions() {
 
 export function initUiUpgrades() {
   ensureStylesheet(STYLE_ID, '/assets/css/ui-upgrades.css');
+  installLogoFallbacks();
   decorateThemeToggle();
   enhanceDashboardGlobe();
   observeChainTable();

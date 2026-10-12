@@ -63,10 +63,6 @@ function buildLauncher(navId) {
 }
 
 function buildColumns(nav, current) {
-  const head = document.createElement('div');
-  head.className = 'nav-panel-head';
-  head.innerHTML = `<p class="nav-panel-title">${t('nav.routes')}</p><p class="nav-panel-sub">${t('nav.prompt')}</p>`;
-
   const columns = document.createElement('div');
   columns.className = 'nav-columns';
 
@@ -90,16 +86,14 @@ function buildColumns(nav, current) {
       copy.className = 'nav-copy';
       const label = document.createElement('strong');
       label.textContent = getLocale() === 'id' ? route.labelId : route.label;
-      const note = document.createElement('small');
-      note.textContent = getLocale() === 'id' ? route.noteId : route.note;
-      copy.append(label, note);
+      copy.append(label);
       link.append(routeIcon(route.icon), copy);
       section.append(link);
     }
     columns.append(section);
   }
 
-  nav.replaceChildren(head, columns);
+  nav.replaceChildren(columns);
 }
 
 /* The readiness line used to sit under the brand, where it cost about 30px of

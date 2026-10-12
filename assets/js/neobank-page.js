@@ -15,6 +15,10 @@ import { rankBoard, rankCard } from './ranking-board.js';
 
 const $ = (id) => document.getElementById(id);
 const state = { data: null, ranking: 'customers' };
+const OFFICIAL_LOGOS = {
+  webank: 'data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAABILAAASCwAAAAAAAAAAAAAAAAAAAAAAAP///wAAAAAAxcXFA5aWlQhqamgMTU1LDz4+PBFDQ0EQa2tqDKenpgQAAAAA////AAAAAAAAAAAAAAAAAGFhXwBycnALTk5MOldXVWdISEeLPz89oj8/PbA6Oji5Ozs5tkdHRZ9TU1FtUlJRKWtraQJaWlgAAAAAAAAAAABSUk8AaWlmGjY2NKQrKyn2Tk5M/IeHhv5HR0X/NDQy/zc3Nf81NTP+MTEv+Tc3NcJtbWsXWlpYAAAAAAAAAAAAXl5cAHt7eQ8xMS6uZ2dl/+Xl5P/AwL//NDQy/zY2NP83NzX/Nzc1/zQ0Mv87OzmppKSjCXl5dwAAAAAAAAAAAD09OwBDQ0FHODg28szMy///////qamo/y4uLP83NzX/Nzc1/zc3Nf80NDL/PDw7spWVlAx1dXQAAAAAAAAAAAA2NjQAODg2VEZGRPbj4+P//////7W1tf8vLy7/Nzc1/zc3Nf83NzX/NTUz/zY2NNtgYF8hTk5MAAAAAAAAAAAAT09NAF9fXSszMzLhvb29///////k5OL/Tk5H/zQ0K/84OC//ODgw/zg3Mv8xMS72UVFQVkREQgAAAAAAAAAAAHp6eADKysgFLi4tl21ta//g4fT/ycv1/3F1o/8pLV3/LzNf/zE0Vv8zNUn/MzM1/z8+NYgAAAAApqWTAAAAAAAAAAAAPUJ2AE9ScDMjK5njLTrV/x4p1f8XJNf/EyTZ/xQl2f8YKNb/GinK/xsntv8pMaytkpvfCmlyzAAAAAAAAAAAAG56/wDP2/8EIy7lkhAf2P8gLtX/Lz7a/zRC2v8rOdL/GSjI/xgo1P8VJt7/GCjeyiU12RMiMtoAAAAAAAAAAABXV1MAdnVoFjEzT5JGSXz6wMLl/7Gywv/c3u3/09Xl/0hKXf8tME//KzBm/ykyi71TX9IPR1G7AAAAAAAAAAAASkpJAF5eXigwLyqiQ0M78sPCwP+Hh4P/3t7d//Hx8f9ZWFP/MjIq/zQ0K/89PDOV////A5mXiAAAAAAAAAAAAMTEwwD///8Ar6+vDDMzMpFLS0n+o6Oi/8XFxf+MjIv/Nzc1/zU1M/8uLivtTk5MSTc3NgD///8AAAAAAAAAAAAAAAAAAAAAAEVFQwBZWVcYLS0rmCwsKe0zMzH9MTEv/zMzMf0wMC7kPz89cqOjoQZ1dXMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYWFgAGtragpYWFZHRkZEmzg4NrlHR0WSU1NRNqenpgRycnEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACtra0A1NTUAWpqaAs8PDoQcHBuCe/v8AG4uLgAAAAAAAAAAAAAAAAA8A8AAMADAADAAwAAwAMAAMADAADAAwAAwAMAAMADAADgAQAA4AEAAOABAADgAQAA4AMAAPgDAAD8BwAA/g8AAA==',
+  mybank: '/assets/img/neobanks/mybank.ico',
+};
 
 function setStatus(text, kind = 'busy') {
   $('statusText').textContent = text;
@@ -71,6 +75,27 @@ function sourceTag(source) {
     class: `source-kind is-${source.kind}`, href: source.url,
     target: '_blank', rel: 'noreferrer', title: source.label,
   }, source.kind);
+}
+
+function bankLogo(bank, size = 40) {
+  const initials = bank.name.split(/\s+/).map((part) => part[0]).join('').slice(0, 2).toUpperCase();
+  const wrap = el('span', { class: `neobank-logo${size <= 28 ? ' is-small' : ''}`, 'aria-label': `${bank.name} logo` },
+    el('span', { class: 'neobank-logo-fallback', 'aria-hidden': 'true' }, initials),
+  );
+  const image = el('img', {
+    src: OFFICIAL_LOGOS[bank.id] || `/assets/img/neobanks/${bank.id}.png`,
+    alt: '',
+    width: size,
+    height: size,
+    loading: 'lazy',
+    decoding: 'async',
+    onerror: (event) => {
+      event.currentTarget.hidden = true;
+      wrap.classList.add('is-fallback');
+    },
+  });
+  wrap.prepend(image);
+  return wrap;
 }
 
 /* --- rankings ----------------------------------------------------------- */
@@ -137,7 +162,7 @@ function renderRanking() {
   const body = el('tbody');
   rows.forEach((bank, index) => body.append(el('tr', {},
     el('td', { class: 'muted num' }, String(index + 1)),
-    el('td', {}, el('strong', {}, bank.name)),
+    el('td', {}, el('span', { class: 'neobank-name-cell' }, bankLogo(bank, 28), el('strong', {}, bank.name))),
     el('td', {}, bank.country),
     el('td', { class: 'r num' }, fmtCount(bank.customers?.value, bank.customers?.qualifier)),
     el('td', { class: 'muted' }, customerBasis(bank)),
@@ -152,6 +177,7 @@ function renderRanking() {
 
   const cards = rows.map((bank, index) => rankCard({
     rank: String(index + 1),
+    logo: bankLogo(bank, 42),
     title: bank.name,
     subtitle: `${bank.country} · founded ${bank.founded}`,
     href: bank.site,
@@ -183,15 +209,15 @@ function renderControls() {
 }
 
 function renderGrid() {
-  $('neobankGrid').replaceChildren(...state.data.neobanks.map((bank) => el('a', {
+  $('neobankGrid').replaceChildren(...state.data.neobanks.map((bank) => el('article', {
     class: 'airdrop-card research-card',
-    href: bank.site,
-    target: '_blank',
-    rel: 'noreferrer',
   },
-    el('div', { class: 'airdrop-card-head' },
-      el('strong', {}, bank.name),
-      el('span', { class: 'airdrop-card-sym num' }, bank.country),
+    el('div', { class: 'airdrop-card-head has-logo' },
+      bankLogo(bank),
+      el('span', { class: 'airdrop-project-copy' },
+        el('a', { class: 'airdrop-card-title', href: bank.site, target: '_blank', rel: 'noreferrer' }, bank.name),
+        el('small', {}, `${bank.country} · ${bank.founded}`),
+      ),
     ),
     el('p', { class: 'research-summary' }, bank.note),
     el('dl', { class: 'airdrop-card-stats' },
@@ -210,7 +236,7 @@ function renderGrid() {
         .map(sourceTag)
         .filter(Boolean),
     ),
-    el('span', { class: 'case-card-cta' }, 'Open official site'),
+    el('a', { class: 'case-card-cta', href: bank.site, target: '_blank', rel: 'noreferrer' }, 'Company site'),
   )));
 }
 

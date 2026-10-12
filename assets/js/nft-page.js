@@ -37,28 +37,40 @@ function stat(label, value, note) {
   );
 }
 
-function card(item, live) {
-  const metrics = nftMetrics(item, live);
-
+function collectionLogo(item, live) {
+  const initials = item.name.split(/\s+/).map((part) => part[0]).join('').slice(0, 2).toUpperCase();
+  const wrap = el('span', { class: 'nft-card-logo-wrap', 'aria-label': `${item.name} logo` },
+    el('span', { class: 'nft-card-logo-fallback', 'aria-hidden': 'true' }, initials),
+  );
   const logo = el('img', {
     class: 'nft-card-logo',
     src: live?.image || item.logo,
-    alt: `${item.name} collection logo`,
+    alt: '',
     width: 52,
     height: 52,
     loading: 'lazy',
     decoding: 'async',
     onerror: (event) => {
-      const img = event.currentTarget;
-      if (img.dataset.fallback) return;
-      img.dataset.fallback = '1';
-      img.src = item.logoFallback;
+      const image = event.currentTarget;
+      if (!image.dataset.localFallback) {
+        image.dataset.localFallback = '1';
+        image.src = item.logoFallback;
+        return;
+      }
+      image.hidden = true;
+      wrap.classList.add('is-fallback');
     },
   });
+  wrap.prepend(logo);
+  return wrap;
+}
+
+function card(item, live) {
+  const metrics = nftMetrics(item, live);
 
   return el('article', { class: 'nft-card' },
     el('div', { class: 'nft-card-head' },
-      logo,
+      collectionLogo(item, live),
       el('div', {},
         el('a', { class: 'nft-card-title', href: `/nft/${item.slug}/` }, item.name),
         el('small', {}, `${item.chain} · launched ${fmtResearchDate(item.launch)} · mint ${item.mint}`),
