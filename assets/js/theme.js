@@ -55,12 +55,7 @@ function commitTheme(theme, persist = false) {
 }
 
 function applyTheme(theme, persist = false) {
-  const commit = () => commitTheme(theme, persist);
-  if (persist && document.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    document.startViewTransition(commit);
-  } else {
-    commit();
-  }
+  commitTheme(theme, persist);
 }
 
 applyTheme(savedTheme() || (media.matches ? 'light' : 'dark'));

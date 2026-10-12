@@ -2,7 +2,6 @@
    Uiverse references:
    - switch: Bodyhc / light-lion-39 (MIT)
    - site search input: OnlyCodeChannel / ugly-penguin-43 (MIT)
-   - route loader: andrew-manzyk / fast-vampirebat-53 (MIT)
    Markup and motion are adapted to the site's existing accessible shell. */
 
 const STYLE_ID = 'crypto-bros-ui-upgrades';
@@ -452,74 +451,6 @@ function observeResearchCards() {
   observer.observe(document.body, { childList: true, subtree: true });
 }
 
-function routeTarget(anchor, event) {
-  if (!anchor || anchor.hasAttribute('download') || anchor.dataset.noRouteTransition != null) return null;
-  /* The drawer/sidebar deliberately navigates immediately: the transition is
-     for page content and research entry points, not the navigation chrome. */
-  if (anchor.closest('.primary-nav, [data-nav-panel], .nav-panel')) return null;
-  if (anchor.target && anchor.target !== '_self') return null;
-  if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return null;
-  let url;
-  try { url = new URL(anchor.href, window.location.href); } catch { return null; }
-  if (url.origin !== window.location.origin) return null;
-  if (/\.(?:png|jpe?g|gif|webp|svg|pdf|zip|json|xml|txt)$/i.test(url.pathname)) return null;
-  const sameDocument = url.pathname === location.pathname && url.search === location.search;
-  if (sameDocument && url.hash) return null;
-  if (url.href === location.href) return null;
-  return url;
-}
-
-function createRouteTransition() {
-  let overlay = document.querySelector('.route-transition');
-  if (overlay) return overlay;
-  overlay = document.createElement('div');
-  overlay.className = 'route-transition';
-  overlay.hidden = true;
-  overlay.setAttribute('aria-hidden', 'true');
-  overlay.innerHTML = `
-    <div class="peg-top-loader" role="status" aria-label="Opening page">
-      <span class="peg-top-dot peg-top-dot-1" aria-hidden="true"></span>
-      <span class="peg-top-dot peg-top-dot-2" aria-hidden="true"></span>
-      <span class="peg-top-dot peg-top-dot-3" aria-hidden="true"></span>
-      <span class="peg-top-dot peg-top-dot-4" aria-hidden="true"></span>
-      <span class="peg-top-dot peg-top-dot-5" aria-hidden="true"></span>
-    </div>`;
-  document.body.append(overlay);
-  return overlay;
-}
-
-function installRouteTransitions() {
-  const overlay = createRouteTransition();
-  let leaving = false;
-
-  const reset = () => {
-    leaving = false;
-    overlay.classList.remove('is-visible');
-    overlay.hidden = true;
-    overlay.setAttribute('aria-hidden', 'true');
-    document.documentElement.classList.remove('is-route-leaving');
-  };
-
-  window.addEventListener('pageshow', reset);
-
-  document.addEventListener('click', (event) => {
-    if (leaving) return;
-    const anchor = event.target.closest?.('a[href]');
-    const url = routeTarget(anchor, event);
-    if (!url) return;
-
-    event.preventDefault();
-    leaving = true;
-    overlay.hidden = false;
-    overlay.setAttribute('aria-hidden', 'false');
-    document.documentElement.classList.add('is-route-leaving');
-    requestAnimationFrame(() => overlay.classList.add('is-visible'));
-
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    window.setTimeout(() => window.location.assign(url.href), reduced ? 0 : 185);
-  });
-}
-
 export function initUiUpgrades() {
   ensureStylesheet(STYLE_ID, '/assets/css/ui-upgrades.css');
   installLogoFallbacks();
@@ -528,5 +459,4 @@ export function initUiUpgrades() {
   observeChainTable();
   installSiteSearch();
   observeResearchCards();
-  installRouteTransitions();
 }

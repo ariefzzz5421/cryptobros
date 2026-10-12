@@ -34,7 +34,7 @@ async function fetchRecords() {
   return data;
 }
 
-function renderCard(event) {
+function renderCard(event, index) {
   const priceAth = event.priceAth;
   const registryToken = findToken({ id: event.marketId || event.id });
 
@@ -44,6 +44,7 @@ function renderCard(event) {
     'aria-label': `Open research ${event.name}`,
   },
     el('div', { class: 'breakout-preview-main' },
+      el('span', { class: 'breakout-preview-rank', 'aria-hidden': 'true' }, String(index + 1).padStart(2, '0')),
       el('img', {
         class: 'breakout-preview-logo',
         src: event.current?.image || TOKEN_LOGOS[event.id] || '/assets/img/brand/crypto-bros-hex.svg',
@@ -87,7 +88,7 @@ function renderCard(event) {
         el('small', {}, priceAth ? 'Calendar days · CoinGecko' : 'No sourced ATH date'),
       ),
     ),
-    el('span', { class: 'breakout-preview-cta', 'aria-hidden': 'true' }, 'Read research'),
+    el('span', { class: 'breakout-preview-cta', 'aria-hidden': 'true' }, 'Open'),
   );
 }
 

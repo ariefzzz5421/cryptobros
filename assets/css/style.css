@@ -3788,9 +3788,6 @@ body {
 }
 .case-doc .doc-callout.is-accent p { color: var(--ink); font-size: clamp(1rem, 1.5vw, 1.16rem); line-height: 1.65; }
 
-::view-transition-old(root),
-::view-transition-new(root) { animation-duration: 320ms; animation-timing-function: var(--ease-out); }
-
 @media (max-width: 36rem) {
   .market-tape-item { min-width: 168px; padding-inline: var(--space-3); }
   .market-tape[data-state="ready"] .market-tape-track,
@@ -3819,8 +3816,6 @@ body {
   .market-tape-track,
   .market-tape-skeleton,
   .interaction-ripple { animation: none !important; }
-  ::view-transition-old(root),
-  ::view-transition-new(root) { animation-duration: 1ms; }
 }
 
 /* ---------------- Homepage · Stat-Led Command Deck ---------------- */
@@ -4773,4 +4768,84 @@ a.rank-card-title::after {
   letter-spacing: normal;
   color: inherit;
   font-size: inherit;
+}
+
+/* 2026 threshold events: compact leaderboard rows instead of tiled stat cards. */
+.breakout-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
+.breakout-preview-card {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.55fr) repeat(5, minmax(100px, 1fr)) auto;
+  align-items: center;
+  gap: 0;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 0;
+  border-top: 1px solid var(--border-2);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  transition: background-color 140ms ease;
+}
+.breakout-preview-card.research-card-premium {
+  isolation: auto;
+  overflow: visible;
+  border-color: var(--border-2) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.breakout-preview-card.research-card-premium::before,
+.breakout-preview-card.research-card-premium::after { display: none !important; }
+.breakout-preview-card:last-child { border-bottom: 1px solid var(--border-2); }
+.breakout-preview-card:focus-visible { outline-offset: -2px; }
+.breakout-preview-main { min-width: 0; gap: 10px; padding-right: 12px; }
+.breakout-preview-rank {
+  flex: none;
+  width: 2ch;
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.breakout-preview-logo { width: 40px; height: 40px; border-radius: 10px; }
+.breakout-preview-title h3 { font-size: 14px; }
+.breakout-preview-title .eyebrow { font-size: 9px; }
+.breakout-preview-title .chain-label { font-size: 11px; }
+.breakout-preview-facts { display: contents; }
+.breakout-preview-facts > div {
+  min-width: 0;
+  padding: 5px 10px;
+  border-left: 1px solid var(--border-2);
+  background: transparent;
+}
+.breakout-preview-facts span { font-size: 9px; }
+.breakout-preview-facts strong { font-size: 12px; line-height: 1.35; }
+.breakout-preview-facts small { font-size: 10px; }
+.breakout-preview-cta {
+  grid-column: auto;
+  justify-self: end;
+  padding-left: 10px;
+  font-size: 11px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .breakout-preview-card:hover { background: color-mix(in srgb, var(--seq-mid) 5%, var(--surface)); }
+  .breakout-preview-card:hover .breakout-preview-cta { transform: none; }
+}
+@media (max-width: 900px) {
+  .breakout-preview-card { grid-template-columns: minmax(0, 1fr) auto; gap: 4px 0; }
+  .breakout-preview-main { grid-column: 1; }
+  .breakout-preview-cta { grid-column: 2; grid-row: 1; }
+  .breakout-preview-facts {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    margin: 8px 0 0 30px;
+  }
+  .breakout-preview-facts > div:first-child { border-left: 0; padding-left: 0; }
+}
+@media (max-width: 600px) {
+  .breakout-preview-card { padding: 12px 4px; }
+  .breakout-preview-title h3 { font-size: 14px; }
+  .breakout-preview-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 4px; }
+  .breakout-preview-facts > div { padding: 4px 8px; }
+  .breakout-preview-facts > div:nth-child(odd) { border-left: 0; padding-left: 0; }
+  .breakout-preview-facts > div:last-child { grid-column: 1 / -1; }
 }

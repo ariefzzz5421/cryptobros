@@ -1,7 +1,7 @@
 /* Crypto Bros UI upgrades -------------------------------------------------
    Switch adapted from Uiverse.io Bodyhc / light-lion-39 (MIT).
    Search input adapted from OnlyCodeChannel / ugly-penguin-43 (MIT).
-   Route loader adapted from andrew-manzyk / fast-vampirebat-53 (MIT). */
+   Search is immediate; route navigation uses the browser's native behavior. */
 
 /* Bodyhc-inspired compact light/dark switch. */
 .theme-toggle.theme-toggle-uiverse {
@@ -91,40 +91,6 @@
 .site-search-result-copy small { margin-top: 2px; color: var(--muted); font-size: 10px; letter-spacing: .04em; text-transform: uppercase; }
 .site-search-result-arrow { color: var(--muted); font-size: 13px; }
 .site-search-empty { margin: 0; padding: 18px 12px; color: var(--muted); font-size: 12px; text-align: center; }
-
-/* andrew-manzyk-inspired peg-top page transition. Animation only: no words. */
-.route-transition {
-  position: fixed; inset: 0; z-index: 99999; display: grid; place-items: center;
-  background: radial-gradient(circle at 50% 46%, rgba(63,109,255,.11), transparent 28%), color-mix(in srgb, #080b12 89%, transparent);
-  backdrop-filter: blur(11px); opacity: 0; pointer-events: none; transition: opacity 155ms cubic-bezier(.16,1,.3,1);
-}
-.route-transition[hidden] { display: none; }
-.route-transition.is-visible { opacity: 1; pointer-events: auto; }
-.peg-top-loader { position: relative; width: 116px; height: 72px; filter: drop-shadow(0 12px 24px rgba(29,78,216,.18)); }
-.peg-top-loader::after {
-  content: ''; position: absolute; left: 50%; bottom: 8px; width: 86px; height: 2px; translate: -50% 0;
-  border-radius: 50%; background: linear-gradient(90deg, transparent, rgba(125,170,255,.58), rgba(203,119,255,.52), transparent);
-  box-shadow: 0 0 18px rgba(96,165,250,.28); opacity: .7;
-}
-.peg-top-dot {
-  position: absolute; top: 0; width: 13px; height: 22px; border-radius: 9px;
-  background: linear-gradient(180deg, #d8e8ff 0%, #6ea8ff 38%, #7667ff 70%, #d34fff 100%);
-  box-shadow: inset 0 1px 1px rgba(255,255,255,.72), 0 0 15px rgba(100,139,255,.46);
-  animation: peg-top-drop 720ms cubic-bezier(.2,.78,.28,1) infinite;
-}
-.peg-top-dot-1 { left: 9px; animation-delay: 0ms; }
-.peg-top-dot-2 { left: 31px; animation-delay: 75ms; }
-.peg-top-dot-3 { left: 52px; animation-delay: 150ms; }
-.peg-top-dot-4 { left: 73px; animation-delay: 225ms; }
-.peg-top-dot-5 { left: 95px; animation-delay: 300ms; }
-@keyframes peg-top-drop {
-  0% { transform: translateY(-30px) scaleY(.72); opacity: 0; }
-  18% { opacity: 1; }
-  58% { transform: translateY(36px) scaleY(1); opacity: 1; }
-  76% { transform: translateY(39px) scaleY(.82); opacity: 1; }
-  100% { transform: translateY(39px) scale(.72); opacity: 0; }
-}
-html.is-route-leaving body > *:not(.route-transition) { transition: opacity 155ms ease, transform 155ms ease, filter 155ms ease; opacity: .62; transform: scale(.996); filter: blur(.5px); }
 
 /* Research cards ---------------------------------------------------------- */
 .research-card-premium {
