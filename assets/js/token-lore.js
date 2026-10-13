@@ -4,6 +4,16 @@ import { el } from './utils.js';
 import { t } from './i18n.js';
 
 const TOKEN_POLISH_STYLES = '/assets/css/token-polish.css';
+const mountedLore = new WeakMap();
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('localechange', () => {
+    document.querySelectorAll('.token-lore-section').forEach((holder) => {
+      const token = mountedLore.get(holder);
+      if (token) renderTokenLore(holder, token);
+    });
+  });
+}
 
 function ensureTokenPolishStyles() {
   if (document.querySelector(`link[href="${TOKEN_POLISH_STYLES}"]`)) return;
@@ -98,6 +108,7 @@ function loreSourceLink(url, token) {
 
 export function renderTokenLore(holder, token) {
   if (!holder) return;
+  mountedLore.set(holder, token);
   ensureTokenPolishStyles();
   const symbol = String(token?.symbol || token?.sym || 'TOKEN').toUpperCase();
   const lore = token?.lore || t('lore.unverified');
