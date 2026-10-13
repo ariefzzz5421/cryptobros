@@ -29,10 +29,15 @@ test('language control provides menu semantics, persistence, and keyboard handli
   assert.match(source, /event\.key === 'ArrowDown'/);
 });
 
-test('research indexes no longer force a tall minimum row and retain narrow-screen reflow', async () => {
+test('research indexes use compact rows and stack cleanly on narrow screens', async () => {
   const { readFile } = await import('node:fs/promises');
   const css = await readFile(new URL('../assets/css/style.css', import.meta.url), 'utf8');
+  const airdrops = await readFile(new URL('../assets/js/airdrops-page.js', import.meta.url), 'utf8');
   assert.match(css, /\.research-card\s*\{\s*min-height:\s*0;/);
   assert.match(css, /\.airdrop-card\s*\{[^}]*min-height:\s*0;/s);
-  assert.match(css, /@media\s*\(max-width:\s*800px\)[\s\S]*?\.airdrop-card\s*\{\s*grid-template-columns:\s*minmax\(0, 1fr\) auto;/);
+  assert.match(css, /\.airdrop-project-copy\s*\{\s*display:\s*grid;/);
+  assert.match(css, /\.airdrop-grid \.airdrop-card-head\s*\{\s*justify-content:\s*flex-start;/);
+  assert.match(css, /@media\s*\(max-width:\s*800px\)[\s\S]*?\.airdrop-card,\s*#neobankGrid \.airdrop-card\s*\{\s*grid-template-columns:\s*minmax\(0, 1fr\);/);
+  assert.doesNotMatch(airdrops, /airdrop-card-sources/);
+  assert.match(await readFile(new URL('../scripts/generate-airdrop-pages.cjs', import.meta.url), 'utf8'), /id="caseSources"/);
 });

@@ -4389,6 +4389,14 @@ a.rank-card-title::after {
 .airdrop-card.is-featured { border-color: var(--accent-45); background: linear-gradient(150deg, var(--accent-14), var(--surface) 62%); }
 .airdrop-card-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); min-width: 0; }
 .airdrop-card-head strong { font-size: 16px; overflow-wrap: anywhere; }
+.airdrop-project-copy {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+.airdrop-project-copy > a,
+.airdrop-project-copy > strong { min-width: 0; overflow-wrap: anywhere; }
+.airdrop-project-copy > small { color: var(--muted); line-height: 1.35; }
 .airdrop-card-sym { color: var(--muted); font-size: 12px; letter-spacing: .06em; flex: none; }
 .airdrop-card-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr)); gap: var(--space-3); margin: 0; }
 .airdrop-card-stats dt { margin-bottom: 3px; color: var(--muted); font-size: 10px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; }
@@ -4923,11 +4931,12 @@ a.rank-card-title::after {
 .nft-card .nft-card-actions { grid-column: 1 / -1; grid-row: 3; padding-top: 6px; }
 
 .airdrop-card {
-  grid-template-columns: minmax(12rem, .9fr) minmax(15rem, 1.55fr) minmax(12rem, .8fr) auto;
+  position: relative;
+  grid-template-columns: minmax(12rem, .85fr) minmax(16rem, 1.55fr) minmax(13rem, .8fr);
   align-items: center;
-  gap: 8px 16px;
+  gap: 8px 20px;
   min-height: 0;
-  padding: 12px 8px;
+  padding: 10px 54px 10px 8px;
   border: 0;
   border-top: 1px solid var(--border-2);
   border-radius: 0;
@@ -4939,10 +4948,29 @@ a.rank-card-title::after {
 .airdrop-card > .airdrop-card-head { grid-column: 1; grid-row: 1; }
 .airdrop-card > .research-summary { grid-column: 2; grid-row: 1; margin: 0; }
 .airdrop-card > .airdrop-card-stats { grid-column: 3; grid-row: 1; gap: 8px; }
-.airdrop-card > .airdrop-card-sources { grid-column: 2 / 4; grid-row: 2; padding-top: 6px; }
-.airdrop-card > .case-card-cta { grid-column: 4; grid-row: 1; justify-self: end; white-space: nowrap; }
-#neobankGrid .airdrop-card { grid-template-columns: minmax(12rem, .9fr) minmax(15rem, 1.55fr) minmax(12rem, .8fr) auto; }
+#neobankGrid .airdrop-card { grid-template-columns: minmax(12rem, .85fr) minmax(16rem, 1.55fr) minmax(13rem, .8fr); }
 #neobankGrid .airdrop-card > .evidence-source { grid-column: 2 / 4; grid-row: 2; margin: 0; }
+.airdrop-grid .airdrop-card.research-card-premium {
+  border-color: var(--border-2) !important;
+  background: var(--surface) !important;
+  box-shadow: none !important;
+  transition: background-color 140ms ease !important;
+}
+.airdrop-grid .airdrop-card.research-card-premium::before,
+.airdrop-grid .airdrop-card.research-card-premium::after { display: none !important; }
+.airdrop-grid .airdrop-card.research-card-premium:hover {
+  background: color-mix(in srgb, var(--seq-mid) 5%, var(--surface)) !important;
+  transform: none !important;
+}
+.airdrop-grid .airdrop-card-head { justify-content: flex-start; align-items: center; gap: 12px; }
+.airdrop-grid .airdrop-card-head > .airdrop-project-copy { flex: 1 1 auto; }
+.airdrop-grid .airdrop-card.research-card-premium .airdrop-card-head { padding-right: 0; }
+.airdrop-grid .airdrop-card .case-card-cta {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+}
 
 .platform-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; margin-bottom: 20px; }
 .platform-card,
@@ -4980,13 +5008,12 @@ a.rank-card-title::after {
   .nft-card-more,
   .nft-card > p { grid-column: 1 / -1; grid-row: 3; }
   .nft-card .nft-card-actions { grid-column: 1 / -1; grid-row: 4; }
-  .airdrop-card { grid-template-columns: minmax(0, 1fr) auto; }
-  #neobankGrid .airdrop-card { grid-template-columns: minmax(0, 1fr) auto; }
+  .airdrop-card,
+  #neobankGrid .airdrop-card { grid-template-columns: minmax(0, 1fr); }
   .airdrop-card > .airdrop-card-head { grid-column: 1; grid-row: 1; }
-  .airdrop-card > .case-card-cta { grid-column: 2; grid-row: 1; }
+  .airdrop-card > .case-card-cta { grid-column: auto; grid-row: auto; }
   .airdrop-card > .research-summary { grid-column: 1 / -1; grid-row: 2; }
   .airdrop-card > .airdrop-card-stats { grid-column: 1 / -1; grid-row: 3; }
-  .airdrop-card > .airdrop-card-sources { grid-column: 1 / -1; grid-row: 4; }
   #neobankGrid .airdrop-card > .evidence-source { grid-column: 1 / -1; grid-row: 4; }
   .platform-card,
   .platform-card:nth-child(1),

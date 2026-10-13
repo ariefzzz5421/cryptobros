@@ -9,7 +9,6 @@
 import { el, fmtClock } from './utils.js';
 import { t } from './i18n.js';
 import { rankBoard, rankCard } from './ranking-board.js';
-import { brandedSourceLink } from './source-brands.js';
 import {
   loadAirdrops, RANKINGS, rankByDistributionValue, recipientCount, recipientCountLabel,
   fmtBigUsd, fmtWallets, fmtTokens, fmtAirdropDate,
@@ -74,29 +73,6 @@ function projectLogo(item, { small = false } = {}) {
   });
   wrap.prepend(img);
   return wrap;
-}
-
-function projectCardSources(item) {
-  const officialSite = top30Match(item)?.site;
-  const candidates = [
-    {
-      source: (item.sources || []).find((source) => source.kind === 'official')
-        || (officialSite ? { label: 'Project website', url: `https://${officialSite}/` } : null),
-      label: 'Project',
-    },
-    { source: item.valueAtDistributionSource, label: 'Distribution' },
-    { source: item.peakValueSource, label: 'Peak value' },
-  ];
-  const seen = new Set();
-  return candidates
-    .filter(({ source }) => source?.url && !seen.has(source.url) && seen.add(source.url))
-    .slice(0, 3)
-    .map(({ source, label }) => brandedSourceLink({
-      label,
-      url: source.url,
-      note: source.label,
-      className: 'source-button airdrop-card-source',
-    }));
 }
 
 function projectNameNode(item, { deepCase = false } = {}) {
@@ -340,7 +316,6 @@ function renderGrid() {
         el('dd', { class: 'num' }, fmtWallets(recipientCount(item))),
       ),
     ),
-    el('div', { class: 'airdrop-card-sources', 'aria-label': `${item.project} sources` }, ...projectCardSources(item)),
     el('a', { class: 'case-card-cta', href: `/airdrops/${item.slug}/` }, 'Read case'),
   )));
 }
