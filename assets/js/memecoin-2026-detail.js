@@ -4,6 +4,7 @@ import { startAutoRefresh } from './autorefresh.js';
 import { fetchDexLaunch, renderDexScreenerChart } from './dexscreener.js';
 import { findToken } from './token-registry.js';
 import { renderTokenLore } from './token-lore.js';
+import { localeTag } from './i18n.js';
 
 const $ = (id) => document.getElementById(id);
 const slug = document.body.dataset.event;
@@ -15,7 +16,7 @@ function setStatus(text, kind = 'busy') {
   $('statusDot').className = `dot ${kind}`;
 }
 
-const fmtDate = (value) => new Intl.DateTimeFormat('en-US', {
+const fmtDate = (value) => new Intl.DateTimeFormat(localeTag(), {
   month: 'short',
   day: '2-digit',
   year: 'numeric',

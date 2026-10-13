@@ -1,3 +1,5 @@
+import { localeTag } from './i18n.js';
+
 /* Live NFT floor data. The same-origin backend caches the CoinGecko NFT
    collection endpoint; a collection the upstream cannot resolve stays absent
    rather than being filled with an estimate. */
@@ -28,10 +30,10 @@ export async function fetchNftFloors({ force = false, slugs = [] } = {}) {
   return request;
 }
 
-export const fmtEth = (value, digits = 2, locale = 'en-US') =>
+export const fmtEth = (value, digits = 2, locale = localeTag()) =>
   (Number.isFinite(value) ? `${value.toLocaleString(locale, { maximumFractionDigits: digits })} ETH` : 'Unavailable');
 
-export const fmtMonth = (value, locale = 'en-US') => {
+export const fmtMonth = (value, locale = localeTag()) => {
   const [year, month] = String(value).split('-');
   if (!month) return year;
   return new Intl.DateTimeFormat(locale, {
@@ -40,7 +42,7 @@ export const fmtMonth = (value, locale = 'en-US') => {
 };
 
 /* Accepts YYYY, YYYY-MM, or YYYY-MM-DD and never invents a missing part. */
-export const fmtResearchDate = (value, locale = 'en-US') => {
+export const fmtResearchDate = (value, locale = localeTag()) => {
   const parts = String(value).split('-');
   if (parts.length === 1) return parts[0];
   if (parts.length === 2) return fmtMonth(value, locale);

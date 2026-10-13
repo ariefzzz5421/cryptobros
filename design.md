@@ -79,8 +79,9 @@ Use a four-point scale through named tokens only:
 
 - Primary: compact blue rectangular control with a 10px radius.
 - Secondary: transparent control with one-pixel rule.
-- Copy is English-only, literal, and short: “Read research”, “View source”,
-  and “Reset”.
+- UI copy is literal and concise in English, Indonesian, Simplified Chinese,
+  and Japanese. Sourced research prose and provider content stay in their
+  original language unless a reviewed translation is supplied.
 
 ## Per-page allowances
 
@@ -114,8 +115,9 @@ Use a four-point scale through named tokens only:
 - The menu opens a viewport drawer/mega-panel organised into Market and
   Research columns. It is keyboard reachable, closes with Escape/backdrop/route
   selection, traps no content, and restores focus to the launcher.
-- English is the sole product language. No translator control is mounted, and
-  stale language preferences are cleared so every route stays consistent.
+- A compact language control sits beside the theme switch. It supports English,
+  Indonesian, Simplified Chinese, and Japanese, persists the preference, and
+  updates the document language. English is the fallback.
 
 ## 2026 extension: themes, identity, and source imagery
 
@@ -200,6 +202,20 @@ Use a four-point scale through named tokens only:
   arrows and the word “Official” are intentionally omitted from link chrome.
 - The light theme is a cool paper surface, while dark remains graphite-blue.
   Theme changes use a short document transition when the browser supports it.
+
+## Compact multilingual research lists
+
+- Research indexes use content-sized leaderboard rows; each record owns its
+  project-specific evidence links. Rows do not inherit decorative card minimum
+  heights, and sources stay with the record they describe.
+- True numeric datasets remain semantic tables with right-aligned tabular
+  numbers and a contained horizontal scroller on narrow screens.
+- The shared language menu is keyboard operable and localizes site-owned
+  navigation, labels, and standard states. Token tickers, names, addresses,
+  provider values, and source prose are not translated automatically.
+- Shared interface translations live in `assets/js/i18n.js`; locale-aware
+  number/date formatting uses `Intl` tags for `en-US`, `id-ID`, `zh-CN`, and
+  `ja-JP`.
 
 ## Homepage Command Deck extension
 

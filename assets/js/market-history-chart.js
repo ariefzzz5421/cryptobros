@@ -1,4 +1,5 @@
 import { PALETTE, fmtPrice, fmtUsd, el } from './utils.js';
+import { localeTag } from './i18n.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const DAY = 86400000;
@@ -12,7 +13,7 @@ const svgNode = (tag, attrs = {}) => {
   return node;
 };
 
-const fmtDate = (timestamp) => new Intl.DateTimeFormat('en-US', {
+const fmtDate = (timestamp) => new Intl.DateTimeFormat(localeTag(), {
   day: '2-digit',
   month: 'short',
   year: 'numeric',

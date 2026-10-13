@@ -4,6 +4,8 @@
    - site search input: OnlyCodeChannel / ugly-penguin-43 (MIT)
    Markup and motion are adapted to the site's existing accessible shell. */
 
+import { t } from './i18n.js';
+
 const STYLE_ID = 'crypto-bros-ui-upgrades';
 const GLOBE_STYLE_ID = 'crypto-bros-dashboard-globe';
 /* A compact open-in-place glyph rather than the previous oversized arrow: it
@@ -311,6 +313,10 @@ function installSiteSearch() {
   const panel = shell.querySelector('.site-search-panel');
   const input = shell.querySelector('.site-search-input');
   const results = shell.querySelector('.site-search-results');
+  trigger.setAttribute('aria-label', t('label.searchBrand'));
+  input.setAttribute('placeholder', t('label.searchResearch'));
+  input.setAttribute('aria-label', t('label.searchThisSite'));
+  results.setAttribute('aria-label', t('label.searchResults'));
   let entries = collectSiteSearchEntries();
 
   const render = () => {
@@ -319,7 +325,7 @@ function installSiteSearch() {
     if (!matches.length) {
       const empty = document.createElement('p');
       empty.className = 'site-search-empty';
-      empty.textContent = 'No matching page';
+      empty.textContent = t('label.noMatchingPage');
       results.append(empty);
     }
   };
@@ -393,7 +399,7 @@ function decorateResearchCard(card) {
     cta.classList.add('research-enter-cta');
     cta.replaceChildren(makeResearchIcon());
     if (cta.matches('a[href]')) {
-      cta.setAttribute('aria-label', `Open ${title} research`);
+      cta.setAttribute('aria-label', t('label.openNamedResearch').replace('{title}', title));
       cta.removeAttribute('aria-hidden');
     } else {
       cta.setAttribute('aria-hidden', 'true');
@@ -421,7 +427,7 @@ function detailRowLabel(link) {
   const row = link.closest('tr');
   const name = row?.querySelector('th, td')?.parentElement
     ?.querySelector('a, strong')?.textContent?.trim();
-  return name ? `Open ${cleanSearchLabel(name)}` : 'Open research';
+  return name ? t('label.openNamedResearch').replace('{title}', cleanSearchLabel(name)) : t('label.openResearch');
 }
 
 function decorateDetailLinks(root = document) {
@@ -459,4 +465,18 @@ export function initUiUpgrades() {
   observeChainTable();
   installSiteSearch();
   observeResearchCards();
+  window.addEventListener('localechange', () => {
+    const trigger = document.querySelector('.site-search-trigger');
+    const input = document.querySelector('.site-search-input');
+    const results = document.querySelector('.site-search-results');
+    trigger?.setAttribute('aria-label', t('label.searchBrand'));
+    input?.setAttribute('placeholder', t('label.searchResearch'));
+    input?.setAttribute('aria-label', t('label.searchThisSite'));
+    results?.setAttribute('aria-label', t('label.searchResults'));
+    document.querySelectorAll('.research-card-premium .research-enter-cta[href]').forEach((cta) => {
+      const card = cta.closest('.research-card-premium');
+      cta.setAttribute('aria-label', t('label.openNamedResearch').replace('{title}', researchTitle(card)));
+    });
+    document.querySelectorAll('.data-table a.detail-enter-link').forEach((link) => link.setAttribute('aria-label', detailRowLabel(link)));
+  });
 }

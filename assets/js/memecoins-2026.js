@@ -2,6 +2,7 @@ import { fmtClock, fmtPrice, fmtUsd, el } from './utils.js';
 import { chainBadge, chainLabel } from './chain-brands.js';
 import { startAutoRefresh } from './autorefresh.js';
 import { findToken } from './token-registry.js';
+import { localeTag } from './i18n.js';
 
 const $ = (id) => document.getElementById(id);
 const TOKEN_LOGOS = {
@@ -12,7 +13,7 @@ const TOKEN_LOGOS = {
   troll: '/assets/img/coins/troll.png',
 };
 
-const fmtDate = (value) => new Intl.DateTimeFormat('en-US', {
+const fmtDate = (value) => new Intl.DateTimeFormat(localeTag(), {
   day: '2-digit',
   month: 'short',
   year: 'numeric',

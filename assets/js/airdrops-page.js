@@ -7,6 +7,7 @@
 */
 
 import { el, fmtClock } from './utils.js';
+import { t } from './i18n.js';
 import { rankBoard, rankCard } from './ranking-board.js';
 import { brandedSourceLink } from './source-brands.js';
 import {
@@ -362,14 +363,16 @@ function renderKpis() {
   const wallets = walletRows.reduce((sum, item) => sum + recipientCount(item), 0);
 
   $('kpiCases').textContent = String(state.data.cases.length);
-  $('kpiCasesSub').textContent = 'with sourced distribution research';
+  $('kpiCasesSub').textContent = t('label.sourcedCases');
   $('kpiValue').textContent = fmtBigUsd(total);
   $('kpiWallets').textContent = fmtWallets(wallets);
-  $('kpiWalletsSub').textContent = `across ${walletRows.length} of ${state.data.cases.length} cases that published a count`;
+  $('kpiWalletsSub').textContent = t('label.publishedCountSummary')
+    .replace('{matched}', fmtWallets(walletRows.length))
+    .replace('{total}', fmtWallets(state.data.cases.length));
   $('kpiLargest').textContent = ranked[0] ? ranked[0].tokenSymbol : 'Unavailable';
   $('kpiLargestSub').textContent = ranked[0]
-    ? `${fmtBigUsd(ranked[0].valueAtDistributionUsd, ranked[0].valueAtDistributionQualifier)} at distribution`
-    : 'by value at distribution';
+    ? `${fmtBigUsd(ranked[0].valueAtDistributionUsd, ranked[0].valueAtDistributionQualifier)} ${t('label.atDistribution')}`
+    : t('label.launchDayBasis');
   $('researchCutoff').textContent = fmtAirdropDate(state.data.researchCutoff || AIRDROP_RESEARCH_CUTOFF);
   $('updatedAt').textContent = fmtClock(Date.now());
 }
@@ -384,7 +387,7 @@ async function init() {
     renderRanking();
     renderGrid();
     renderMethod();
-    setStatus('Airdrop research ready · top 30 + sourced deep cases', 'ok');
+    setStatus(t('label.airdropResearchReady'), 'ok');
   } catch (error) {
     console.error(error);
     setStatus(`Airdrop research unavailable: ${error.message}`, 'err');
@@ -394,3 +397,13 @@ async function init() {
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
 else init();
+
+window.addEventListener('localechange', () => {
+  if (!state.data) return;
+  renderTop30Controls();
+  renderTop30();
+  renderKpis();
+  renderControls();
+  renderRanking();
+  renderGrid();
+});

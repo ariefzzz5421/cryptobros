@@ -8,6 +8,7 @@ import {
   unresolvedToken,
 } from './token-registry.js';
 import { renderTokenLore } from './token-lore.js';
+import { localeTag } from './i18n.js';
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -53,7 +54,7 @@ function setStatus(text, kind = 'busy') {
 const fmtDate = (value) => {
   const date = new Date(value);
   if (!Number.isFinite(date.getTime())) return 'Unavailable';
-  return new Intl.DateTimeFormat('en-US', {
+  return new Intl.DateTimeFormat(localeTag(), {
     day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC',
   }).format(date);
 };

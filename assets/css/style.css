@@ -573,6 +573,34 @@ body {
 
 .head-actions { display: flex; align-items: center; gap: 12px; }
 
+.language-switcher { position: relative; display: inline-flex; }
+.language-toggle {
+  display: inline-grid; place-items: center; width: 44px; height: 44px; padding: 0;
+  color: var(--ink-2); border: 1px solid var(--border); border-radius: 12px;
+  background: var(--surface); cursor: pointer;
+  transition: color 140ms ease, border-color 140ms ease, background-color 140ms ease;
+}
+.language-toggle:hover, .language-toggle[aria-expanded="true"] {
+  color: var(--ink); border-color: var(--accent-45); background: var(--surface-hover);
+}
+.language-toggle:focus-visible, .language-option:focus-visible {
+  outline: 2px solid var(--seq-hi); outline-offset: 2px;
+}
+.language-menu {
+  position: absolute; z-index: 1000; top: calc(100% + 8px); right: 0;
+  display: grid; gap: 3px; width: max-content; min-width: 190px; padding: 6px;
+  border: 1px solid var(--border); border-radius: 12px; background: var(--surface);
+  box-shadow: 0 16px 40px var(--shadow-heavy);
+}
+.language-menu[hidden] { display: none; }
+.language-option {
+  display: flex; align-items: center; width: 100%; min-height: 40px; padding: 8px 10px;
+  border: 0; border-radius: 8px; color: var(--ink-2); background: transparent;
+  font: inherit; font-size: 13px; text-align: left; cursor: pointer; white-space: nowrap;
+}
+.language-option:hover, .language-option.is-active { color: var(--ink); background: var(--surface-hover); }
+.language-option.is-active::after { content: "✓"; margin-left: auto; color: var(--seq-hi); }
+
 .theme-toggle {
   display: inline-grid;
   place-items: center;
@@ -1444,7 +1472,7 @@ body {
 }
 .coin-cell small { color: var(--muted); }
 .market-leader-table td { height: 52px; }
-.research-card { min-height: 190px; }
+.research-card { min-height: 0; }
 .research-summary {
   margin: var(--space-3) 0;
   color: var(--ink-2);
@@ -3152,7 +3180,7 @@ body[data-nav-open] { overflow: hidden; }
   .brand h1 { font-size: 14px; white-space: nowrap; }
   .brand-mark { width: 40px; height: 40px; }
   .head-actions { gap: var(--space-2); }
-  .theme-toggle, .nav-launcher { width: 40px; height: 40px; }
+  .theme-toggle, .language-toggle, .nav-launcher { width: 40px; height: 40px; }
   .primary-nav {
     right: 10px;
     width: calc(100vw - 20px);
@@ -4395,17 +4423,6 @@ a.rank-card-title::after {
 .airdrop-card-title { color: var(--ink); font-weight: 700; text-decoration: none; }
 .airdrop-card-title:hover, .airdrop-card-title:focus-visible { color: var(--seq-hi); }
 .airdrop-card-head { padding-right: 0 !important; }
-@media (min-width: 52rem) {
-  .airdrop-card {
-    grid-template-columns: minmax(13rem, .75fr) minmax(0, 1.6fr);
-    align-items: center;
-  }
-  .airdrop-card-head { grid-column: 1; grid-row: 1; }
-  .airdrop-card > .research-summary { grid-column: 2; grid-row: 1; }
-  .airdrop-card-stats { grid-column: 2; grid-row: 2; }
-  .airdrop-card-sources { grid-column: 2; grid-row: 3; }
-  .airdrop-card > .case-card-cta { grid-column: 1; grid-row: 2 / span 2; }
-}
 
 .neobank-name-cell { display: inline-flex; align-items: center; gap: 9px; min-width: 0; }
 .neobank-logo {
@@ -4906,10 +4923,11 @@ a.rank-card-title::after {
 .nft-card .nft-card-actions { grid-column: 1 / -1; grid-row: 3; padding-top: 6px; }
 
 .airdrop-card {
-  grid-template-columns: minmax(14rem, 1.1fr) minmax(0, 1.5fr) minmax(12rem, .8fr) auto;
+  grid-template-columns: minmax(12rem, .9fr) minmax(15rem, 1.55fr) minmax(12rem, .8fr) auto;
   align-items: center;
-  gap: 8px 18px;
-  padding: 14px 8px;
+  gap: 8px 16px;
+  min-height: 0;
+  padding: 12px 8px;
   border: 0;
   border-top: 1px solid var(--border-2);
   border-radius: 0;
@@ -4921,8 +4939,10 @@ a.rank-card-title::after {
 .airdrop-card > .airdrop-card-head { grid-column: 1; grid-row: 1; }
 .airdrop-card > .research-summary { grid-column: 2; grid-row: 1; margin: 0; }
 .airdrop-card > .airdrop-card-stats { grid-column: 3; grid-row: 1; gap: 8px; }
-.airdrop-card > .airdrop-card-sources { grid-column: 1 / 4; grid-row: 2; padding-top: 8px; }
+.airdrop-card > .airdrop-card-sources { grid-column: 2 / 4; grid-row: 2; padding-top: 6px; }
 .airdrop-card > .case-card-cta { grid-column: 4; grid-row: 1; justify-self: end; white-space: nowrap; }
+#neobankGrid .airdrop-card { grid-template-columns: minmax(12rem, .9fr) minmax(15rem, 1.55fr) minmax(12rem, .8fr) auto; }
+#neobankGrid .airdrop-card > .evidence-source { grid-column: 2 / 4; grid-row: 2; margin: 0; }
 
 .platform-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; margin-bottom: 20px; }
 .platform-card,
@@ -4961,11 +4981,13 @@ a.rank-card-title::after {
   .nft-card > p { grid-column: 1 / -1; grid-row: 3; }
   .nft-card .nft-card-actions { grid-column: 1 / -1; grid-row: 4; }
   .airdrop-card { grid-template-columns: minmax(0, 1fr) auto; }
+  #neobankGrid .airdrop-card { grid-template-columns: minmax(0, 1fr) auto; }
   .airdrop-card > .airdrop-card-head { grid-column: 1; grid-row: 1; }
   .airdrop-card > .case-card-cta { grid-column: 2; grid-row: 1; }
   .airdrop-card > .research-summary { grid-column: 1 / -1; grid-row: 2; }
   .airdrop-card > .airdrop-card-stats { grid-column: 1 / -1; grid-row: 3; }
   .airdrop-card > .airdrop-card-sources { grid-column: 1 / -1; grid-row: 4; }
+  #neobankGrid .airdrop-card > .evidence-source { grid-column: 1 / -1; grid-row: 4; }
   .platform-card,
   .platform-card:nth-child(1),
   .platform-card:nth-child(2) { grid-template-columns: minmax(0, 1fr) auto; gap: 8px 12px; }
@@ -4974,6 +4996,10 @@ a.rank-card-title::after {
   .platform-card .platform-metrics { grid-column: 1 / -1; }
   .platform-card .metric-bars { grid-column: 1 / -1; }
   .platform-card .platform-chains { grid-column: 1 / -1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .language-toggle, .language-option { transition: none; }
 }
 
 @media (max-width: 520px) {

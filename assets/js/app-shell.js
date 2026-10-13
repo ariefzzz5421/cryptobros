@@ -5,7 +5,7 @@
    appears site-wide at once. */
 
 import { ROUTE_COLUMNS, activeRoute } from './routes.js';
-import { getLocale, t } from './i18n.js';
+import { t } from './i18n.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -72,7 +72,7 @@ function buildColumns(nav, current) {
 
     const heading = document.createElement('h2');
     heading.className = 'nav-column-title';
-    heading.textContent = getLocale() === 'id' ? column.labelId : column.label;
+    heading.textContent = t(`route.${column.id}`, column.label);
     section.append(heading);
 
     for (const route of column.routes) {
@@ -85,7 +85,13 @@ function buildColumns(nav, current) {
       const copy = document.createElement('span');
       copy.className = 'nav-copy';
       const label = document.createElement('strong');
-      label.textContent = getLocale() === 'id' ? route.labelId : route.label;
+      const routeKey = ({
+        '/': 'route.dashboard', '/maps/': 'route.maps', '/sentiment/': 'route.sentiment',
+        '/launchpads/': 'route.launchpads', '/cases/': 'route.cases', '/airdrops/': 'route.airdrops',
+        '/neobank/': 'route.neobank', '/2026-memecoins/': 'route.breakouts',
+        '/nft/': 'route.nft', '/nft-2026/': 'route.nft2026',
+      })[route.href];
+      label.textContent = t(routeKey, route.label);
       copy.append(label);
       link.append(routeIcon(route.icon), copy);
       section.append(link);
@@ -144,7 +150,7 @@ export function initAppShell() {
   if (!nav) return;
 
   nav.id ||= 'primaryNavigation';
-  nav.setAttribute('aria-label', 'Primary navigation');
+  nav.setAttribute('aria-label', t('nav.primary'));
   buildColumns(nav, activeRoute());
   const brand = document.querySelector('.brand');
   const brandTitle = brand?.querySelector('h1');
@@ -172,7 +178,7 @@ export function initAppShell() {
     backdrop.className = 'nav-backdrop';
     backdrop.type = 'button';
     backdrop.tabIndex = -1;
-    backdrop.setAttribute('aria-label', 'Close navigation');
+    backdrop.setAttribute('aria-label', t('nav.dismiss'));
     document.body.append(backdrop);
   }
   backdrop.hidden = true;
@@ -201,6 +207,8 @@ export function initAppShell() {
   });
   window.addEventListener('localechange', () => {
     buildColumns(nav, activeRoute());
+    nav.setAttribute('aria-label', t('nav.primary'));
+    backdrop.setAttribute('aria-label', t('nav.dismiss'));
     toggle.setAttribute('aria-label', document.body.hasAttribute('data-nav-open') ? t('nav.close') : t('nav.open'));
   });
 }

@@ -15,6 +15,8 @@
    share a label.
    ============================================================ */
 
+import { localeTag, t } from './i18n.js';
+
 const DATA_URL = '/assets/data/airdrops.json';
 
 let snapshot = null;
@@ -154,38 +156,40 @@ export function recipientCountLabel(item) {
 /* --- Formatting --------------------------------------------------------- */
 
 export function fmtTokens(value) {
-  if (!Number.isFinite(value)) return 'Unavailable';
-  if (value >= 1e9) return `${(value / 1e9).toFixed(2)}B`;
-  if (value >= 1e6) return `${(value / 1e6).toFixed(1)}M`;
-  if (value >= 1e3) return `${(value / 1e3).toFixed(0)}K`;
-  return value.toLocaleString('en-US');
+  if (!Number.isFinite(value)) return t('common.unavailable');
+  const format = (number, digits) => number.toLocaleString(localeTag(), { minimumFractionDigits: digits, maximumFractionDigits: digits });
+  if (value >= 1e9) return `${format(value / 1e9, 2)}B`;
+  if (value >= 1e6) return `${format(value / 1e6, 1)}M`;
+  if (value >= 1e3) return `${format(value / 1e3, 0)}K`;
+  return value.toLocaleString(localeTag());
 }
 
 export function fmtWallets(value, qualifier) {
-  if (!Number.isFinite(value)) return 'Not disclosed';
-  const text = value.toLocaleString('en-US');
+  if (!Number.isFinite(value)) return t('common.notDisclosed');
+  const text = value.toLocaleString(localeTag());
   if (qualifier === 'at-least') return `${text}+`;
   if (qualifier === 'approximate') return `~${text}`;
   return text;
 }
 
 export function fmtBigUsd(value, qualifier) {
-  if (!Number.isFinite(value)) return 'Unavailable';
+  if (!Number.isFinite(value)) return t('common.unavailable');
+  const number = (amount, digits) => amount.toLocaleString(localeTag(), { minimumFractionDigits: digits, maximumFractionDigits: digits });
   const text = value >= 1e9
-    ? `$${(value / 1e9).toFixed(2)}B`
+    ? `$${number(value / 1e9, 2)}B`
     : value >= 1e6
-      ? `$${(value / 1e6).toFixed(0)}M`
-      : `$${value.toLocaleString('en-US')}`;
+      ? `$${number(value / 1e6, 0)}M`
+      : `$${value.toLocaleString(localeTag())}`;
   return qualifier === 'at-least' ? `${text}+` : qualifier === 'approximate' ? `~${text}` : text;
 }
 
 export function fmtAirdropDate(value) {
-  if (!value) return 'Unavailable';
+  if (!value) return t('common.unavailable');
   const parts = String(value).split('-');
   if (parts.length === 1) return parts[0];
   const options = parts.length === 2
     ? { month: 'short', year: 'numeric', timeZone: 'UTC' }
     : { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' };
   const iso = parts.length === 2 ? `${value}-01` : value;
-  return new Intl.DateTimeFormat('en-US', options).format(new Date(`${iso}T00:00:00Z`));
+  return new Intl.DateTimeFormat(localeTag(), options).format(new Date(`${iso}T00:00:00Z`));
 }

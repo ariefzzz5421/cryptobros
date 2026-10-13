@@ -7,6 +7,9 @@
    ============================================================ */
 
 import { WIB_OFFSET } from './config.js';
+import { localeTag, t } from './i18n.js';
+
+const localizedNumber = (value, options = {}) => new Intl.NumberFormat(localeTag(), options).format(value);
 
 /* ---------------- Palet ---------------- */
 
@@ -134,43 +137,45 @@ export function perceptual(v, max, gamma = 0.42) {
 export function fmtUsd(v, digits = 2) {
   if (!Number.isFinite(v)) return '—';
   const a = Math.abs(v);
-  if (a >= 1e12) return `$${(v / 1e12).toFixed(digits)}T`;
-  if (a >= 1e9) return `$${(v / 1e9).toFixed(digits)}B`;
-  if (a >= 1e6) return `$${(v / 1e6).toFixed(digits)}M`;
-  if (a >= 1e3) return `$${(v / 1e3).toFixed(digits)}K`;
-  return `$${v.toFixed(a < 1 ? 6 : 2)}`;
+  const format = (value, places) => localizedNumber(value, { minimumFractionDigits: places, maximumFractionDigits: places });
+  if (a >= 1e12) return `$${format(v / 1e12, digits)}T`;
+  if (a >= 1e9) return `$${format(v / 1e9, digits)}B`;
+  if (a >= 1e6) return `$${format(v / 1e6, digits)}M`;
+  if (a >= 1e3) return `$${format(v / 1e3, digits)}K`;
+  return `$${format(v, a < 1 ? 6 : 2)}`;
 }
 
 /* Versi ringkas untuk label sumbu yang sempit */
 export function fmtUsdShort(v) {
   if (!Number.isFinite(v)) return '—';
   const a = Math.abs(v);
-  if (a >= 1e12) return `$${(v / 1e12).toFixed(1)}T`;
-  if (a >= 1e9) return `$${(v / 1e9).toFixed(1)}B`;
-  if (a >= 1e6) return `$${(v / 1e6).toFixed(1)}M`;
-  if (a >= 1e3) return `$${(v / 1e3).toFixed(0)}K`;
-  return `$${v.toFixed(0)}`;
+  const format = (value, places) => localizedNumber(value, { minimumFractionDigits: places, maximumFractionDigits: places });
+  if (a >= 1e12) return `$${format(v / 1e12, 1)}T`;
+  if (a >= 1e9) return `$${format(v / 1e9, 1)}B`;
+  if (a >= 1e6) return `$${format(v / 1e6, 1)}M`;
+  if (a >= 1e3) return `$${format(v / 1e3, 0)}K`;
+  return `$${format(v, 0)}`;
 }
 
 export function fmtPrice(v) {
   if (!Number.isFinite(v)) return '—';
   const a = Math.abs(v);
   if (a === 0) return '$0';
-  if (a >= 1) return `$${v.toLocaleString('en-US', { maximumFractionDigits: 4 })}`;
-  if (a >= 0.001) return `$${v.toFixed(6)}`;
-  if (a >= 0.000001) return `$${v.toFixed(8)}`;
-  if (a >= 0.00000001) return `$${v.toFixed(10)}`;
+  if (a >= 1) return `$${localizedNumber(v, { maximumFractionDigits: 4 })}`;
+  if (a >= 0.001) return `$${localizedNumber(v, { minimumFractionDigits: 6, maximumFractionDigits: 6 })}`;
+  if (a >= 0.000001) return `$${localizedNumber(v, { minimumFractionDigits: 8, maximumFractionDigits: 8 })}`;
+  if (a >= 0.00000001) return `$${localizedNumber(v, { minimumFractionDigits: 10, maximumFractionDigits: 10 })}`;
   return `$${v.toExponential(3)}`;
 }
 
 export function fmtPct(v, digits = 2) {
   if (!Number.isFinite(v)) return '—';
-  return `${v >= 0 ? '+' : ''}${v.toFixed(digits)}%`;
+  return `${localizedNumber(v, { minimumFractionDigits: digits, maximumFractionDigits: digits, signDisplay: 'exceptZero' })}%`;
 }
 
 export function fmtNum(v) {
   if (!Number.isFinite(v)) return '—';
-  return v.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  return localizedNumber(v, { maximumFractionDigits: 0 });
 }
 
 /* ---------------- Waktu: WIB & UTC ---------------- */
@@ -210,11 +215,11 @@ export function fmtClock(ms) {
   /* A missing timestamp reads as unavailable rather than as "NaN undefined
      NaN, NaN:NaN WIB" — the launchpad fallback note printed that whenever a
      protocol had no dated snapshot. */
-  if (!Number.isFinite(Number(ms))) return 'Unavailable';
-  const p = wibParts(ms);
-  const mon = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const d = new Date(ms + WIB_OFFSET * 3600 * 1000);
-  return `${p.date} ${mon[p.month]} ${p.year}, ${pad2(d.getUTCHours())}:${pad2(d.getUTCMinutes())} WIB`;
+  if (!Number.isFinite(Number(ms))) return t('common.unavailable');
+  return `${new Intl.DateTimeFormat(localeTag(), {
+    day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
+    hourCycle: 'h23', timeZone: 'Asia/Jakarta',
+  }).format(new Date(ms))} WIB`;
 }
 
 export function fmtAgo(ms) {
