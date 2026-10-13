@@ -7,6 +7,13 @@ const COPY = {
   en: {
     'nav.open': 'Open navigation', 'nav.close': 'Close navigation', 'nav.routes': 'Explore Crypto Bros',
     'nav.primary': 'Primary navigation', 'nav.dismiss': 'Close navigation',
+    'brand.homeSub': 'Global volume · memecoin momentum · trading hours',
+    'brand.mapSub': 'Global exchange-jurisdiction intelligence', 'brand.caseSub': 'Memecoin market-cap research',
+    'brand.caseDetail': 'Sourced memecoin case study',
+    'brand.airdropSub': 'Sourced airdrop distribution research', 'brand.neobankSub': 'Sourced neobank research',
+    'brand.nftSub': 'Sourced NFT floor research', 'brand.launchpadSub': 'Contract-first launchpad research',
+    'brand.sentimentSub': 'Platform volume, revenue, and momentum', 'brand.breakoutSub': '2026 threshold-event research',
+    'brand.nft2026Sub': '2026 NFT breakout research',
     'theme.light': 'Switch to light theme', 'theme.dark': 'Switch to dark theme',
     'language.label': 'Language', 'language.choose': 'Choose language', 'language.current': 'Current language: {language}',
     'route.market': 'Markets', 'route.research': 'Research', 'route.dashboard': 'Dashboard',
@@ -94,10 +101,25 @@ const COPY = {
     'label.publishedCount': 'cases that published a count', 'label.launchDayBasis': 'by value at distribution',
     'label.peakHistoricalTable': 'Historical table', 'label.reconstructed': 'Reconstructed',
     'label.projectResearch': 'Project research', 'label.openCase': 'Open case',
+    'label.thesis': 'Thesis', 'label.whyItPumped': 'Why it pumped', 'label.reasonsFactors': 'Reasons and factors',
+    'label.marketSnapshot': 'Market snapshot', 'label.triggers': 'Triggers', 'label.identity': 'Identity',
+    'label.floorHistory': 'Floor history', 'label.successCase': 'Why it counts as a success',
+    'label.lore': 'Lore', 'label.onChainMarket': 'On-chain market',
+    'lore.unverified': 'Lore not sufficiently verified yet.', 'lore.origin': 'Source-backed origin',
+    'lore.pending': 'Research pending', 'lore.verified': 'Verified', 'lore.unverifiedStatus': 'Unverified',
+    'lore.sources': 'Lore sources', 'lore.contractReminder': 'Source-backed summary · Always verify the contract.',
+    'lore.creator': 'Creator', 'lore.creatorSocial': 'Creator social profiles', 'lore.noCreatorProfile': 'No verified creator social profile',
   },
   id: {
     'nav.open': 'Buka navigasi', 'nav.close': 'Tutup navigasi', 'nav.routes': 'Jelajahi Crypto Bros',
     'nav.primary': 'Navigasi utama', 'nav.dismiss': 'Tutup navigasi',
+    'brand.homeSub': 'Volume global · momentum memecoin · jam perdagangan',
+    'brand.mapSub': 'Intelijen yurisdiksi bursa global', 'brand.caseSub': 'Riset kapitalisasi pasar memecoin',
+    'brand.caseDetail': 'Studi kasus memecoin bersumber',
+    'brand.airdropSub': 'Riset distribusi airdrop bersumber', 'brand.neobankSub': 'Riset neobank bersumber',
+    'brand.nftSub': 'Riset floor NFT bersumber', 'brand.launchpadSub': 'Riset launchpad berbasis kontrak',
+    'brand.sentimentSub': 'Volume, pendapatan, dan momentum platform', 'brand.breakoutSub': 'Riset peristiwa ambang 2026',
+    'brand.nft2026Sub': 'Riset breakout NFT 2026',
     'theme.light': 'Ganti ke tema terang', 'theme.dark': 'Ganti ke tema gelap',
     'language.label': 'Bahasa', 'language.choose': 'Pilih bahasa', 'language.current': 'Bahasa saat ini: {language}',
     'route.market': 'Pasar', 'route.research': 'Riset', 'route.dashboard': 'Dasbor',
@@ -185,10 +207,25 @@ const COPY = {
     'label.publishedCount': 'kasus yang mengumumkan jumlahnya', 'label.launchDayBasis': 'berdasarkan nilai saat distribusi',
     'label.peakHistoricalTable': 'Tabel historis', 'label.reconstructed': 'Direkonstruksi',
     'label.projectResearch': 'Riset proyek', 'label.openCase': 'Buka kasus',
+    'label.thesis': 'Tesis', 'label.whyItPumped': 'Alasan harga naik', 'label.reasonsFactors': 'Alasan dan faktor',
+    'label.marketSnapshot': 'Snapshot pasar', 'label.triggers': 'Pemicu', 'label.identity': 'Identitas',
+    'label.floorHistory': 'Riwayat floor', 'label.successCase': 'Mengapa dianggap sukses',
+    'label.lore': 'Kisah', 'label.onChainMarket': 'Pasar on-chain',
+    'lore.unverified': 'Kisah belum cukup terverifikasi.', 'lore.origin': 'Asal-usul berbasis sumber',
+    'lore.pending': 'Riset belum tersedia', 'lore.verified': 'Terverifikasi', 'lore.unverifiedStatus': 'Belum terverifikasi',
+    'lore.sources': 'Sumber kisah', 'lore.contractReminder': 'Ringkasan bersumber · Selalu verifikasi kontrak.',
+    'lore.creator': 'Pembuat', 'lore.creatorSocial': 'Profil sosial pembuat', 'lore.noCreatorProfile': 'Profil sosial pembuat belum terverifikasi',
   },
   'zh-CN': {
     'nav.open': '打开导航', 'nav.close': '关闭导航', 'nav.routes': '探索 Crypto Bros',
     'nav.primary': '主导航', 'nav.dismiss': '关闭导航',
+    'brand.homeSub': '全球成交量 · Meme 币动能 · 交易时段',
+    'brand.mapSub': '全球交易所司法辖区情报', 'brand.caseSub': 'Meme 币市值研究',
+    'brand.caseDetail': '有来源的 Meme 币案例研究',
+    'brand.airdropSub': '有来源的空投分发研究', 'brand.neobankSub': '有来源的新银行研究',
+    'brand.nftSub': '有来源的 NFT 地板价研究', 'brand.launchpadSub': '合约优先的发射平台研究',
+    'brand.sentimentSub': '平台成交量、收入与动能', 'brand.breakoutSub': '2026 年阈值事件研究',
+    'brand.nft2026Sub': '2026 年 NFT 突破研究',
     'theme.light': '切换到浅色主题', 'theme.dark': '切换到深色主题',
     'language.label': '语言', 'language.choose': '选择语言', 'language.current': '当前语言：{language}',
     'route.market': '市场', 'route.research': '研究', 'route.dashboard': '仪表盘',
@@ -276,10 +313,25 @@ const COPY = {
     'label.publishedCount': '个已公布数量的案例', 'label.launchDayBasis': '按分发时价值排序',
     'label.peakHistoricalTable': '历史数据表', 'label.reconstructed': '重建估算',
     'label.projectResearch': '项目研究', 'label.openCase': '查看案例',
+    'label.thesis': '核心论点', 'label.whyItPumped': '上涨原因', 'label.reasonsFactors': '原因与因素',
+    'label.marketSnapshot': '市场概况', 'label.triggers': '催化因素', 'label.identity': '身份信息',
+    'label.floorHistory': '地板价历史', 'label.successCase': '为何可视为成功',
+    'label.lore': '背景故事', 'label.onChainMarket': '链上市场',
+    'lore.unverified': '背景故事尚未得到充分验证。', 'lore.origin': '有来源支持的起源',
+    'lore.pending': '研究待补充', 'lore.verified': '已验证', 'lore.unverifiedStatus': '未验证',
+    'lore.sources': '背景故事来源', 'lore.contractReminder': '来源摘要 · 请务必核实合约。',
+    'lore.creator': '创建者', 'lore.creatorSocial': '创建者社交账号', 'lore.noCreatorProfile': '没有已验证的创建者社交账号',
   },
   ja: {
     'nav.open': 'ナビゲーションを開く', 'nav.close': 'ナビゲーションを閉じる', 'nav.routes': 'Crypto Bros を見る',
     'nav.primary': 'メインナビゲーション', 'nav.dismiss': 'ナビゲーションを閉じる',
+    'brand.homeSub': '世界の出来高 · ミームコイン動向 · 取引時間',
+    'brand.mapSub': '世界の取引所・法域インテリジェンス', 'brand.caseSub': 'ミームコイン時価総額調査',
+    'brand.caseDetail': '出典付きミームコイン事例研究',
+    'brand.airdropSub': '出典付きエアドロップ配布調査', 'brand.neobankSub': '出典付きネオバンク調査',
+    'brand.nftSub': '出典付き NFT フロア調査', 'brand.launchpadSub': 'コントラクト優先のローンチパッド調査',
+    'brand.sentimentSub': 'プラットフォームの出来高・収益・動向', 'brand.breakoutSub': '2026 年の閾値イベント調査',
+    'brand.nft2026Sub': '2026 年 NFT ブレイクアウト調査',
     'theme.light': 'ライトテーマに切り替え', 'theme.dark': 'ダークテーマに切り替え',
     'language.label': '言語', 'language.choose': '言語を選択', 'language.current': '現在の言語: {language}',
     'route.market': 'マーケット', 'route.research': 'リサーチ', 'route.dashboard': 'ダッシュボード',
@@ -367,8 +419,25 @@ const COPY = {
     'label.publishedCount': '件の公表済み件数', 'label.launchDayBasis': '配布時価値順',
     'label.peakHistoricalTable': '過去の一覧', 'label.reconstructed': '再構成値',
     'label.projectResearch': 'プロジェクト調査', 'label.openCase': '事例を開く',
+    'label.thesis': '投資仮説', 'label.whyItPumped': '上昇した理由', 'label.reasonsFactors': '理由と要因',
+    'label.marketSnapshot': '市場スナップショット', 'label.triggers': 'きっかけ', 'label.identity': 'プロジェクト情報',
+    'label.floorHistory': 'フロア価格の推移', 'label.successCase': '成功とみなされる理由',
+    'label.lore': '背景', 'label.onChainMarket': 'オンチェーン市場',
+    'lore.unverified': '背景情報はまだ十分に検証されていません。', 'lore.origin': '出典に基づく起源',
+    'lore.pending': '調査中', 'lore.verified': '確認済み', 'lore.unverifiedStatus': '未確認',
+    'lore.sources': '背景情報の出典', 'lore.contractReminder': '出典付き要約 · コントラクトを必ず確認してください。',
+    'lore.creator': '作成者', 'lore.creatorSocial': '作成者の SNS プロフィール', 'lore.noCreatorProfile': '確認済みの作成者 SNS プロフィールはありません',
   },
 };
+
+const PHRASE_KEYS = new Map();
+for (const [key, english] of Object.entries(COPY.en)) {
+  for (const value of [english, ...SUPPORTED_LOCALES.map((locale) => COPY[locale]?.[key])]) {
+    if (typeof value === 'string' && value.trim() && !PHRASE_KEYS.has(value.trim())) {
+      PHRASE_KEYS.set(value.trim(), key);
+    }
+  }
+}
 
 const LOCALE_TAGS = { en: 'en-US', id: 'id-ID', 'zh-CN': 'zh-CN', ja: 'ja-JP' };
 const LANGUAGE_NAMES = { en: 'English', id: 'Bahasa Indonesia', 'zh-CN': '简体中文', ja: '日本語' };
@@ -390,12 +459,7 @@ export function translate(key, targetLocale = locale, fallback = '') {
 export function t(key, fallback = '') { return translate(key, locale, fallback); }
 
 function reversePhrase(value) {
-  const normalized = value.trim();
-  for (const [key, english] of Object.entries(COPY.en)) {
-    if (english === normalized) return key;
-    for (const lang of SUPPORTED_LOCALES) if (COPY[lang]?.[key] === normalized) return key;
-  }
-  return null;
+  return PHRASE_KEYS.get(value.trim()) || null;
 }
 
 function shouldSkip(node) {

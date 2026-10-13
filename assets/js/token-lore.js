@@ -1,6 +1,7 @@
 import { CASES } from './cases-config.js';
 import { brandedSourceLink, sourceBrand } from './source-brands.js';
 import { el } from './utils.js';
+import { t } from './i18n.js';
 
 const TOKEN_POLISH_STYLES = '/assets/css/token-polish.css';
 
@@ -56,7 +57,7 @@ function creatorBlock(token) {
       url: profile.url,
       className: 'creator-social-chip',
     }))
-    : [el('span', { class: 'creator-anon-chip', title: 'No verified creator social profile' },
+    : [el('span', { class: 'creator-anon-chip', title: t('lore.noCreatorProfile') },
       el('img', {
         src: '/assets/img/sources/anon.svg',
         alt: '',
@@ -69,11 +70,11 @@ function creatorBlock(token) {
 
   return el('div', { class: 'token-lore-creator' },
     el('div', { class: 'token-lore-creator-copy' },
-      el('span', {}, 'Creator'),
+      el('span', {}, t('lore.creator')),
       el('strong', {}, creator.label),
       creator.note ? el('small', {}, creator.note) : null,
     ),
-    el('div', { class: 'token-lore-creator-socials', 'aria-label': 'Creator social profiles' }, ...socials),
+    el('div', { class: 'token-lore-creator-socials', 'aria-label': t('lore.creatorSocial') }, ...socials),
   );
 }
 
@@ -99,7 +100,7 @@ export function renderTokenLore(holder, token) {
   if (!holder) return;
   ensureTokenPolishStyles();
   const symbol = String(token?.symbol || token?.sym || 'TOKEN').toUpperCase();
-  const lore = token?.lore || 'Lore not sufficiently verified yet.';
+  const lore = token?.lore || t('lore.unverified');
   const sourceUrls = [...new Set([
     token?.officialX,
     token?.officialSite,
@@ -112,18 +113,18 @@ export function renderTokenLore(holder, token) {
     el('header', { class: 'token-lore-head' },
       el('span', { class: 'token-lore-prompt', 'aria-hidden': 'true' }, '›_'),
       el('div', {},
-        el('p', { class: 'eyebrow' }, `$${symbol} · Lore`),
-        el('h2', {}, token?.lore ? 'Source-backed origin' : 'Research pending'),
+        el('p', { class: 'eyebrow' }, `$${symbol} · ${t('label.lore')}`),
+        el('h2', {}, token?.lore ? t('lore.origin') : t('lore.pending')),
       ),
-      el('span', { class: 'token-lore-state' }, token?.lore ? 'Verified' : 'Unverified'),
+      el('span', { class: 'token-lore-state' }, token?.lore ? t('lore.verified') : t('lore.unverifiedStatus')),
     ),
     el('p', { class: 'token-lore-copy' }, lore),
     creatorBlock(token),
     el('footer', { class: 'token-lore-foot' },
-      el('div', { class: 'token-lore-sources', 'aria-label': 'Lore sources' },
+      el('div', { class: 'token-lore-sources', 'aria-label': t('lore.sources') },
         ...sourceUrls.map((url) => loreSourceLink(url, token)),
       ),
-      el('small', {}, 'Source-backed summary · Always verify the contract.'),
+      el('small', {}, t('lore.contractReminder')),
     ),
   );
   holder.replaceChildren(card);

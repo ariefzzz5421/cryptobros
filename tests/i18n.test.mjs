@@ -14,6 +14,9 @@ test('key interface labels have localized text in every supported language', () 
     assert.ok(translate('route.airdrops', locale).length > 0, `${locale}: route label missing`);
     assert.ok(translate('common.marketCap', locale).length > 0, `${locale}: market-cap label missing`);
     assert.ok(translate('airdrop.readCase', locale).length > 0, `${locale}: airdrop action missing`);
+    assert.ok(translate('brand.homeSub', locale).length > 0, `${locale}: brand subtitle missing`);
+    assert.ok(translate('label.thesis', locale).length > 0, `${locale}: case section label missing`);
+    assert.ok(translate('lore.origin', locale).length > 0, `${locale}: token lore label missing`);
   }
 });
 
